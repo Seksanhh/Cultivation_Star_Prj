@@ -1,0 +1,3653 @@
+<roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.roblox.com/roblox.xsd" version="4">
+	<External>null</External>
+	<External>nil</External>
+	<Item class="Workspace" referent="RBX1">
+		<Properties>
+			<float name="AirDensity">0.00120000006</float>
+			<float name="AirTurbulenceIntensity">0</float>
+			<bool name="AllowThirdPartySales">false</bool>
+			<token name="AuthorityMode">1</token>
+			<token name="AvatarUnificationMode">0</token>
+			<token name="ClientAnimatorThrottling">0</token>
+			<Ref name="CurrentCamera">RBX41E88AB8CF944818A71ED99CE7B54C4F</Ref>
+			<double name="DistributedGameTime">0</double>
+			<token name="EnableSLIMAvatars">0</token>
+			<token name="ExpandedTerrain">0</token>
+			<bool name="ExplicitAutoJoints">true</bool>
+			<bool name="FallHeightEnabled">true</bool>
+			<float name="FallenPartsDestroyHeight">-500</float>
+			<token name="FluidForces">0</token>
+			<Vector3 name="GlobalWind">
+				<X>0</X>
+				<Y>0</Y>
+				<Z>0</Z>
+			</Vector3>
+			<float name="Gravity">196.199997</float>
+			<token name="IKControlConstraintSupport">0</token>
+			<token name="ImprovedPhysicsReplication">0</token>
+			<token name="InputSinkEnabled">0</token>
+			<token name="LayeredClothingCacheOptimizations">0</token>
+			<token name="LuauTypeCheckMode">0</token>
+			<token name="MapTVRemoteToGamepadKeycodes">0</token>
+			<token name="MeshPartHeadsAndAccessories">0</token>
+			<token name="MeshStreamingAndImprovedLods">0</token>
+			<token name="ModelStreamingBehavior">0</token>
+			<token name="NextGenerationPhysicsSolver">0</token>
+			<token name="NextGenerationReplication">0</token>
+			<token name="ParticlesUseDynamicWind">0</token>
+			<token name="PathfindingUseImprovedSearch">0</token>
+			<token name="PhysicsSteppingMethod">0</token>
+			<token name="PlayerCharacterDestroyBehavior">0</token>
+			<token name="PlayerScriptsUseInputActionSystem">0</token>
+			<token name="PredictiveStreamingMode">0</token>
+			<token name="RejectCharacterDeletions">0</token>
+			<token name="RenderingCacheOptimizations">0</token>
+			<token name="ReplicateInstanceDestroySetting">0</token>
+			<token name="ReplicationFrequency">0</token>
+			<token name="ReplicationThroughput">0</token>
+			<token name="Retargeting">0</token>
+			<token name="SandboxedInstanceMode">0</token>
+			<token name="SignalBehavior2">0</token>
+			<token name="StreamOutBehavior">0</token>
+			<bool name="StreamingAdaptiveRadius">false</bool>
+			<bool name="StreamingEnabled">false</bool>
+			<token name="StreamingIntegrityMode">0</token>
+			<int name="StreamingMinRadius">64</int>
+			<int name="StreamingTargetRadius">1024</int>
+			<bool name="TerrainWeldsFixed">true</bool>
+			<token name="TouchEventsUseCollisionGroups">0</token>
+			<bool name="TouchesUseCollisionGroups">false</bool>
+			<token name="UseFixedSimulation">0</token>
+			<token name="UseNewLuauTypeSolver">2</token>
+			<token name="ValidateEnabledProximityPrompt">0</token>
+			<bool name="AutoSimulate">true</bool>
+			<BinaryString name="CollisionGroupData">AQEABP////8HRGVmYXVsdA==</BinaryString>
+			<Vector3 name="GravityDirection">
+				<X>0</X>
+				<Y>-1</Y>
+				<Z>0</Z>
+			</Vector3>
+			<float name="SimulationRate">1</float>
+			<float name="Wind">0</float>
+			<Vector3 name="WindDirection">
+				<X>0</X>
+				<Y>0</Y>
+				<Z>0</Z>
+			</Vector3>
+			<Content name="ExplorerIconContent">
+				<null></null>
+			</Content>
+			<token name="LevelOfDetail">0</token>
+			<CoordinateFrame name="ModelMeshCFrame">
+				<X>0</X>
+				<Y>0</Y>
+				<Z>0</Z>
+				<R00>1</R00>
+				<R01>0</R01>
+				<R02>0</R02>
+				<R10>0</R10>
+				<R11>1</R11>
+				<R12>0</R12>
+				<R20>0</R20>
+				<R21>0</R21>
+				<R22>1</R22>
+			</CoordinateFrame>
+			<SharedString name="ModelMeshData">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<Vector3 name="ModelMeshSize">
+				<X>0</X>
+				<Y>0</Y>
+				<Z>0</Z>
+			</Vector3>
+			<token name="ModelStreamingMode">0</token>
+			<bool name="NeedsPivotMigration">false</bool>
+			<Ref name="PrimaryPart">null</Ref>
+			<float name="ScaleFactor">1</float>
+			<SharedString name="SlimHash">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<OptionalCoordinateFrame name="WorldPivotData">
+				<CFrame>
+					<X>0</X>
+					<Y>0</Y>
+					<Z>0</Z>
+					<R00>1</R00>
+					<R01>0</R01>
+					<R02>0</R02>
+					<R10>0</R10>
+					<R11>1</R11>
+					<R12>0</R12>
+					<R20>0</R20>
+					<R21>0</R21>
+					<R22>1</R22>
+				</CFrame>
+			</OptionalCoordinateFrame>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">Workspace</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca00000002</UniqueId>
+		</Properties>
+		<Item class="Terrain" referent="RBX88C45407A07043DABF2B1737995232E2">
+			<Properties>
+				<token name="AcquisitionMethod">0</token>
+				<bool name="Decoration">false</bool>
+				<float name="GrassLength">0.699999988</float>
+				<BinaryString name="MaterialColors"><![CDATA[AAAAAAAAan8/P39rf2Y/ilY+j35fi21PZmxvZbDqw8faiVpHOi4kHh4lZlw76JxKc3trhHta
+gcLgc4RKxr21zq2UlJSM]]></BinaryString>
+				<SharedString name="Materials">leDEa27wHRPaBssaK0OoqQ==</SharedString>
+				<BinaryString name="PhysicsGrid">AgMAAAAAAAAAAAAAAAA=</BinaryString>
+				<BinaryString name="SmoothGrid">AQU=</BinaryString>
+				<bool name="SmoothVoxelsUpgraded">false</bool>
+				<AssetContentMap name="VoxelGridAssetContentMap">[]</AssetContentMap>
+				<Color3 name="WaterColor">
+					<R>0.0500000007</R>
+					<G>0.330000013</G>
+					<B>0.360000014</B>
+				</Color3>
+				<float name="WaterReflectance">1</float>
+				<float name="WaterTransparency">0.300000012</float>
+				<float name="WaterWaveSize">0.150000006</float>
+				<float name="WaterWaveSpeed">10</float>
+				<bool name="Anchored">true</bool>
+				<bool name="AudioCanCollide">true</bool>
+				<float name="BackParamA">-0.5</float>
+				<float name="BackParamB">0.5</float>
+				<token name="BackSurface">0</token>
+				<token name="BackSurfaceInput">0</token>
+				<float name="BottomParamA">-0.5</float>
+				<float name="BottomParamB">0.5</float>
+				<token name="BottomSurface">4</token>
+				<token name="BottomSurfaceInput">0</token>
+				<CoordinateFrame name="CFrame">
+					<X>0</X>
+					<Y>0</Y>
+					<Z>0</Z>
+					<R00>1</R00>
+					<R01>0</R01>
+					<R02>0</R02>
+					<R10>0</R10>
+					<R11>1</R11>
+					<R12>0</R12>
+					<R20>0</R20>
+					<R21>0</R21>
+					<R22>1</R22>
+				</CoordinateFrame>
+				<bool name="CanCollide">true</bool>
+				<bool name="CanQuery">true</bool>
+				<bool name="CanTouch">true</bool>
+				<bool name="CastShadow">true</bool>
+				<string name="CollisionGroup">Default</string>
+				<int name="CollisionGroupId">0</int>
+				<Color3uint8 name="Color3uint8">4288914085</Color3uint8>
+				<PhysicalProperties name="CustomPhysicalProperties">
+					<CustomPhysics>false</CustomPhysics>
+				</PhysicalProperties>
+				<bool name="EnableFluidForces">true</bool>
+				<float name="FrontParamA">-0.5</float>
+				<float name="FrontParamB">0.5</float>
+				<token name="FrontSurface">0</token>
+				<token name="FrontSurfaceInput">0</token>
+				<float name="LeftParamA">-0.5</float>
+				<float name="LeftParamB">0.5</float>
+				<token name="LeftSurface">0</token>
+				<token name="LeftSurfaceInput">0</token>
+				<bool name="Locked">true</bool>
+				<bool name="Massless">false</bool>
+				<token name="Material">256</token>
+				<string name="MaterialVariantSerialized"></string>
+				<CoordinateFrame name="PivotOffset">
+					<X>0</X>
+					<Y>0</Y>
+					<Z>0</Z>
+					<R00>1</R00>
+					<R01>0</R01>
+					<R02>0</R02>
+					<R10>0</R10>
+					<R11>1</R11>
+					<R12>0</R12>
+					<R20>0</R20>
+					<R21>0</R21>
+					<R22>1</R22>
+				</CoordinateFrame>
+				<float name="Reflectance">0</float>
+				<float name="RightParamA">-0.5</float>
+				<float name="RightParamB">0.5</float>
+				<token name="RightSurface">0</token>
+				<token name="RightSurfaceInput">0</token>
+				<int name="RootPriority">0</int>
+				<Vector3 name="RotVelocity">
+					<X>0</X>
+					<Y>0</Y>
+					<Z>0</Z>
+				</Vector3>
+				<float name="TopParamA">-0.5</float>
+				<float name="TopParamB">0.5</float>
+				<token name="TopSurface">3</token>
+				<token name="TopSurfaceInput">0</token>
+				<float name="Transparency">0</float>
+				<Vector3 name="Velocity">
+					<X>0</X>
+					<Y>0</Y>
+					<Z>0</Z>
+				</Vector3>
+				<Vector3 name="size">
+					<X>2044</X>
+					<Y>252</Y>
+					<Z>2044</Z>
+				</Vector3>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+				<bool name="DefinesCapabilities">false</bool>
+				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+				<string name="Name">Terrain</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
+				<int64 name="SourceAssetId">-1</int64>
+				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+				<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003e9</UniqueId>
+			</Properties>
+		</Item>
+		<Item class="Camera" referent="RBX41E88AB8CF944818A71ED99CE7B54C4F">
+			<Properties>
+				<CoordinateFrame name="CFrame">
+					<X>30.2605991</X>
+					<Y>-2.46638918</Y>
+					<Z>-17.7646523</Z>
+					<R00>-0.913551152</R00>
+					<R01>-0.119591504</R01>
+					<R02>-0.388744295</R02>
+					<R10>-0</R10>
+					<R11>0.955794334</R11>
+					<R12>-0.29403621</R12>
+					<R20>0.406723738</R20>
+					<R21>-0.268617123</R21>
+					<R22>-0.873167098</R22>
+				</CoordinateFrame>
+				<Ref name="CameraSubject">null</Ref>
+				<token name="CameraType">0</token>
+				<float name="FieldOfView">70</float>
+				<token name="FieldOfViewMode">0</token>
+				<CoordinateFrame name="Focus">
+					<X>31.0380859</X>
+					<Y>-1.87831807</Y>
+					<Z>-16.018322</Z>
+					<R00>1</R00>
+					<R01>0</R01>
+					<R02>0</R02>
+					<R10>0</R10>
+					<R11>1</R11>
+					<R12>0</R12>
+					<R20>0</R20>
+					<R21>0</R21>
+					<R22>1</R22>
+				</CoordinateFrame>
+				<bool name="HeadLocked">true</bool>
+				<float name="HeadScale">1</float>
+				<token name="OrthographicMode">0</token>
+				<float name="OrthographicSize">35</float>
+				<token name="ProjectionType">0</token>
+				<bool name="VRTiltAndRollEnabled">false</bool>
+				<float name="ViewStretch">1</float>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+				<bool name="DefinesCapabilities">false</bool>
+				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+				<string name="Name">Camera</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
+				<int64 name="SourceAssetId">-1</int64>
+				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+				<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003f9</UniqueId>
+			</Properties>
+		</Item>
+	</Item>
+	<Item class="TimerService" referent="RBXF8D415958DF141AABF2DCF2A8CB10901">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">TimerService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca0000036b</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="CollectionService" referent="RBX908F3DFF7E4B41518295F7546E5BAA6B">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">CollectionService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca0000036c</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="SoundService" referent="RBXFD19B4A8FE8C4D909A6661F1CA137BC3">
+		<Properties>
+			<bool name="AcousticSimulationEnabled">false</bool>
+			<token name="AmbientReverb">0</token>
+			<token name="AudioApiByDefault">0</token>
+			<token name="CharacterSoundsUseNewApi">0</token>
+			<token name="DefaultListenerLocation">0</token>
+			<bool name="DiffractionEnabled">true</bool>
+			<float name="DistanceFactor">3.32999992</float>
+			<float name="DopplerScale">1</float>
+			<bool name="IsNewExpForAudioApiByDefault">false</bool>
+			<CoordinateFrame name="ListenerCFrame">
+				<X>0</X>
+				<Y>0</Y>
+				<Z>0</Z>
+				<R00>1</R00>
+				<R01>0</R01>
+				<R02>0</R02>
+				<R10>0</R10>
+				<R11>1</R11>
+				<R12>0</R12>
+				<R20>0</R20>
+				<R21>0</R21>
+				<R22>1</R22>
+			</CoordinateFrame>
+			<Ref name="ListenerObject">null</Ref>
+			<token name="ListenerType">0</token>
+			<bool name="OcclusionEnabled">true</bool>
+			<bool name="RespectFilteringEnabled">false</bool>
+			<bool name="ReverbEnabled">true</bool>
+			<float name="RolloffScale">1</float>
+			<token name="VolumetricAudio">1</token>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">SoundService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca0000036d</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="VideoCaptureService" referent="RBXDBE4E321277D4523956790C00047A4D2">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">VideoCaptureService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca00000379</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="NonReplicatedCSGDictionaryService" referent="RBX064A147B88B6432D9F55D9B1EF076DFE">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">NonReplicatedCSGDictionaryService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca0000037a</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="CSGDictionaryService" referent="RBXEAA52CC46E1C46C297A012D98B214BEB">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">CSGDictionaryService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca0000037b</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="Chat" referent="RBX381EA28669984B7997CC07A84DDB14D9">
+		<Properties>
+			<bool name="BubbleChatEnabled">false</bool>
+			<bool name="IsAutoMigrated">false</bool>
+			<bool name="LoadDefaultChat">true</bool>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">Chat</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca00000381</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="Players" referent="RBX6C83CA565B5C4BDDA3D5BF8459159014">
+		<Properties>
+			<bool name="BanningEnabled">true</bool>
+			<bool name="CharacterAutoLoads">true</bool>
+			<int name="MaxPlayersInternal">12</int>
+			<int name="PreferredPlayersInternal">0</int>
+			<float name="RespawnTime">5</float>
+			<bool name="UseStrafingAnimations">false</bool>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">Players</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca00000383</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="ReplicatedFirst" referent="RBXC1AFCDB552B14394A1712FFD52041D50">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">ReplicatedFirst</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca00000386</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="TweenService" referent="RBX20549182D7184BF38060D9383D657BC1">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">TweenService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca00000388</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="MaterialService" referent="RBX678E0F7D977C45E2808F767E2BF8C542">
+		<Properties>
+			<string name="AsphaltName">Asphalt</string>
+			<string name="BasaltName">Basalt</string>
+			<string name="BrickName">Brick</string>
+			<string name="CardboardName">Cardboard</string>
+			<string name="CarpetName">Carpet</string>
+			<string name="CeramicTilesName">CeramicTiles</string>
+			<string name="ClayRoofTilesName">ClayRoofTiles</string>
+			<string name="CobblestoneName">Cobblestone</string>
+			<string name="ConcreteName">Concrete</string>
+			<string name="CorrodedMetalName">CorrodedMetal</string>
+			<string name="CrackedLavaName">CrackedLava</string>
+			<string name="DiamondPlateName">DiamondPlate</string>
+			<string name="FabricName">Fabric</string>
+			<string name="FoilName">Foil</string>
+			<string name="GlacierName">Glacier</string>
+			<string name="GraniteName">Granite</string>
+			<string name="GrassName">Grass</string>
+			<string name="GroundName">Ground</string>
+			<string name="IceName">Ice</string>
+			<string name="LeafyGrassName">LeafyGrass</string>
+			<string name="LeatherName">Leather</string>
+			<string name="LimestoneName">Limestone</string>
+			<string name="MarbleName">Marble</string>
+			<string name="MetalName">Metal</string>
+			<string name="MudName">Mud</string>
+			<string name="PavementName">Pavement</string>
+			<string name="PebbleName">Pebble</string>
+			<string name="PlasterName">Plaster</string>
+			<string name="PlasticName">Plastic</string>
+			<string name="RockName">Rock</string>
+			<string name="RoofShinglesName">RoofShingles</string>
+			<string name="RubberName">Rubber</string>
+			<string name="SaltName">Salt</string>
+			<string name="SandName">Sand</string>
+			<string name="SandstoneName">Sandstone</string>
+			<string name="SlateName">Slate</string>
+			<string name="SmoothPlasticName">SmoothPlastic</string>
+			<string name="SnowName">Snow</string>
+			<bool name="Use2022MaterialsXml">false</bool>
+			<string name="WoodName">Wood</string>
+			<string name="WoodPlanksName">WoodPlanks</string>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">MaterialService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca00000389</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="TextChatService" referent="RBXFE85DCE3A291444ABFFC566620FD8781">
+		<Properties>
+			<bool name="ChatTranslationFTUXShown">true</bool>
+			<bool name="ChatTranslationToggleEnabled">false</bool>
+			<token name="ChatVersion">0</token>
+			<bool name="CreateDefaultCommands">true</bool>
+			<bool name="CreateDefaultTextChannels">true</bool>
+			<bool name="HasSeenDeprecationDialog">false</bool>
+			<bool name="IsLegacyChatDisabled">false</bool>
+			<token name="PlatformIntegratedChat">0</token>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">TextChatService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca0000038a</UniqueId>
+		</Properties>
+		<Item class="ChatWindowConfiguration" referent="RBXCD386FD047F7405DBC404CE3D71EF3FF">
+			<Properties>
+				<Color3 name="BackgroundColor3">
+					<R>0.0980392173</R>
+					<G>0.105882354</G>
+					<B>0.113725491</B>
+				</Color3>
+				<double name="BackgroundTransparency">0.2999999999999999889</double>
+				<bool name="Enabled">true</bool>
+				<Font name="FontFace">
+					<Family><url>rbxasset://fonts/families/GothamSSm.json</url></Family>
+					<Weight>500</Weight>
+					<Style>Normal</Style>
+					<CachedFaceId><url>rbxasset://fonts/Montserrat-Medium.ttf</url></CachedFaceId>
+				</Font>
+				<float name="HeightScale">1</float>
+				<token name="HorizontalAlignment">1</token>
+				<token name="TextChannelDisplayMode">0</token>
+				<Color3 name="TextColor3">
+					<R>1</R>
+					<G>1</G>
+					<B>1</B>
+				</Color3>
+				<int64 name="TextSize">14</int64>
+				<Color3 name="TextStrokeColor3">
+					<R>0</R>
+					<G>0</G>
+					<B>0</B>
+				</Color3>
+				<double name="TextStrokeTransparency">0.5</double>
+				<token name="VerticalAlignment">1</token>
+				<float name="WidthScale">1</float>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+				<bool name="DefinesCapabilities">false</bool>
+				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+				<string name="Name">ChatWindowConfiguration</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
+				<int64 name="SourceAssetId">-1</int64>
+				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+				<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003eb</UniqueId>
+			</Properties>
+		</Item>
+		<Item class="ChatInputBarConfiguration" referent="RBX756B1472CAD44DA793DB62B9D7ADD035">
+			<Properties>
+				<bool name="AutocompleteEnabled">true</bool>
+				<Color3 name="BackgroundColor3">
+					<R>0.0980392173</R>
+					<G>0.105882354</G>
+					<B>0.113725491</B>
+				</Color3>
+				<double name="BackgroundTransparency">0.2000000000000000111</double>
+				<bool name="Enabled">true</bool>
+				<Font name="FontFace">
+					<Family><url>rbxasset://fonts/families/GothamSSm.json</url></Family>
+					<Weight>500</Weight>
+					<Style>Normal</Style>
+					<CachedFaceId><url>rbxasset://fonts/Montserrat-Medium.ttf</url></CachedFaceId>
+				</Font>
+				<token name="KeyboardKeyCode">47</token>
+				<Color3 name="PlaceholderColor3">
+					<R>0.698039234</R>
+					<G>0.698039234</G>
+					<B>0.698039234</B>
+				</Color3>
+				<Ref name="TargetTextChannel">null</Ref>
+				<Color3 name="TextColor3">
+					<R>1</R>
+					<G>1</G>
+					<B>1</B>
+				</Color3>
+				<int64 name="TextSize">14</int64>
+				<Color3 name="TextStrokeColor3">
+					<R>0</R>
+					<G>0</G>
+					<B>0</B>
+				</Color3>
+				<double name="TextStrokeTransparency">0.5</double>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+				<bool name="DefinesCapabilities">false</bool>
+				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+				<string name="Name">ChatInputBarConfiguration</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
+				<int64 name="SourceAssetId">-1</int64>
+				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+				<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003ec</UniqueId>
+			</Properties>
+		</Item>
+		<Item class="BubbleChatConfiguration" referent="RBXCFAF0932908A4F0FB2AFAC0AB0A3D143">
+			<Properties>
+				<string name="AdorneeName">HumanoidRootPart</string>
+				<Color3 name="BackgroundColor3">
+					<R>0.980392158</R>
+					<G>0.980392158</G>
+					<B>0.980392158</B>
+				</Color3>
+				<double name="BackgroundTransparency">0.10000000000000000555</double>
+				<float name="BubbleDuration">15</float>
+				<float name="BubblesSpacing">6</float>
+				<bool name="Enabled">true</bool>
+				<token name="Font">18</token>
+				<Font name="FontFace">
+					<Family><url>rbxasset://fonts/families/GothamSSm.json</url></Family>
+					<Weight>500</Weight>
+					<Style>Normal</Style>
+					<CachedFaceId><url>rbxasset://fonts/Montserrat-Medium.ttf</url></CachedFaceId>
+				</Font>
+				<Vector3 name="LocalPlayerStudsOffset">
+					<X>0</X>
+					<Y>0</Y>
+					<Z>0</Z>
+				</Vector3>
+				<float name="MaxBubbles">3</float>
+				<float name="MaxDistance">100</float>
+				<float name="MinimizeDistance">40</float>
+				<bool name="TailVisible">true</bool>
+				<Color3 name="TextColor3">
+					<R>0.223529413</R>
+					<G>0.23137255</G>
+					<B>0.239215687</B>
+				</Color3>
+				<int64 name="TextSize">16</int64>
+				<float name="VerticalStudsOffset">0</float>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+				<bool name="DefinesCapabilities">false</bool>
+				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+				<string name="Name">BubbleChatConfiguration</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
+				<int64 name="SourceAssetId">-1</int64>
+				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+				<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003ed</UniqueId>
+			</Properties>
+		</Item>
+		<Item class="ChannelTabsConfiguration" referent="RBX019F2F7419964AE8B7A5318F708FBC8C">
+			<Properties>
+				<Color3 name="BackgroundColor3">
+					<R>0.0980392173</R>
+					<G>0.105882354</G>
+					<B>0.113725491</B>
+				</Color3>
+				<double name="BackgroundTransparency">0</double>
+				<bool name="Enabled">false</bool>
+				<Font name="FontFace">
+					<Family><url>rbxasset://fonts/families/BuilderSans.json</url></Family>
+					<Weight>700</Weight>
+					<Style>Normal</Style>
+					<CachedFaceId><url>rbxasset://fonts/BuilderSans-Bold.otf</url></CachedFaceId>
+				</Font>
+				<Color3 name="HoverBackgroundColor3">
+					<R>0.490196079</R>
+					<G>0.490196079</G>
+					<B>0.490196079</B>
+				</Color3>
+				<Color3 name="SelectedTabTextColor3">
+					<R>1</R>
+					<G>1</G>
+					<B>1</B>
+				</Color3>
+				<Color3 name="TextColor3">
+					<R>0.686274529</R>
+					<G>0.686274529</G>
+					<B>0.686274529</B>
+				</Color3>
+				<int64 name="TextSize">18</int64>
+				<Color3 name="TextStrokeColor3">
+					<R>0</R>
+					<G>0</G>
+					<B>0</B>
+				</Color3>
+				<double name="TextStrokeTransparency">1</double>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+				<bool name="DefinesCapabilities">false</bool>
+				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+				<string name="Name">ChannelTabsConfiguration</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
+				<int64 name="SourceAssetId">-1</int64>
+				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+				<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003ee</UniqueId>
+			</Properties>
+		</Item>
+	</Item>
+	<Item class="PermissionsService" referent="RBX2A6EDBE5319C4D7FB9291874BDC0C6F0">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">PermissionsService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca0000038c</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="PlayerEmulatorService" referent="RBXD817EC99887441C29CEF4E08160F3295">
+		<Properties>
+			<bool name="CustomPoliciesEnabled">false</bool>
+			<string name="EmulatedCountryCode"></string>
+			<string name="EmulatedGameLocale"></string>
+			<bool name="PlayerEmulationEnabled">false</bool>
+			<bool name="PseudolocalizationEnabled">false</bool>
+			<BinaryString name="SerializedEmulatedPolicyInfo"></BinaryString>
+			<int name="TextElongationFactor">0</int>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">PlayerEmulatorService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca0000038d</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="StudioData" referent="RBX9EC82BC1868B4B9A85520B3F9F71A549">
+		<Properties>
+			<bool name="EnableScriptCollabByDefaultOnLoad">false</bool>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">StudioData</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca00000390</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="StarterPlayer" referent="RBX13">
+		<Properties>
+			<bool name="AllowCustomAnimations">true</bool>
+			<bool name="AutoJumpEnabled">true</bool>
+			<token name="AvatarJointUpgrade_SerializedRollout">0</token>
+			<float name="CameraMaxZoomDistance">400</float>
+			<float name="CameraMinZoomDistance">0.5</float>
+			<token name="CameraMode">0</token>
+			<bool name="CharacterBreakJointsOnDeath">true</bool>
+			<float name="CharacterJumpHeight">7.19999981</float>
+			<float name="CharacterJumpPower">50</float>
+			<float name="CharacterMaxSlopeAngle">89</float>
+			<bool name="CharacterUseJumpPower">true</bool>
+			<float name="CharacterWalkSpeed">16</float>
+			<bool name="ClassicDeath">true</bool>
+			<bool name="CreateDefaultPlayerModule">true</bool>
+			<token name="DevCameraOcclusionMode">0</token>
+			<token name="DevComputerCameraMovementMode">0</token>
+			<token name="DevComputerMovementMode">0</token>
+			<token name="DevTouchCameraMovementMode">0</token>
+			<token name="DevTouchMovementMode">0</token>
+			<token name="EnableDynamicHeads">0</token>
+			<bool name="EnableMouseLockOption">true</bool>
+			<token name="GameSettingsAvatar">1</token>
+			<token name="GameSettingsR15Collision">0</token>
+			<float name="HealthDisplayDistance">100</float>
+			<bool name="LoadCharacterAppearance">true</bool>
+			<token name="LoadCharacterLayeredClothing">0</token>
+			<token name="LuaCharacterController">0</token>
+			<float name="NameDisplayDistance">100</float>
+			<Ref name="PlaceAvatarRules">null</Ref>
+			<int name="PlayerModuleStatus">0</int>
+			<token name="UseImprovedCharacterEvents">0</token>
+			<bool name="UserEmotesEnabled">true</bool>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">StarterPlayer</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca00000392</UniqueId>
+		</Properties>
+		<Item class="StarterPlayerScripts" referent="RBX12">
+			<Properties>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+				<bool name="DefinesCapabilities">false</bool>
+				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+				<string name="Name">StarterPlayerScripts</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
+				<int64 name="SourceAssetId">-1</int64>
+				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+				<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003e6</UniqueId>
+			</Properties>
+			<Item class="Folder" referent="RBX11">
+				<Properties>
+					<Content name="ExplorerIconContent">
+						<null></null>
+					</Content>
+					<Color3 name="IconTint">
+						<R>0</R>
+						<G>0</G>
+						<B>0</B>
+					</Color3>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+					<bool name="DefinesCapabilities">false</bool>
+					<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+					<string name="Name">Client</string>
+					<BinaryString name="SerializedOverrides"></BinaryString>
+					<int64 name="SourceAssetId">-1</int64>
+					<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+					<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003e7</UniqueId>
+				</Properties>
+				<Item class="LocalScript" referent="RBX10">
+					<Properties>
+						<ProtectedString name="Source"><![CDATA[-- Client : pilote les mains avec les manettes VR, saisit les armes et détecte les coups.
+-- Sans casque, un mode de test clavier/souris prend le relais :
+--   E = saisir/lâcher (main droite), Q = saisir/lâcher (main gauche), clic gauche = frapper.
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local VRService = game:GetService("VRService")
+local HapticService = game:GetService("HapticService")
+
+local Config = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Config"))
+
+local remotes = ReplicatedStorage:WaitForChild("Remotes")
+local grabRemote = remotes:WaitForChild("Grab") :: RemoteEvent
+local releaseRemote = remotes:WaitForChild("Release") :: RemoteEvent
+local hitRemote = remotes:WaitForChild("Hit") :: RemoteEvent
+
+local handsFolder = workspace:WaitForChild("VRHands")
+local weaponsFolder = workspace:WaitForChild("Weapons")
+
+local player = Players.LocalPlayer
+player.CameraMode = Enum.CameraMode.LockFirstPerson
+
+local SIDES = { "Left", "Right" }
+local SWING_TIME = 0.28 -- durée du coup en mode clavier/souris
+local MAX_PLAUSIBLE_SPEED = 400 -- au-delà, c'est une téléportation de l'arme, pas un coup
+
+---------------------------------------------------------------------------
+-- État
+---------------------------------------------------------------------------
+
+local wantHold: { [string]: boolean } = { Left = false, Right = false }
+local lastReleaseSent: { [string]: number } = { Left = 0, Right = 0 }
+
+-- Seconde main posée sur une arme à deux mains.
+local support: { side: string, weapon: Model, sign: number }? = nil
+
+local swingStart: number? = nil
+local lastTips: { [BasePart]: Vector3 } = setmetatable({}, { __mode = "k" }) :: any
+local lastHit: { [Humanoid]: number } = setmetatable({}, { __mode = "k" }) :: any
+local peakSpeeds: { [BasePart]: { speed: number, time: number } } = setmetatable({}, { __mode = "k" }) :: any
+local PEAK_WINDOW = 0.15 -- durée (s) pendant laquelle la vitesse de pointe d'un geste reste valable
+
+local overlapParams = OverlapParams.new()
+overlapParams.FilterType = Enum.RaycastFilterType.Exclude
+
+local highlights: { [string]: Highlight } = {}
+for _, side in SIDES do
+	local highlight = Instance.new("Highlight")
+	highlight.Name = "GrabHint" .. side
+	highlight.FillTransparency = 1
+	highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+	highlight.Enabled = false
+	highlight.Parent = workspace.CurrentCamera -- local à ce client, et dans le Workspace pour être affiché
+	highlights[side] = highlight
+end
+
+---------------------------------------------------------------------------
+-- Utilitaires
+---------------------------------------------------------------------------
+
+local function otherSide(side: string): string
+	return if side == "Left" then "Right" else "Left"
+end
+
+local function getHeldWeapon(side: string): Model?
+	for _, weapon in weaponsFolder:GetChildren() do
+		if weapon:GetAttribute("Holder") == player.UserId and weapon:GetAttribute("HolderHand") == side then
+			return weapon :: Model
+		end
+	end
+	return nil
+end
+
+-- Distance entre un point et le manche d'une arme.
+local function distanceToHandle(weapon: Model, position: Vector3): number
+	local handle = weapon.PrimaryPart
+	if not handle then
+		return math.huge
+	end
+	local localPoint = handle.CFrame:PointToObjectSpace(position)
+	local half = handle.Size.Y / 2
+	local closest = Vector3.new(0, math.clamp(localPoint.Y, -half, half), 0)
+	return (localPoint - closest).Magnitude
+end
+
+local function findNearestFreeWeapon(position: Vector3): (Model?, number)
+	local nearest: Model? = nil
+	local nearestDistance = Config.GRAB_RADIUS
+	for _, weapon in weaponsFolder:GetChildren() do
+		if weapon:IsA("Model") and not weapon:GetAttribute("Holder") then
+			local distance = distanceToHandle(weapon, position)
+			if distance <= nearestDistance then
+				nearest = weapon
+				nearestDistance = distance
+			end
+		end
+	end
+	return nearest, nearestDistance
+end
+
+-- Position et orientation d'une manette dans le monde.
+local function controllerCFrame(side: string): CFrame
+	local camera = workspace.CurrentCamera
+	if VRService.VREnabled then
+		local userCFrame = if side == "Left" then Enum.UserCFrame.LeftHand else Enum.UserCFrame.RightHand
+		local tracked = VRService:GetUserCFrame(userCFrame)
+		return camera.CFrame * CFrame.new(tracked.Position * camera.HeadScale) * tracked.Rotation
+	end
+
+	-- Mode clavier/souris : les mains flottent devant la caméra.
+	local x = if side == "Left" then -0.9 else 0.9
+	local base = camera.CFrame * CFrame.new(x, -0.9, -1.6)
+	if side == "Right" and swingStart then
+		local t = (os.clock() - swingStart) / SWING_TIME
+		if t >= 1 then
+			swingStart = nil
+		else
+			base *= CFrame.Angles(math.rad(40 - 130 * t), 0, 0)
+		end
+	end
+	return base
+end
+
+local function pulse(side: string, strength: number, duration: number?)
+	if not VRService.VREnabled then
+		return
+	end
+	local motor = if side == "Left" then Enum.VibrationMotor.LeftHand else Enum.VibrationMotor.RightHand
+	pcall(function()
+		HapticService:SetMotor(Enum.UserInputType.Gamepad1, motor, strength)
+	end)
+	task.delay(duration or 0.08, function()
+		pcall(function()
+			HapticService:SetMotor(Enum.UserInputType.Gamepad1, motor, 0)
+		end)
+	end)
+end
+
+-- Le serveur fait vibrer la main qui vient de bloquer ou de parer un coup.
+local feedbackRemote = remotes:WaitForChild("Feedback") :: RemoteEvent
+feedbackRemote.OnClientEvent:Connect(function(side: any, strength: any, duration: any)
+	if (side == "Left" or side == "Right") and typeof(strength) == "number" then
+		pulse(side, strength, if typeof(duration) == "number" then duration else nil)
+	end
+end)
+
+local function findHumanoid(part: Instance): Humanoid?
+	local model = part:FindFirstAncestorOfClass("Model")
+	while model do
+		local humanoid = model:FindFirstChildOfClass("Humanoid")
+		if humanoid then
+			return humanoid
+		end
+		model = model:FindFirstAncestorOfClass("Model")
+	end
+	return nil
+end
+
+---------------------------------------------------------------------------
+-- Saisir / lâcher
+---------------------------------------------------------------------------
+
+local function tryGrab(side: string)
+	if getHeldWeapon(side) then
+		return
+	end
+	local handPosition = controllerCFrame(side).Position
+	local nearest, nearestDistance = findNearestFreeWeapon(handPosition)
+
+	-- La seconde main peut guider une arme à deux mains déjà tenue.
+	local other = otherSide(side)
+	local otherWeapon = getHeldWeapon(other)
+	if otherWeapon and otherWeapon.PrimaryPart then
+		local def = Config.Weapons[otherWeapon:GetAttribute("WeaponType")]
+		local distance = distanceToHandle(otherWeapon, handPosition)
+		if def and def.TwoHanded and distance <= Config.GRAB_RADIUS and (not nearest or distance <= nearestDistance) then
+			local primaryPosition = controllerCFrame(other).Position
+			local bladeDirection = otherWeapon.PrimaryPart.CFrame.UpVector
+			local sign = if (handPosition - primaryPosition):Dot(bladeDirection) >= 0 then 1 else -1
+			support = { side = side, weapon = otherWeapon, sign = sign }
+			pulse(side, 0.3)
+			return
+		end
+	end
+
+	if nearest then
+		grabRemote:FireServer(nearest, side)
+		pulse(side, 0.4)
+	end
+end
+
+local function letGo(side: string)
+	wantHold[side] = false
+	if support and support.side == side then
+		support = nil
+		return
+	end
+	if getHeldWeapon(side) then
+		lastReleaseSent[side] = os.clock()
+		releaseRemote:FireServer(side)
+	end
+end
+
+local function isHolding(side: string): boolean
+	return getHeldWeapon(side) ~= nil or (support ~= nil and support.side == side)
+end
+
+local function press(side: string, forceToggle: boolean)
+	if (Config.GRIP_TOGGLE or forceToggle) and isHolding(side) then
+		letGo(side)
+		return
+	end
+	wantHold[side] = true
+	tryGrab(side)
+end
+
+local GRIP_KEYS: { [Enum.KeyCode]: string } = {
+	[Enum.KeyCode.ButtonL1] = "Left",
+	[Enum.KeyCode.ButtonR1] = "Right",
+}
+
+UserInputService.InputBegan:Connect(function(input, processed)
+	local side = GRIP_KEYS[input.KeyCode]
+	if side then
+		press(side, false)
+		return
+	end
+	if processed or VRService.VREnabled then
+		return
+	end
+	if input.KeyCode == Enum.KeyCode.E then
+		press("Right", true)
+	elseif input.KeyCode == Enum.KeyCode.Q then
+		press("Left", true)
+	elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
+		swingStart = os.clock()
+	end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+	local side = GRIP_KEYS[input.KeyCode]
+	if side and not Config.GRIP_TOGGLE then
+		letGo(side)
+	end
+end)
+
+---------------------------------------------------------------------------
+-- Détection des coups
+---------------------------------------------------------------------------
+
+local function checkHits(weapon: Model, side: string, dt: number, rootVelocity: Vector3)
+	local def = Config.Weapons[weapon:GetAttribute("WeaponType")]
+	if not def then
+		return
+	end
+	for _, part in weapon:GetChildren() do
+		if part:IsA("BasePart") and part:GetAttribute("IsBlade") then
+			local tip = part.CFrame * Vector3.new(0, part.Size.Y / 2, 0)
+			local last = lastTips[part]
+			lastTips[part] = tip
+			if last and dt > 0 then
+				-- Vitesse de la lame par rapport au joueur : marcher ne compte pas comme un coup.
+				local speed = ((tip - last) / dt - rootVelocity).Magnitude
+
+				-- On retient la vitesse de pointe du geste sur un court instant : les dégâts reflètent
+				-- l'élan du coup, pas seulement l'image précise où la lame entre dans la cible.
+				local now = os.clock()
+				local peak = peakSpeeds[part]
+				if speed <= MAX_PLAUSIBLE_SPEED and (not peak or speed >= peak.speed or now - peak.time > PEAK_WINDOW) then
+					peak = { speed = speed, time = now }
+					peakSpeeds[part] = peak
+				end
+				speed = if peak and now - peak.time <= PEAK_WINDOW then peak.speed else 0
+
+				if speed >= def.MinSpeed then
+					for _, hit in workspace:GetPartsInPart(part, overlapParams) do
+						local humanoid = findHumanoid(hit)
+						if humanoid and humanoid.Health > 0 then
+							local now = os.clock()
+							local previous = lastHit[humanoid]
+							if not previous or now - previous >= Config.HIT_COOLDOWN then
+								lastHit[humanoid] = now
+								hitRemote:FireServer(weapon, hit, speed)
+								pulse(side, math.clamp(speed / Config.REFERENCE_SPEED, 0.3, 1))
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+end
+
+---------------------------------------------------------------------------
+-- Vibration quand une arme tenue heurte quelque chose de solide
+---------------------------------------------------------------------------
+
+local touchConnections: { [Model]: { RBXScriptConnection } } = {}
+local lastBump = 0
+
+local function watchCollisions(weapon: Model)
+	if touchConnections[weapon] then
+		return
+	end
+	local connections = {}
+	touchConnections[weapon] = connections
+	for _, item in weapon:GetChildren() do
+		if item:IsA("BasePart") then
+			local part = item
+			table.insert(connections, part.Touched:Connect(function(other)
+				local now = os.clock()
+				local side = weapon:GetAttribute("HolderHand")
+				if now - lastBump < 0.1 or not side then
+					return
+				end
+				if other:IsDescendantOf(weapon) or not other.CanCollide or other.CollisionGroup == "Bodies" then
+					return
+				end
+				local speed = part:GetVelocityAtPosition(part.Position).Magnitude
+				if speed < 3 then
+					return
+				end
+				lastBump = now
+				pulse(side, math.clamp(speed / Config.REFERENCE_SPEED, 0.2, 1))
+			end))
+		end
+	end
+end
+
+-- Coupe l'écoute des armes que ce joueur ne tient plus.
+local function unwatchReleased()
+	for weapon, connections in touchConnections do
+		if weapon:GetAttribute("Holder") ~= player.UserId then
+			for _, connection in connections do
+				connection:Disconnect()
+			end
+			touchConnections[weapon] = nil
+		end
+	end
+end
+
+---------------------------------------------------------------------------
+-- Boucle principale
+---------------------------------------------------------------------------
+
+local function update(dt: number)
+	local hands = handsFolder:FindFirstChild(tostring(player.UserId))
+	if not hands then
+		for _, side in SIDES do
+			highlights[side].Enabled = false
+		end
+		return
+	end
+
+	local targets: { [string]: CFrame } = {
+		Left = controllerCFrame("Left"),
+		Right = controllerCFrame("Right"),
+	}
+
+	-- Arme à deux mains : la lame s'aligne sur la droite qui relie les deux mains.
+	if support then
+		local primarySide = otherSide(support.side)
+		if getHeldWeapon(primarySide) ~= support.weapon then
+			support = nil
+		else
+			local primaryPosition = targets[primarySide].Position
+			local direction = (targets[support.side].Position - primaryPosition) * support.sign
+			if direction.Magnitude > 0.2 then
+				direction = direction.Unit
+				local right = targets[primarySide].RightVector
+				right -= direction * right:Dot(direction)
+				if right.Magnitude > 0.05 then
+					local handleRotation = CFrame.fromMatrix(Vector3.zero, right.Unit, direction)
+					targets[primarySide] = CFrame.new(primaryPosition) * handleRotation * Config.GRIP_ROTATION:Inverse()
+				end
+			end
+		end
+	end
+
+	-- Envoie les cibles aux contraintes des mains (la physique est simulée par ce client).
+	for _, side in SIDES do
+		local hand = hands:FindFirstChild(side)
+		local alignPosition = hand and hand:FindFirstChild("AlignPosition")
+		local alignOrientation = hand and hand:FindFirstChild("AlignOrientation")
+		if alignPosition and alignPosition:IsA("AlignPosition") and alignOrientation and alignOrientation:IsA("AlignOrientation") then
+			alignPosition.Position = targets[side].Position
+			alignOrientation.CFrame = targets[side].Rotation
+		end
+	end
+
+	local character = player.Character
+	local root = character and character:FindFirstChild("HumanoidRootPart")
+	local rootVelocity = if root and root:IsA("BasePart") then root.AssemblyLinearVelocity else Vector3.zero
+
+	local ignored: { Instance } = { weaponsFolder, handsFolder }
+	if character then
+		table.insert(ignored, character)
+	end
+	overlapParams.FilterDescendantsInstances = ignored
+	unwatchReleased()
+
+	for _, side in SIDES do
+		local weapon = getHeldWeapon(side)
+		local highlight = highlights[side]
+		if weapon then
+			highlight.Enabled = false
+			watchCollisions(weapon)
+			if not wantHold[side] and os.clock() - lastReleaseSent[side] > 0.3 then
+				-- L'arme est arrivée dans la main après que le joueur a relâché : on la rend.
+				lastReleaseSent[side] = os.clock()
+				releaseRemote:FireServer(side)
+			end
+			checkHits(weapon, side, dt, rootVelocity)
+		else
+			-- Contour blanc sur l'arme que cette main peut saisir.
+			local nearest = if support and support.side == side then nil else findNearestFreeWeapon(targets[side].Position)
+			highlight.Adornee = nearest
+			highlight.Enabled = nearest ~= nil
+		end
+	end
+end
+
+RunService:BindToRenderStep("VRMelee", Enum.RenderPriority.Camera.Value + 1, update)
+]]></ProtectedString>
+						<bool name="Disabled">false</bool>
+						<Content name="LinkedSource"><null></null></Content>
+						<token name="RunContext">0</token>
+						<string name="ScriptGuid">{305BFCBE-9EC2-4303-94CC-B4CC33B63C8B}</string>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+						<bool name="DefinesCapabilities">false</bool>
+						<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+						<string name="Name">VRClient</string>
+						<BinaryString name="SerializedOverrides"></BinaryString>
+						<int64 name="SourceAssetId">-1</int64>
+						<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+						<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003e8</UniqueId>
+					</Properties>
+				</Item>
+			</Item>
+		</Item>
+		<Item class="StarterCharacterScripts" referent="RBX2BD7D893DF9B41D68A70BA78B73E460F">
+			<Properties>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+				<bool name="DefinesCapabilities">false</bool>
+				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+				<string name="Name">StarterCharacterScripts</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
+				<int64 name="SourceAssetId">-1</int64>
+				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+				<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003ea</UniqueId>
+			</Properties>
+		</Item>
+	</Item>
+	<Item class="StarterPack" referent="RBX88AF69A2BA20493D933399A14E8E91C7">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">StarterPack</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca00000393</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="StarterGui" referent="RBX586590961A3B4EF4831CC21A9961D0D1">
+		<Properties>
+			<token name="ClipsDescendantsSupportsRotation">0</token>
+			<bool name="ResetPlayerGuiOnSpawn">true</bool>
+			<token name="RtlTextSupport">0</token>
+			<token name="ScreenOrientation">2</token>
+			<bool name="ShowDevelopmentGui">true</bool>
+			<Ref name="StudioDefaultStyleSheet">null</Ref>
+			<Ref name="StudioInsertWidgetLayerCollectorAutoLinkStyleSheet">null</Ref>
+			<token name="VirtualCursorMode">0</token>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">StarterGui</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca00000394</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="LocalizationService" referent="RBX3E432DC0DB4640F095B9942029032238">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">LocalizationService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca00000396</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="TeleportService" referent="RBX4BC6C2D62F63447B9CCA4FADAB87BE30">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">Teleport Service</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca0000039a</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="PhysicsService" referent="RBX7434C5881CE04392973438B4DD0F785F">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">PhysicsService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca0000039c</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="InsertService" referent="RBXE84ED690CE98438EB9D3E54D64A46FDF">
+		<Properties>
+			<bool name="AllowInsertFreeModels">false</bool>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">InsertService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca0000039f</UniqueId>
+		</Properties>
+		<Item class="StringValue" referent="RBX78EF6A43CC3241BB9898C0C83FEFE3D7">
+			<Properties>
+				<string name="Value">{6059D8EC-DF04-400B-989B-A90A70FB6840}</string>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+				<bool name="DefinesCapabilities">false</bool>
+				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+				<string name="Name">InsertionHash</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
+				<int64 name="SourceAssetId">-1</int64>
+				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+				<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca0000f190</UniqueId>
+			</Properties>
+		</Item>
+	</Item>
+	<Item class="GamePassService" referent="RBX0901319A50E84EFD9716170338651854">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">GamePassService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003a0</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="Debris" referent="RBX68A4C454D7184C36B964F0573A68AA28">
+		<Properties>
+			<int name="MaxItems">1000</int>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">Debris</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003a1</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="CookiesService" referent="RBX79CBDCCAB5BE4131927725DF6ACA3D96">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">CookiesService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003a2</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="Selection" referent="RBX740249DAF5B5458591A85793E9E8D517">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">Selection</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003a3</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="VRService" referent="RBX5513797CA63F4F0FB785C8FAF4E6D165">
+		<Properties>
+			<token name="AutomaticScaling">0</token>
+			<bool name="AvatarGestures">false</bool>
+			<token name="ControllerModels">1</token>
+			<bool name="FadeOutViewOnCollision">true</bool>
+			<token name="LaserPointer">1</token>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">VRService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003a7</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="ContextActionService" referent="RBX196A0FD7D7D54B96A009B64967505C71">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">ContextActionService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003a8</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="ScriptService" referent="RBXD30CB1E58ECA4352A3A48029DAAE07C7">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">ScriptService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003a9</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="AssetService" referent="RBX97D1FFA18A9E4E5D96486B349CC42259">
+		<Properties>
+			<bool name="AllowInsertFreeAssets">false</bool>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">AssetService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003aa</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="TouchInputService" referent="RBXEAB8A063C4194313AD8DD4DD260AED08">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">TouchInputService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003ac</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="AvatarSettings" referent="RBX6E1D1950D6B249DAA69D06F42744EF71">
+		<Properties>
+			<int name="RulesSchemaVersion">0</int>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">AvatarSettings</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003b2</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="Packages" referent="RBX686C6DBA7AA24506A493120858EF87A3">
+		<Properties>
+			<bool name="IsDehydrated">false</bool>
+			<bool name="OverridesRecalculated">false</bool>
+			<int name="ShellPackagesCount">0</int>
+			<int name="SkippedInstancesCount">0</int>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">Packages</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003b6</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="GuidRegistryService" referent="RBXFD74C4474CE3486FB20EE0467DB2FE8D">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">GuidRegistryService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003b7</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="ServiceVisibilityService" referent="RBX6882B26154144F05A00CEC599C865C8B">
+		<Properties>
+			<BinaryString name="HiddenServices">AAAAAA==</BinaryString>
+			<BinaryString name="VisibleServices">AAAAAA==</BinaryString>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">ServiceVisibilityService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003bd</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="LuaWebService" referent="RBXDF10F939CDAF457E92B2A83F9A0E5D32">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">LuaWebService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003d3</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="ProcessInstancePhysicsService" referent="RBXDFD09BDDF4274FE896B8C7F43F421A22">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">ProcessInstancePhysicsService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003d4</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="ReplicatedStorage" referent="RBX4">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">ReplicatedStorage</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003d5</UniqueId>
+		</Properties>
+		<Item class="Folder" referent="RBX3">
+			<Properties>
+				<Content name="ExplorerIconContent">
+					<null></null>
+				</Content>
+				<Color3 name="IconTint">
+					<R>0</R>
+					<G>0</G>
+					<B>0</B>
+				</Color3>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+				<bool name="DefinesCapabilities">false</bool>
+				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+				<string name="Name">Shared</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
+				<int64 name="SourceAssetId">-1</int64>
+				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+				<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003df</UniqueId>
+			</Properties>
+			<Item class="ModuleScript" referent="RBX2">
+				<Properties>
+					<Content name="LinkedSource"><null></null></Content>
+					<ProtectedString name="Source"><![CDATA[-- Réglages partagés entre le serveur et le client.
+-- Toutes les distances sont en studs (1 mètre réel ≈ 3,6 studs en VR).
+
+local Config = {}
+
+-- Distance maximale entre la main et le manche pour saisir une arme.
+Config.GRAB_RADIUS = 2.2
+
+-- false : il faut garder la gâchette de préhension (grip) enfoncée pour tenir l'arme.
+-- true  : un appui saisit, un second appui lâche.
+Config.GRIP_TOGGLE = false
+
+-- Inclinaison de la lame par rapport à l'axe "pointeur" de la manette, en degrés.
+-- 90 = lame perpendiculaire à la manette, 0 = lame dans l'axe du pointeur.
+Config.GRIP_PITCH_DEG = 50
+
+-- Vitesse de la lame (studs/s) qui donne exactement les dégâts de base.
+Config.REFERENCE_SPEED = 25
+
+-- Multiplicateur de dégâts minimal et maximal selon la vitesse du coup.
+-- Dégâts = dégâts de base × (vitesse du coup / vitesse de référence), bornés par ces deux valeurs.
+Config.MIN_DAMAGE_SCALE = 0.3
+Config.MAX_DAMAGE_SCALE = 2.5
+
+-- Délai minimal entre deux coups de la même arme sur la même cible (secondes).
+Config.HIT_COOLDOWN = 0.35
+
+-- Les joueurs peuvent-ils se blesser entre eux ?
+Config.PVP_ENABLED = true
+
+-- Une arme lâchée retourne sur le râtelier après ce délai (secondes).
+Config.WEAPON_RETURN_TIME = 40
+
+-- Effets sonores.
+-- Pour en changer un, ouvre la Toolbox de Studio (onglet Audio), choisis un son
+-- et remplace Id par "rbxassetid://NUMERO".
+-- Sons de la bibliothèque audio Roblox, publiés par ProSoundEffects (catalogue sous licence Roblox,
+-- utilisable dans tous les jeux). Le nom d'origine de chaque son est indiqué en commentaire.
+Config.Sounds = {
+	-- Arme contre arme ou contre du métal — « Shield Clang As Hit Metal Sword Hubcap 1 »
+	Metal = { Id = "rbxassetid://9119072660", Pitch = 1, Volume = 1 },
+	-- Arme contre le décor — « Wood Impacts 3 »
+	Thud = { Id = "rbxassetid://9120916241", Pitch = 1, Volume = 0.9 },
+	-- Coup qui touche une cible — « Boxing Hits 14 »
+	Flesh = { Id = "rbxassetid://9113573976", Pitch = 1, Volume = 1 },
+	-- Parade réussie — « Shield Clang As Hit Metal Sword Hubcap 2 »
+	Parry = { Id = "rbxassetid://9119072674", Pitch = 1.1, Volume = 1.2 },
+	-- Coup arrêté par un bouclier — « Wood Impact 18 »
+	Block = { Id = "rbxassetid://9120908635", Pitch = 0.9, Volume = 1.4 },
+	-- Arme saisie — « Sword Draw Clang Unsheathing Two Sabers 30 »
+	Grab = { Id = "rbxassetid://9119744718", Pitch = 1, Volume = 0.6 },
+	Hurt = { Id = "rbxasset://sounds/ouch.ogg", Pitch = 1, Volume = 0.8 }, -- joueur blessé
+}
+
+-- Vitesse de choc minimale (studs/s) pour qu'une collision d'arme fasse du bruit.
+Config.COLLISION_SOUND_MIN_SPEED = 5
+
+export type WeaponPart = {
+	Name: string,
+	Size: Vector3,
+	Offset: Vector3, -- position du centre de la pièce par rapport au centre du manche (Y = vers la lame)
+	Color: Color3,
+	Material: Enum.Material,
+	Blade: boolean?, -- true : cette pièce inflige des dégâts
+	Shield: boolean?, -- true : cette pièce bloque les attaques
+	Shape: Enum.PartType?, -- forme de la pièce (bloc par défaut)
+	Rotation: CFrame?, -- rotation de la pièce par rapport au manche
+}
+
+export type WeaponDef = {
+	DisplayName: string,
+	Damage: number, -- dégâts à la vitesse de référence
+	MinSpeed: number, -- vitesse minimale de la lame pour que le coup compte
+	TwoHanded: boolean, -- la seconde main peut guider l'arme
+	HandleLength: number,
+	GripOffset: number, -- position de la main le long du manche (0 = centre, + = vers la lame)
+	GripPitchDeg: number?, -- inclinaison propre à cet objet ; sinon Config.GRIP_PITCH_DEG
+	Parts: { WeaponPart },
+}
+
+local STEEL = Color3.fromRGB(200, 205, 215)
+local DARK_STEEL = Color3.fromRGB(90, 95, 105)
+local GOLD = Color3.fromRGB(190, 150, 60)
+
+local weapons: { [string]: WeaponDef } = {
+	Dague = {
+		DisplayName = "Dague",
+		Damage = 12,
+		MinSpeed = 8,
+		TwoHanded = false,
+		HandleLength = 0.8,
+		GripOffset = 0,
+		Parts = {
+			{ Name = "Pommeau", Size = Vector3.new(0.34, 0.2, 0.34), Offset = Vector3.new(0, -0.5, 0), Color = DARK_STEEL, Material = Enum.Material.Metal },
+			{ Name = "Garde", Size = Vector3.new(0.3, 0.14, 0.8), Offset = Vector3.new(0, 0.47, 0), Color = DARK_STEEL, Material = Enum.Material.Metal },
+			{ Name = "Lame", Size = Vector3.new(0.06, 1.5, 0.26), Offset = Vector3.new(0, 1.29, 0), Color = STEEL, Material = Enum.Material.Metal, Blade = true },
+		},
+	},
+
+	Epee = {
+		DisplayName = "Épée",
+		Damage = 25,
+		MinSpeed = 11,
+		TwoHanded = false,
+		HandleLength = 1.1,
+		GripOffset = 0,
+		Parts = {
+			{ Name = "Pommeau", Size = Vector3.new(0.4, 0.3, 0.4), Offset = Vector3.new(0, -0.7, 0), Color = GOLD, Material = Enum.Material.Metal },
+			{ Name = "Garde", Size = Vector3.new(0.3, 0.2, 1.4), Offset = Vector3.new(0, 0.65, 0), Color = GOLD, Material = Enum.Material.Metal },
+			{ Name = "Lame", Size = Vector3.new(0.08, 3.2, 0.35), Offset = Vector3.new(0, 2.35, 0), Color = STEEL, Material = Enum.Material.Metal, Blade = true },
+		},
+	},
+
+	EpeeLongue = {
+		DisplayName = "Épée longue",
+		Damage = 40,
+		MinSpeed = 9,
+		TwoHanded = true,
+		HandleLength = 1.9,
+		GripOffset = 0.45,
+		Parts = {
+			{ Name = "Pommeau", Size = Vector3.new(0.45, 0.35, 0.45), Offset = Vector3.new(0, -1.12, 0), Color = DARK_STEEL, Material = Enum.Material.Metal },
+			{ Name = "Garde", Size = Vector3.new(0.32, 0.22, 2), Offset = Vector3.new(0, 1.06, 0), Color = DARK_STEEL, Material = Enum.Material.Metal },
+			{ Name = "Lame", Size = Vector3.new(0.09, 4.4, 0.42), Offset = Vector3.new(0, 3.37, 0), Color = STEEL, Material = Enum.Material.Metal, Blade = true },
+		},
+	},
+
+	Hache = {
+		DisplayName = "Hache",
+		Damage = 35,
+		MinSpeed = 10,
+		TwoHanded = true,
+		HandleLength = 2.6,
+		GripOffset = -0.6,
+		Parts = {
+			-- Le fer dépasse vers l'avant (-Z), côté tranchant.
+			{ Name = "Fer", Size = Vector3.new(0.1, 1, 0.9), Offset = Vector3.new(0, 0.95, -0.55), Color = STEEL, Material = Enum.Material.Metal, Blade = true },
+			{ Name = "Talon", Size = Vector3.new(0.34, 0.5, 0.34), Offset = Vector3.new(0, 0.95, 0), Color = DARK_STEEL, Material = Enum.Material.Metal },
+		},
+	},
+
+	-- Bouclier rond en rotin (tengpai). Il n'inflige pas de dégâts : il bloque.
+	-- La poignée est verticale dans la main et le plateau fait face à la direction pointée par la manette.
+	Bouclier = {
+		DisplayName = "Bouclier",
+		Damage = 0,
+		MinSpeed = math.huge,
+		TwoHanded = false,
+		HandleLength = 0.9,
+		GripOffset = 0,
+		GripPitchDeg = 78,
+		Parts = {
+			{ Name = "Plateau", Size = Vector3.new(0.3, 3.6, 3.6), Offset = Vector3.new(0, 0, -0.6), Color = Color3.fromRGB(150, 105, 55), Material = Enum.Material.WoodPlanks, Shape = Enum.PartType.Cylinder, Rotation = CFrame.Angles(0, math.rad(90), 0), Shield = true },
+			{ Name = "Cerclage", Size = Vector3.new(0.2, 3.8, 3.8), Offset = Vector3.new(0, 0, -0.55), Color = Color3.fromRGB(105, 25, 25), Material = Enum.Material.Wood, Shape = Enum.PartType.Cylinder, Rotation = CFrame.Angles(0, math.rad(90), 0) },
+			{ Name = "Umbo", Size = Vector3.new(0.3, 1, 1), Offset = Vector3.new(0, 0, -0.85), Color = GOLD, Material = Enum.Material.Metal, Shape = Enum.PartType.Cylinder, Rotation = CFrame.Angles(0, math.rad(90), 0) },
+			{ Name = "Sangle", Size = Vector3.new(0.18, 0.18, 0.5), Offset = Vector3.new(0, 0.38, -0.25), Color = DARK_STEEL, Material = Enum.Material.Metal },
+			{ Name = "Sangle", Size = Vector3.new(0.18, 0.18, 0.5), Offset = Vector3.new(0, -0.38, -0.25), Color = DARK_STEEL, Material = Enum.Material.Metal },
+		},
+	},
+}
+
+Config.Weapons = weapons
+
+-- Armes posées sur le râtelier au démarrage, dans l'ordre.
+Config.RACK = { "Bouclier", "Bouclier", "Dague", "Dague", "Epee", "Epee", "EpeeLongue", "EpeeLongue", "Hache", "Hache" }
+
+-- Rotation qui amène l'axe du manche (+Y) vers le haut et l'avant de la main.
+Config.GRIP_ROTATION = CFrame.Angles(math.rad(Config.GRIP_PITCH_DEG - 90), 0, 0)
+
+-- CFrame du manche exprimé dans le repère de la main.
+function Config.getGripCFrame(def: WeaponDef): CFrame
+	local rotation = Config.GRIP_ROTATION
+	if def.GripPitchDeg then
+		rotation = CFrame.Angles(math.rad(def.GripPitchDeg - 90), 0, 0)
+	end
+	return rotation * CFrame.new(0, -def.GripOffset, 0)
+end
+
+return Config
+]]></ProtectedString>
+					<string name="ScriptGuid">{9D37C55C-C4E7-4B08-8805-DA554C4BC72E}</string>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+					<bool name="DefinesCapabilities">false</bool>
+					<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+					<string name="Name">Config</string>
+					<BinaryString name="SerializedOverrides"></BinaryString>
+					<int64 name="SourceAssetId">-1</int64>
+					<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+					<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003e0</UniqueId>
+				</Properties>
+			</Item>
+		</Item>
+	</Item>
+	<Item class="ServerScriptService" referent="RBX9">
+		<Properties>
+			<bool name="LoadStringEnabled">false</bool>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">ServerScriptService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003d6</UniqueId>
+		</Properties>
+		<Item class="Folder" referent="RBX8">
+			<Properties>
+				<Content name="ExplorerIconContent">
+					<null></null>
+				</Content>
+				<Color3 name="IconTint">
+					<R>0</R>
+					<G>0</G>
+					<B>0</B>
+				</Color3>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+				<bool name="DefinesCapabilities">false</bool>
+				<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+				<string name="Name">Server</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
+				<int64 name="SourceAssetId">-1</int64>
+				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+				<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003e1</UniqueId>
+			</Properties>
+			<Item class="ModuleScript" referent="RBX5">
+				<Properties>
+					<Content name="LinkedSource"><null></null></Content>
+					<ProtectedString name="Source"><![CDATA[-- Construit le temple martial : cour pavée, enceinte, grande salle, leitai (estrade de duel),
+-- râtelier d'armes, mannequins de bois, lanternes, cerisiers et pics montagneux au loin.
+-- Repères : le nord est vers -Z. Le joueur apparaît au sud de la cour, face à la grande salle.
+
+local Lighting = game:GetService("Lighting")
+
+local Collisions = require(script.Parent:WaitForChild("Collisions"))
+
+local Arena = {}
+
+local folder: Folder
+
+---------------------------------------------------------------------------
+-- Palette
+---------------------------------------------------------------------------
+
+local RED = Color3.fromRGB(150, 38, 32) -- laque rouge des murs et colonnes
+local DARK_RED = Color3.fromRGB(105, 25, 25)
+local TILE = Color3.fromRGB(45, 68, 72) -- tuiles vernissées gris-vert
+local GOLD = Color3.fromRGB(205, 165, 65)
+local STONE = Color3.fromRGB(150, 148, 140)
+local STONE_DARK = Color3.fromRGB(105, 104, 100)
+local WOOD = Color3.fromRGB(70, 45, 30)
+local WOOD_LIGHT = Color3.fromRGB(150, 110, 70)
+local BLOSSOM = Color3.fromRGB(255, 185, 200)
+local LANTERN = Color3.fromRGB(255, 95, 45)
+
+---------------------------------------------------------------------------
+-- Briques de base
+---------------------------------------------------------------------------
+
+local function block(name: string, size: Vector3, cframe: CFrame, color: Color3, material: Enum.Material): Part
+	local part = Instance.new("Part")
+	part.Name = name
+	part.Size = size
+	part.CFrame = cframe
+	part.Color = color
+	part.Material = material
+	part.Anchored = true
+	part.TopSurface = Enum.SurfaceType.Smooth
+	part.BottomSurface = Enum.SurfaceType.Smooth
+	return part
+end
+
+-- Bloc ajouté directement au décor.
+local function add(name: string, size: Vector3, cframe: CFrame, color: Color3, material: Enum.Material): Part
+	local part = block(name, size, cframe, color, material)
+	part.Parent = folder
+	return part
+end
+
+-- Cylindre vertical dont le centre est à `position`.
+local function pillar(name: string, diameter: number, height: number, position: Vector3, color: Color3, material: Enum.Material): Part
+	local part = block(name, Vector3.new(height, diameter, diameter), CFrame.new(position) * CFrame.Angles(0, 0, math.rad(90)), color, material)
+	part.Shape = Enum.PartType.Cylinder
+	part.Parent = folder
+	return part
+end
+
+-- Texte peint sur une face d'une pièce.
+local function paint(part: Part, face: Enum.NormalId, text: string, color: Color3)
+	local gui = Instance.new("SurfaceGui")
+	gui.Face = face
+	gui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
+	gui.PixelsPerStud = 40
+	gui.LightInfluence = 1
+
+	local label = Instance.new("TextLabel")
+	label.Size = UDim2.fromScale(1, 1)
+	label.BackgroundTransparency = 1
+	label.TextScaled = true
+	label.Font = Enum.Font.SourceSansBold
+	label.Text = text
+	label.TextColor3 = color
+	label.Parent = gui
+
+	gui.Parent = part
+end
+
+---------------------------------------------------------------------------
+-- Éléments d'architecture
+---------------------------------------------------------------------------
+
+-- Toit chinois à pans concaves et angles relevés. `base` est le centre du bas de l'avant-toit.
+-- Renvoie la hauteur du faîte.
+local function roof(base: Vector3, width: number, depth: number, levels: number): number
+	local layerHeight = 0.9
+	local insetWidth = width * 0.35
+	local insetDepth = depth - 3
+	local topWidth = width
+
+	for i = 0, levels - 1 do
+		local t = if levels > 1 then i / (levels - 1) else 0
+		-- Pente douce au bord, raide vers le faîte : c'est ce qui donne la courbe.
+		local f = 1 - (1 - t) ^ 2
+		topWidth = width - insetWidth * f
+		local size = Vector3.new(topWidth, layerHeight, depth - insetDepth * f)
+		add("Toit", size, CFrame.new(base + Vector3.new(0, (i + 0.5) * layerHeight, 0)), TILE, Enum.Material.Slate)
+	end
+
+	local ridgeY = base.Y + levels * layerHeight + 0.4
+	add("Faitage", Vector3.new(topWidth + 2, 0.8, 1.2), CFrame.new(base.X, ridgeY, base.Z), GOLD, Enum.Material.Metal)
+	for _, sx in { -1, 1 } do
+		-- Extrémités du faîtage relevées.
+		local tip = CFrame.new(base.X + sx * (topWidth / 2 + 1), ridgeY, base.Z)
+			* CFrame.Angles(0, if sx == 1 then 0 else math.pi, 0)
+			* CFrame.Angles(0, 0, math.rad(35))
+			* CFrame.new(1, 0, 0)
+		add("Faitage", Vector3.new(2.5, 0.7, 1), tip, GOLD, Enum.Material.Metal)
+	end
+
+	-- Angles de l'avant-toit relevés vers l'extérieur.
+	for _, sx in { -1, 1 } do
+		for _, sz in { -1, 1 } do
+			local corner = base + Vector3.new(sx * width / 2, 0.45, sz * depth / 2)
+			local yaw = math.atan2(-sz, sx)
+			local cframe = CFrame.new(corner) * CFrame.Angles(0, yaw, 0) * CFrame.Angles(0, 0, math.rad(22)) * CFrame.new(1.5, 0, 0)
+			add("Angle", Vector3.new(7, 0.7, 1.4), cframe, TILE, Enum.Material.Slate)
+		end
+	end
+
+	return ridgeY
+end
+
+-- Tronçon de mur d'enceinte aligné sur un axe, coiffé de tuiles.
+local function wall(centerX: number, centerZ: number, lengthX: number, lengthZ: number)
+	local height = 9
+	add("Mur", Vector3.new(lengthX, height, lengthZ), CFrame.new(centerX, height / 2, centerZ), RED, Enum.Material.Concrete)
+	add("Soubassement", Vector3.new(lengthX + 0.4, 1.5, lengthZ + 0.4), CFrame.new(centerX, 0.75, centerZ), STONE_DARK, Enum.Material.Slate)
+	add("Chaperon", Vector3.new(lengthX + 1.5, 0.8, lengthZ + 1.5), CFrame.new(centerX, height + 0.4, centerZ), TILE, Enum.Material.Slate)
+	add("Chaperon", Vector3.new(math.max(lengthX - 0.5, 1), 0.6, math.max(lengthZ - 0.5, 1)), CFrame.new(centerX, height + 1.1, centerZ), TILE, Enum.Material.Slate)
+end
+
+-- Lanterne rouge sur potence, avec sa lumière.
+local function lantern(position: Vector3, armDirection: number)
+	add("Poteau", Vector3.new(0.6, 9, 0.6), CFrame.new(position + Vector3.new(0, 4.5, 0)), WOOD, Enum.Material.Wood)
+	add("Potence", Vector3.new(2.6, 0.4, 0.4), CFrame.new(position + Vector3.new(armDirection * 1, 8.6, 0)), WOOD, Enum.Material.Wood)
+
+	local center = position + Vector3.new(armDirection * 2, 7, 0)
+	add("Cordon", Vector3.new(0.1, 0.8, 0.1), CFrame.new(center + Vector3.new(0, 1.4, 0)), WOOD, Enum.Material.Fabric)
+	local body = add("Lanterne", Vector3.new(1.6, 2, 1.6), CFrame.new(center), LANTERN, Enum.Material.Neon)
+	add("Coiffe", Vector3.new(1.8, 0.25, 1.8), CFrame.new(center + Vector3.new(0, 1.1, 0)), GOLD, Enum.Material.Metal)
+	add("Coiffe", Vector3.new(1.8, 0.25, 1.8), CFrame.new(center - Vector3.new(0, 1.1, 0)), GOLD, Enum.Material.Metal)
+
+	local light = Instance.new("PointLight")
+	light.Color = Color3.fromRGB(255, 150, 90)
+	light.Range = 22
+	light.Brightness = 1.6
+	light.Parent = body
+end
+
+-- Cerisier en fleurs.
+local function cherryTree(position: Vector3, scale: number)
+	add("Tronc", Vector3.new(1.6 * scale, 10 * scale, 1.6 * scale), CFrame.new(position + Vector3.new(0, 5 * scale, 0)) * CFrame.Angles(0, 0, math.rad(6)), WOOD, Enum.Material.Wood)
+	local crowns = {
+		{ Vector3.new(0, 12, 0), 12 },
+		{ Vector3.new(4, 10.5, 2), 9 },
+		{ Vector3.new(-4, 10, -2), 9 },
+		{ Vector3.new(1, 10, -4.5), 8 },
+		{ Vector3.new(-1.5, 14, 2.5), 8 },
+	}
+	for _, crown in crowns do
+		local diameter = crown[2] * scale
+		local foliage = add("Fleurs", Vector3.new(diameter, diameter, diameter), CFrame.new(position + crown[1] * scale), BLOSSOM, Enum.Material.Grass)
+		foliage.Shape = Enum.PartType.Ball
+		foliage.CanCollide = false
+		foliage.CastShadow = false
+	end
+end
+
+-- Bannière « 武 » (art martial) pendue à un mât.
+local function banner(position: Vector3)
+	add("Mat", Vector3.new(0.5, 9, 0.5), CFrame.new(position + Vector3.new(0, 4.5, 0)), DARK_RED, Enum.Material.Wood)
+	add("Pommeau", Vector3.new(0.8, 0.4, 0.8), CFrame.new(position + Vector3.new(0, 9.2, 0)), GOLD, Enum.Material.Metal)
+	local cloth = add("Banniere", Vector3.new(2.4, 4.5, 0.1), CFrame.new(position + Vector3.new(0, 6.2, 0.35)), RED, Enum.Material.Fabric)
+	cloth.CanCollide = false
+	paint(cloth, Enum.NormalId.Front, "武", GOLD)
+	paint(cloth, Enum.NormalId.Back, "武", GOLD)
+end
+
+---------------------------------------------------------------------------
+-- Zones du temple
+---------------------------------------------------------------------------
+
+local function buildGround()
+	-- Cour pavée (120 x 120), dessus à y = 0.
+	add("Cour", Vector3.new(124, 1, 124), CFrame.new(0, -0.5, 0), STONE, Enum.Material.Cobblestone)
+	-- Allée centrale entre le portail et la grande salle.
+	add("Allee", Vector3.new(14, 0.1, 118), CFrame.new(0, 0.05, 0), STONE_DARK, Enum.Material.Slate)
+
+	if not workspace:FindFirstChild("Baseplate") then
+		add("Terrain", Vector3.new(900, 1, 900), CFrame.new(0, -0.8, 0), Color3.fromRGB(75, 95, 70), Enum.Material.Grass)
+	end
+
+	if not workspace:FindFirstChildWhichIsA("SpawnLocation", true) then
+		local spawn = Instance.new("SpawnLocation")
+		spawn.Name = "Spawn"
+		spawn.Size = Vector3.new(6, 0.2, 6)
+		spawn.CFrame = CFrame.new(0, 0.2, 42)
+		spawn.Anchored = true
+		spawn.CanCollide = false
+		spawn.Transparency = 1
+		spawn.Parent = folder
+	end
+end
+
+local function buildWalls()
+	wall(0, -61, 124, 2) -- nord
+	wall(61, 0, 2, 120) -- est
+	wall(-61, 0, 2, 120) -- ouest
+	wall(-35, 61, 54, 2) -- sud, de part et d'autre du portail
+	wall(35, 61, 54, 2)
+
+	-- Portail d'entrée.
+	for _, sx in { -1, 1 } do
+		pillar("ColonnePortail", 2, 13, Vector3.new(sx * 7.5, 6.5, 61), RED, Enum.Material.Concrete)
+		pillar("BasePortail", 2.8, 1, Vector3.new(sx * 7.5, 0.5, 61), STONE_DARK, Enum.Material.Slate)
+	end
+	add("Linteau", Vector3.new(19, 1.4, 1.6), CFrame.new(0, 12.3, 61), DARK_RED, Enum.Material.Wood)
+	local sign = add("Enseigne", Vector3.new(8, 2.6, 0.4), CFrame.new(0, 10.2, 60.4), Color3.fromRGB(25, 35, 60), Enum.Material.Wood)
+	paint(sign, Enum.NormalId.Front, "武道", GOLD)
+	roof(Vector3.new(0, 13, 61), 26, 8, 4)
+end
+
+local function buildHall()
+	-- Terrasse de pierre et escalier.
+	add("Terrasse", Vector3.new(66, 3, 30), CFrame.new(0, 1.5, -43), STONE, Enum.Material.Slate)
+	add("Marche", Vector3.new(22, 2, 2), CFrame.new(0, 1, -27), STONE_DARK, Enum.Material.Slate)
+	add("Marche", Vector3.new(22, 1, 2), CFrame.new(0, 0.5, -25), STONE_DARK, Enum.Material.Slate)
+
+	local floorY = 3
+	local columnHeight = 12
+
+	-- Colonnade de façade.
+	for x = -24, 24, 8 do
+		pillar("Colonne", 1.8, columnHeight, Vector3.new(x, floorY + columnHeight / 2, -32), RED, Enum.Material.Concrete)
+		pillar("BaseColonne", 2.6, 0.8, Vector3.new(x, floorY + 0.4, -32), STONE_DARK, Enum.Material.Slate)
+	end
+	add("Poutre", Vector3.new(54, 1.4, 1.4), CFrame.new(0, floorY + columnHeight - 0.7, -32), Color3.fromRGB(30, 70, 95), Enum.Material.Wood)
+
+	-- Murs du fond et des côtés ; la façade reste ouverte.
+	add("MurSalle", Vector3.new(54, columnHeight, 1.2), CFrame.new(0, floorY + columnHeight / 2, -54), RED, Enum.Material.Concrete)
+	for _, sx in { -1, 1 } do
+		add("MurSalle", Vector3.new(1.2, columnHeight, 18), CFrame.new(sx * 26.4, floorY + columnHeight / 2, -45), RED, Enum.Material.Concrete)
+	end
+	add("Tapis", Vector3.new(12, 0.1, 20), CFrame.new(0, floorY + 0.05, -43), DARK_RED, Enum.Material.Fabric)
+
+	-- Autel, gong et enseigne.
+	add("Autel", Vector3.new(12, 2.2, 3), CFrame.new(0, floorY + 1.1, -51), WOOD, Enum.Material.Wood)
+	add("NappeAutel", Vector3.new(12.4, 0.15, 3.4), CFrame.new(0, floorY + 2.28, -51), GOLD, Enum.Material.Fabric)
+	local gong = block("Gong", Vector3.new(0.5, 6, 6), CFrame.new(0, floorY + 7.2, -53) * CFrame.Angles(0, math.rad(90), 0), GOLD, Enum.Material.Metal)
+	gong.Shape = Enum.PartType.Cylinder
+	gong.Parent = folder
+	local sign = add("Enseigne", Vector3.new(12, 3, 0.4), CFrame.new(0, floorY + columnHeight + 2.2, -30.6), Color3.fromRGB(25, 35, 60), Enum.Material.Wood)
+	paint(sign, Enum.NormalId.Back, "武道館", GOLD)
+
+	-- Toit bas, étage, toit haut.
+	local lowerRidge = roof(Vector3.new(0, floorY + columnHeight, -43), 68, 34, 7)
+	local storeyHeight = 6
+	add("Etage", Vector3.new(34, storeyHeight, 12), CFrame.new(0, lowerRidge - 1.5 + storeyHeight / 2, -43), RED, Enum.Material.Concrete)
+	roof(Vector3.new(0, lowerRidge - 1.5 + storeyHeight, -43), 44, 20, 6)
+
+	-- Brûle-encens devant l'escalier.
+	pillar("PiedBruleEncens", 3, 0.8, Vector3.new(0, 0.4, -18), STONE_DARK, Enum.Material.Slate)
+	local burner = pillar("BruleEncens", 4.4, 2.2, Vector3.new(0, 1.9, -18), Color3.fromRGB(110, 85, 50), Enum.Material.Metal)
+	pillar("BordBruleEncens", 5, 0.4, Vector3.new(0, 3.2, -18), Color3.fromRGB(110, 85, 50), Enum.Material.Metal)
+	local smoke = Instance.new("Smoke")
+	smoke.Color = Color3.fromRGB(220, 215, 205)
+	smoke.Opacity = 0.12
+	smoke.RiseVelocity = 3
+	smoke.Size = 1.5
+	smoke.Parent = burner
+end
+
+-- Leitai : l'estrade de duel au centre de la cour.
+local function buildLeitai()
+	add("Leitai", Vector3.new(26, 2, 26), CFrame.new(0, 1, 0), STONE_DARK, Enum.Material.Slate)
+	add("BordureLeitai", Vector3.new(26.6, 0.4, 26.6), CFrame.new(0, 1.8, 0), GOLD, Enum.Material.Metal)
+	add("TapisLeitai", Vector3.new(22, 0.1, 22), CFrame.new(0, 2.05, 0), RED, Enum.Material.Fabric)
+
+	-- Médaillon central.
+	local disc = block("Medaillon", Vector3.new(0.12, 9, 9), CFrame.new(0, 2.06, 0) * CFrame.Angles(0, 0, math.rad(90)), GOLD, Enum.Material.Fabric)
+	disc.Shape = Enum.PartType.Cylinder
+	disc.CanCollide = false
+	disc.Parent = folder
+
+	-- Une marche au sud et une au nord.
+	for _, sz in { -1, 1 } do
+		add("MarcheLeitai", Vector3.new(10, 1, 2), CFrame.new(0, 0.5, sz * 14), STONE, Enum.Material.Slate)
+	end
+
+	-- Bannières aux quatre coins, au sol.
+	for _, sx in { -1, 1 } do
+		for _, sz in { -1, 1 } do
+			banner(Vector3.new(sx * 15, 0, sz * 15))
+		end
+	end
+end
+
+local function buildDecor()
+	for _, z in { 46, 22, -22 } do
+		lantern(Vector3.new(-22, 0, z), 1)
+		lantern(Vector3.new(22, 0, z), -1)
+	end
+
+	cherryTree(Vector3.new(-46, 0, 46), 1)
+	cherryTree(Vector3.new(46, 0, 46), 1.1)
+	cherryTree(Vector3.new(-48, 0, -8), 0.9)
+	cherryTree(Vector3.new(48, 0, -12), 1)
+
+	-- Pics rocheux dans la brume, tout autour du temple.
+	local random = Random.new(7)
+	for i = 1, 14 do
+		local angle = (i / 14) * math.pi * 2 + random:NextNumber(-0.15, 0.15)
+		local distance = random:NextNumber(230, 380)
+		local height = random:NextNumber(150, 320)
+		local diameter = random:NextNumber(45, 85)
+		local position = Vector3.new(math.cos(angle) * distance, height / 2 - 10, math.sin(angle) * distance)
+
+		local peak = pillar("Pic", diameter, height, position, Color3.fromRGB(85, 95, 90), Enum.Material.Slate)
+		peak.CastShadow = false
+		local shoulder = pillar("Pic", diameter * 1.5, height * 0.55, position - Vector3.new(0, height * 0.225, 0), Color3.fromRGB(75, 88, 82), Enum.Material.Slate)
+		shoulder.CastShadow = false
+		local cap = pillar("Vegetation", diameter * 0.9, 6, position + Vector3.new(0, height / 2 + 2, 0), Color3.fromRGB(60, 95, 65), Enum.Material.Grass)
+		cap.CastShadow = false
+	end
+end
+
+-- Lumière de fin d'après-midi et brume.
+local function setAtmosphere()
+	Lighting.ClockTime = 17.3
+	Lighting.GeographicLatitude = 35
+	Lighting.Brightness = 2.4
+	Lighting.Ambient = Color3.fromRGB(95, 78, 78)
+	Lighting.OutdoorAmbient = Color3.fromRGB(150, 122, 110)
+	Lighting.ColorShift_Top = Color3.fromRGB(255, 205, 160)
+
+	if not Lighting:FindFirstChildOfClass("Atmosphere") then
+		local atmosphere = Instance.new("Atmosphere")
+		atmosphere.Density = 0.36
+		atmosphere.Offset = 0.15
+		atmosphere.Color = Color3.fromRGB(235, 200, 170)
+		atmosphere.Decay = Color3.fromRGB(160, 120, 110)
+		atmosphere.Glare = 0.25
+		atmosphere.Haze = 1.8
+		atmosphere.Parent = Lighting
+	end
+end
+
+---------------------------------------------------------------------------
+-- Mannequins
+---------------------------------------------------------------------------
+
+-- Fait apparaître un mannequin de bois dont les pieds sont à `position`. Il réapparaît après sa mort.
+function Arena.spawnDummy(position: Vector3)
+	local origin = CFrame.new(position)
+	local wood = Enum.Material.Wood
+
+	local model = Instance.new("Model")
+	model.Name = "Mannequin"
+
+	local root = block("HumanoidRootPart", Vector3.new(2, 2, 1), origin * CFrame.new(0, 3, 0), WOOD, wood)
+	root.Transparency = 1
+	root.CanCollide = false
+	root.CanQuery = false
+	root.Parent = model
+
+	local pieces = {
+		block("Torso", Vector3.new(2, 2, 1), origin * CFrame.new(0, 3, 0), WOOD_LIGHT, wood),
+		block("Head", Vector3.new(1.2, 1.2, 1.2), origin * CFrame.new(0, 4.6, 0), WOOD_LIGHT, wood),
+		block("Left Arm", Vector3.new(1, 2, 1), origin * CFrame.new(-1.5, 3, 0), WOOD, wood),
+		block("Right Arm", Vector3.new(1, 2, 1), origin * CFrame.new(1.5, 3, 0), WOOD, wood),
+		block("Left Leg", Vector3.new(1, 2, 1), origin * CFrame.new(-0.5, 1, 0), WOOD, wood),
+		block("Right Leg", Vector3.new(1, 2, 1), origin * CFrame.new(0.5, 1, 0), WOOD, wood),
+	}
+	for _, piece in pieces do
+		piece.Parent = model
+	end
+
+	local humanoid = Instance.new("Humanoid")
+	humanoid.DisplayName = "Mannequin"
+	humanoid.RequiresNeck = false
+	humanoid.BreakJointsOnDeath = false
+	humanoid.MaxHealth = 100
+	humanoid.Health = 100
+	humanoid.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOn
+	humanoid.Parent = model
+
+	model.PrimaryPart = root
+	Collisions.assign(model, Collisions.BODIES)
+	model.Parent = folder
+
+	local dead = false
+	humanoid.HealthChanged:Connect(function(health)
+		if health > 0 or dead then
+			return
+		end
+		dead = true
+		-- Le mannequin s'effondre, puis un nouveau prend sa place.
+		for _, piece in pieces do
+			piece.Anchored = false
+		end
+		task.delay(3, function()
+			model:Destroy()
+			Arena.spawnDummy(position)
+		end)
+	end)
+end
+
+---------------------------------------------------------------------------
+-- Construction
+---------------------------------------------------------------------------
+
+-- Construit le temple et renvoie les emplacements des armes sur le râtelier.
+function Arena.build(weaponCount: number): { CFrame }
+	folder = Instance.new("Folder")
+	folder.Name = "Arena"
+	folder.Parent = workspace
+
+	setAtmosphere()
+	buildGround()
+	buildWalls()
+	buildHall()
+	buildLeitai()
+	buildDecor()
+
+	-- Râtelier d'armes, à droite du point d'apparition : les armes flottent au-dessus.
+	local spacing = 2.6
+	local rackLength = math.max(weaponCount * spacing + 1, 6)
+	local rackX, rackZ = 12, 34
+	add("Ratelier", Vector3.new(2.5, 2.6, rackLength), CFrame.new(rackX, 1.3, rackZ), WOOD, Enum.Material.Wood)
+	add("NappeRatelier", Vector3.new(2.7, 0.1, rackLength + 0.2), CFrame.new(rackX, 2.65, rackZ), RED, Enum.Material.Fabric)
+
+	local homes = {}
+	for i = 1, weaponCount do
+		local z = rackZ + (i - (weaponCount + 1) / 2) * spacing
+		table.insert(homes, CFrame.new(rackX, 4.3, z))
+	end
+
+	-- Mannequins : une rangée à gauche du point d'apparition, et un sur le leitai.
+	for _, z in { 24, 30, 36, 42 } do
+		Arena.spawnDummy(Vector3.new(-13, 0, z))
+	end
+	Arena.spawnDummy(Vector3.new(0, 2.1, -4))
+
+	return homes
+end
+
+return Arena
+]]></ProtectedString>
+					<string name="ScriptGuid">{D5071092-285C-4CA2-A4C8-928A11EF1B9B}</string>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+					<bool name="DefinesCapabilities">false</bool>
+					<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+					<string name="Name">Arena</string>
+					<BinaryString name="SerializedOverrides"></BinaryString>
+					<int64 name="SourceAssetId">-1</int64>
+					<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+					<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003e2</UniqueId>
+				</Properties>
+			</Item>
+			<Item class="Script" referent="RBX6">
+				<Properties>
+					<ProtectedString name="Source"><![CDATA[-- Serveur : crée les mains VR de chaque joueur, gère la saisie des armes et valide les coups.
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Debris = game:GetService("Debris")
+
+local Config = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Config"))
+local Arena = require(script.Parent:WaitForChild("Arena"))
+local Weapons = require(script.Parent:WaitForChild("Weapons"))
+local Enemies = require(script.Parent:WaitForChild("Enemies"))
+local Collisions = require(script.Parent:WaitForChild("Collisions"))
+local Sfx = require(script.Parent:WaitForChild("Sfx"))
+
+---------------------------------------------------------------------------
+-- Objets partagés
+---------------------------------------------------------------------------
+
+local remotes = Instance.new("Folder")
+remotes.Name = "Remotes"
+
+local function makeRemote(name: string): RemoteEvent
+	local remote = Instance.new("RemoteEvent")
+	remote.Name = name
+	remote.Parent = remotes
+	return remote
+end
+
+local grabRemote = makeRemote("Grab")
+local releaseRemote = makeRemote("Release")
+local hitRemote = makeRemote("Hit")
+local feedbackRemote = makeRemote("Feedback") -- serveur → client : vibration (main, intensité, durée)
+remotes.Parent = ReplicatedStorage
+
+local handsFolder = Instance.new("Folder")
+handsFolder.Name = "VRHands"
+handsFolder.Parent = workspace
+
+local weaponsFolder = Instance.new("Folder")
+weaponsFolder.Name = "Weapons"
+weaponsFolder.Parent = workspace
+
+---------------------------------------------------------------------------
+-- Arène et armes
+---------------------------------------------------------------------------
+
+local weaponHomes: { [Model]: CFrame } = {}
+
+do
+	local homes = Arena.build(#Config.RACK)
+	for i, typeName in Config.RACK do
+		local weapon = Weapons.create(typeName, homes[i], weaponsFolder)
+		weaponHomes[weapon] = homes[i]
+	end
+	Enemies.init(weaponsFolder, feedbackRemote)
+end
+
+---------------------------------------------------------------------------
+-- État des joueurs
+---------------------------------------------------------------------------
+
+type HeldState = { Left: Model?, Right: Model? }
+
+local held: { [Player]: HeldState } = {}
+local handModels: { [Player]: Model } = {}
+local lastHits: { [Model]: { [Humanoid]: number } } = {}
+
+local function getHand(player: Player, side: string): BasePart?
+	local model = handModels[player]
+	local hand = model and model:FindFirstChild(side)
+	if hand and hand:IsA("BasePart") then
+		return hand
+	end
+	return nil
+end
+
+local function release(player: Player, side: string)
+	local state = held[player] :: any
+	local weapon: Model? = state and state[side]
+	if not state or not weapon then
+		return
+	end
+	state[side] = nil
+
+	local handle = weapon.PrimaryPart
+	if handle then
+		local weld = handle:FindFirstChild("GripWeld")
+		if weld then
+			weld:Destroy()
+		end
+	end
+	Weapons.setHeld(weapon, false)
+	weapon:SetAttribute("Holder", nil)
+	weapon:SetAttribute("HolderHand", nil)
+	weapon:SetAttribute("DroppedAt", os.clock())
+
+	-- Le joueur garde la main sur la physique de l'arme pour que le lancer reste fluide.
+	if handle and not handle.Anchored and handle:IsDescendantOf(workspace) and player.Parent then
+		pcall(function()
+			handle:SetNetworkOwner(player)
+		end)
+	end
+end
+
+local function releaseAll(player: Player)
+	release(player, "Left")
+	release(player, "Right")
+end
+
+local function destroyHands(player: Player)
+	releaseAll(player)
+	local model = handModels[player]
+	if model then
+		handModels[player] = nil
+		model:Destroy()
+	end
+end
+
+---------------------------------------------------------------------------
+-- Mains VR
+---------------------------------------------------------------------------
+
+-- Chaque main est une pièce physique que le client du joueur pilote
+-- en changeant la cible de ses contraintes Align*.
+local function createHand(side: string, start: CFrame, parent: Model): Part
+	local hand = Instance.new("Part")
+	hand.Name = side
+	hand.Size = Vector3.new(0.35, 0.3, 0.7)
+	hand.Color = Color3.fromRGB(225, 200, 170)
+	hand.Material = Enum.Material.SmoothPlastic
+	hand.TopSurface = Enum.SurfaceType.Smooth
+	hand.BottomSurface = Enum.SurfaceType.Smooth
+	hand.CanCollide = false
+	hand.CanQuery = false
+	hand.CanTouch = false
+	hand.CFrame = start
+
+	local attachment = Instance.new("Attachment")
+	attachment.Name = "Center"
+	attachment.Parent = hand
+
+	local alignPosition = Instance.new("AlignPosition")
+	alignPosition.Name = "AlignPosition"
+	alignPosition.Mode = Enum.PositionAlignmentMode.OneAttachment
+	alignPosition.Attachment0 = attachment
+	-- Force limitée plutôt que rigide : une arme tenue s'arrête contre un mur au lieu de le traverser.
+	alignPosition.RigidityEnabled = false
+	alignPosition.MaxForce = 12000
+	alignPosition.Responsiveness = 200
+	alignPosition.Position = start.Position
+	alignPosition.Parent = hand
+
+	local alignOrientation = Instance.new("AlignOrientation")
+	alignOrientation.Name = "AlignOrientation"
+	alignOrientation.Mode = Enum.OrientationAlignmentMode.OneAttachment
+	alignOrientation.Attachment0 = attachment
+	alignOrientation.RigidityEnabled = false
+	alignOrientation.MaxTorque = 30000
+	alignOrientation.Responsiveness = 200
+	alignOrientation.CFrame = start.Rotation
+	alignOrientation.Parent = hand
+
+	hand.Parent = parent
+	return hand
+end
+
+local function onCharacterAdded(player: Player, character: Model)
+	destroyHands(player)
+
+	local root = character:WaitForChild("HumanoidRootPart", 10)
+	local humanoid = character:WaitForChild("Humanoid", 10)
+	if not root or not root:IsA("BasePart") or not humanoid or not humanoid:IsA("Humanoid") then
+		return
+	end
+	if player.Character ~= character then
+		return
+	end
+	-- Les armes tenues traversent les corps au lieu de les bousculer.
+	Collisions.watch(character, Collisions.BODIES)
+
+	local model = Instance.new("Model")
+	model.Name = tostring(player.UserId)
+	local left = createHand("Left", root.CFrame * CFrame.new(-1.2, 0, -1.2), model)
+	local right = createHand("Right", root.CFrame * CFrame.new(1.2, 0, -1.2), model)
+	model.Parent = handsFolder
+	left:SetNetworkOwner(player)
+	right:SetNetworkOwner(player)
+	handModels[player] = model
+
+	humanoid.Died:Connect(function()
+		if handModels[player] == model then
+			destroyHands(player)
+		end
+	end)
+end
+
+local function onPlayerAdded(player: Player)
+	held[player] = {}
+	player.CharacterAdded:Connect(function(character)
+		onCharacterAdded(player, character)
+	end)
+	if player.Character then
+		onCharacterAdded(player, player.Character)
+	end
+end
+
+Players.PlayerAdded:Connect(onPlayerAdded)
+for _, player in Players:GetPlayers() do
+	task.spawn(onPlayerAdded, player)
+end
+
+Players.PlayerRemoving:Connect(function(player)
+	destroyHands(player)
+	held[player] = nil
+end)
+
+---------------------------------------------------------------------------
+-- Saisir / lâcher
+---------------------------------------------------------------------------
+
+local function isSide(value: any): boolean
+	return value == "Left" or value == "Right"
+end
+
+local function isWeapon(value: any): boolean
+	return typeof(value) == "Instance" and value:IsA("Model") and value.Parent == weaponsFolder
+end
+
+grabRemote.OnServerEvent:Connect(function(player, weapon: any, side: any)
+	if not isSide(side) or not isWeapon(weapon) then
+		return
+	end
+	local state = held[player] :: any
+	if not state or state[side] or weapon:GetAttribute("Holder") then
+		return
+	end
+	local hand = getHand(player, side)
+	local handle: BasePart? = weapon.PrimaryPart
+	local def = Config.Weapons[weapon:GetAttribute("WeaponType")]
+	if not hand or not handle or not def then
+		return
+	end
+	-- Marge généreuse : la position de la main vue par le serveur a un peu de retard.
+	if (handle.Position - hand.Position).Magnitude > Config.GRAB_RADIUS + def.HandleLength / 2 + 4 then
+		return
+	end
+
+	Weapons.setHeld(weapon, true)
+	handle.Anchored = false
+	handle.AssemblyLinearVelocity = Vector3.zero
+	handle.AssemblyAngularVelocity = Vector3.zero
+	weapon:PivotTo(hand.CFrame * Config.getGripCFrame(def))
+
+	local weld = Instance.new("WeldConstraint")
+	weld.Name = "GripWeld"
+	weld.Part0 = hand
+	weld.Part1 = handle
+	weld.Parent = handle
+
+	state[side] = weapon
+	weapon:SetAttribute("Holder", player.UserId)
+	weapon:SetAttribute("HolderHand", side)
+	hand:SetNetworkOwner(player)
+	Sfx.play("Grab", handle, 1)
+
+	-- Les bandits arrivent dès qu'un joueur a pris une arme.
+	Enemies.start()
+end)
+
+releaseRemote.OnServerEvent:Connect(function(player, side: any)
+	if isSide(side) then
+		release(player, side)
+	end
+end)
+
+---------------------------------------------------------------------------
+-- Coups
+---------------------------------------------------------------------------
+
+local function findHumanoid(part: Instance): Humanoid?
+	local model = part:FindFirstAncestorOfClass("Model")
+	while model do
+		local humanoid = model:FindFirstChildOfClass("Humanoid")
+		if humanoid then
+			return humanoid
+		end
+		model = model:FindFirstAncestorOfClass("Model")
+	end
+	return nil
+end
+
+local function showDamage(part: BasePart, amount: number)
+	local gui = Instance.new("BillboardGui")
+	gui.Name = "DamagePopup"
+	gui.Size = UDim2.fromScale(3, 1.5)
+	gui.StudsOffset = Vector3.new(0, 2, 0)
+	gui.AlwaysOnTop = true
+	gui.Adornee = part
+
+	local label = Instance.new("TextLabel")
+	label.Size = UDim2.fromScale(1, 1)
+	label.BackgroundTransparency = 1
+	label.TextScaled = true
+	label.Font = Enum.Font.GothamBold
+	label.Text = tostring(math.round(amount))
+	label.TextColor3 = Color3.fromRGB(255, 220, 80)
+	label.TextStrokeTransparency = 0
+	label.Parent = gui
+
+	gui.Parent = part
+	Debris:AddItem(gui, 0.7)
+
+	local target = part:FindFirstAncestorOfClass("Model")
+	if target then
+		local flash = Instance.new("Highlight")
+		flash.Name = "HitFlash"
+		flash.FillColor = Color3.fromRGB(255, 60, 60)
+		flash.FillTransparency = 0.4
+		flash.OutlineTransparency = 1
+		flash.Parent = target
+		Debris:AddItem(flash, 0.12)
+	end
+end
+
+hitRemote.OnServerEvent:Connect(function(player, weapon: any, targetPart: any, speed: any)
+	if not isWeapon(weapon) or weapon:GetAttribute("Holder") ~= player.UserId then
+		return
+	end
+	if typeof(targetPart) ~= "Instance" or not targetPart:IsA("BasePart") or not targetPart:IsDescendantOf(workspace) then
+		return
+	end
+	if typeof(speed) ~= "number" or speed ~= speed then
+		return
+	end
+	local def = Config.Weapons[weapon:GetAttribute("WeaponType")]
+	local hand = getHand(player, weapon:GetAttribute("HolderHand"))
+	local humanoid = findHumanoid(targetPart)
+	if not def or not hand or not humanoid or humanoid.Health <= 0 then
+		return
+	end
+
+	local targetModel = humanoid.Parent
+	if targetModel == player.Character then
+		return
+	end
+	if not Config.PVP_ENABLED and targetModel and Players:GetPlayerFromCharacter(targetModel :: Model) then
+		return
+	end
+	-- La cible doit être à portée d'arme de la main du joueur.
+	if (targetPart.Position - hand.Position).Magnitude > 14 then
+		return
+	end
+	if speed < def.MinSpeed then
+		return
+	end
+
+	local now = os.clock()
+	local perWeapon = lastHits[weapon]
+	if not perWeapon then
+		perWeapon = setmetatable({}, { __mode = "k" }) :: any
+		lastHits[weapon] = perWeapon
+	end
+	local last = perWeapon[humanoid]
+	if last and now - last < Config.HIT_COOLDOWN then
+		return
+	end
+	perWeapon[humanoid] = now
+
+	local scale = math.clamp(speed / Config.REFERENCE_SPEED, Config.MIN_DAMAGE_SCALE, Config.MAX_DAMAGE_SCALE)
+	local damage = def.Damage * scale
+	humanoid:TakeDamage(damage)
+	showDamage(targetPart, damage)
+	Sfx.play("Flesh", targetPart, scale)
+end)
+
+---------------------------------------------------------------------------
+-- Retour des armes abandonnées sur le râtelier
+---------------------------------------------------------------------------
+
+task.spawn(function()
+	while true do
+		task.wait(3)
+		for weapon, home in weaponHomes do
+			local handle = weapon.PrimaryPart
+			if handle and not weapon:GetAttribute("Holder") and not handle.Anchored then
+				local droppedAt = weapon:GetAttribute("DroppedAt") or 0
+				local fell = handle.Position.Y < -30
+				if fell or os.clock() - droppedAt > Config.WEAPON_RETURN_TIME then
+					handle.AssemblyLinearVelocity = Vector3.zero
+					handle.AssemblyAngularVelocity = Vector3.zero
+					handle.Anchored = true
+					weapon:PivotTo(home)
+					Weapons.setHeld(weapon, false)
+				end
+			end
+		end
+	end
+end)
+]]></ProtectedString>
+					<bool name="Disabled">false</bool>
+					<Content name="LinkedSource"><null></null></Content>
+					<token name="RunContext">0</token>
+					<string name="ScriptGuid">{F63A9CBE-A726-4F82-B5D1-A8771B01F6E7}</string>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+					<bool name="DefinesCapabilities">false</bool>
+					<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+					<string name="Name">Main</string>
+					<BinaryString name="SerializedOverrides"></BinaryString>
+					<int64 name="SourceAssetId">-1</int64>
+					<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+					<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003e3</UniqueId>
+				</Properties>
+			</Item>
+			<Item class="ModuleScript" referent="RBX7">
+				<Properties>
+					<Content name="LinkedSource"><null></null></Content>
+					<ProtectedString name="Source"><![CDATA[-- Construit les modèles d'armes à partir des définitions de Config.
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Config = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Config"))
+
+local Collisions = require(script.Parent:WaitForChild("Collisions"))
+local Sfx = require(script.Parent:WaitForChild("Sfx"))
+
+local Weapons = {}
+
+local WOOD = Color3.fromRGB(105, 70, 40)
+
+function Weapons.create(typeName: string, home: CFrame, parent: Instance): Model
+	local def = Config.Weapons[typeName]
+	assert(def, "Arme inconnue : " .. typeName)
+
+	local model = Instance.new("Model")
+	model.Name = typeName
+
+	local handle = Instance.new("Part")
+	handle.Name = "Handle"
+	handle.Size = Vector3.new(0.28, def.HandleLength, 0.28)
+	handle.Color = WOOD
+	handle.Material = Enum.Material.Wood
+	handle.TopSurface = Enum.SurfaceType.Smooth
+	handle.BottomSurface = Enum.SurfaceType.Smooth
+	handle.Anchored = true -- ancrée tant qu'elle est sur le râtelier
+	handle.CFrame = home
+	handle.Parent = model
+
+	for _, info in def.Parts do
+		local part = Instance.new("Part")
+		part.Name = info.Name
+		part.Size = info.Size
+		part.Color = info.Color
+		part.Material = info.Material
+		part.TopSurface = Enum.SurfaceType.Smooth
+		part.BottomSurface = Enum.SurfaceType.Smooth
+		if info.Shape then
+			part.Shape = info.Shape
+		end
+		part.CFrame = home * CFrame.new(info.Offset) * (info.Rotation or CFrame.new())
+		if info.Blade then
+			part:SetAttribute("IsBlade", true)
+		end
+		if info.Shield then
+			part:SetAttribute("IsShield", true)
+		end
+		part.Parent = model
+
+		local weld = Instance.new("WeldConstraint")
+		weld.Part0 = handle
+		weld.Part1 = part
+		weld.Parent = part
+	end
+
+	model.PrimaryPart = handle
+	model:SetAttribute("WeaponType", typeName)
+	model.Parent = parent
+
+	-- Bruit d'impact quand l'arme heurte le décor ou une autre arme.
+	local lastSound = 0
+	for _, item in model:GetChildren() do
+		if item:IsA("BasePart") then
+			local part = item
+			part.Touched:Connect(function(other)
+				local now = os.clock()
+				if now - lastSound < 0.15 then
+					return
+				end
+				-- On ignore l'arme elle-même, ce qui n'est pas solide (mains, feuillages) et les corps.
+				if other:IsDescendantOf(model) or not other.CanCollide or other.CollisionGroup == Collisions.BODIES then
+					return
+				end
+				local point = part.Position
+				local speed = (part:GetVelocityAtPosition(point) - other:GetVelocityAtPosition(point)).Magnitude
+				if speed < Config.COLLISION_SOUND_MIN_SPEED then
+					return
+				end
+				lastSound = now
+				local metal = other.Material == Enum.Material.Metal or other:IsDescendantOf(parent)
+				Sfx.play(if metal then "Metal" else "Thud", part, speed / Config.REFERENCE_SPEED)
+			end)
+		end
+	end
+
+	return model
+end
+
+-- Une arme tenue passe dans le groupe qui traverse les corps ; une arme libre redevient normale.
+-- Dans les deux cas elle reste solide.
+function Weapons.setHeld(weapon: Model, isHeld: boolean)
+	local group = if isHeld then Collisions.HELD else Collisions.DEFAULT
+	for _, item in weapon:GetDescendants() do
+		if item:IsA("BasePart") then
+			item.CanCollide = true
+			item.CollisionGroup = group
+		end
+	end
+end
+
+return Weapons
+]]></ProtectedString>
+					<string name="ScriptGuid">{9F8EF479-ECF7-4D52-9001-104B5AE8259D}</string>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+					<bool name="DefinesCapabilities">false</bool>
+					<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+					<string name="Name">Weapons</string>
+					<BinaryString name="SerializedOverrides"></BinaryString>
+					<int64 name="SourceAssetId">-1</int64>
+					<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+					<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003e4</UniqueId>
+				</Properties>
+			</Item>
+			<Item class="ModuleScript" referent="RBX15BD30BEE1584412BE29F783DE487587">
+				<Properties>
+					<Content name="LinkedSource"><null></null></Content>
+					<ProtectedString name="Source"><![CDATA[-- Bandits qui attaquent les joueurs par vagues.
+-- Ils poursuivent le joueur le plus proche, lèvent leur sabre (la lame s'illumine : c'est le signal),
+-- puis frappent. Le joueur peut parer en plaçant sa propre lame sur la trajectoire.
+
+local Players = game:GetService("Players")
+local Debris = game:GetService("Debris")
+
+local Collisions = require(script.Parent:WaitForChild("Collisions"))
+local Sfx = require(script.Parent:WaitForChild("Sfx"))
+
+local Enemies = {}
+
+---------------------------------------------------------------------------
+-- Réglages
+---------------------------------------------------------------------------
+
+local WALK_SPEED = 11 -- le joueur marche à 16
+local BASE_HEALTH = 50
+local HEALTH_PER_WAVE = 10
+local MAX_HEALTH = 100
+local DAMAGE = 12
+local ATTACK_RANGE = 5 -- distance à laquelle le bandit s'arrête pour frapper
+local STRIKE_RANGE = 7 -- distance maximale à laquelle le coup porte
+local ATTACK_COOLDOWN = 2
+local WINDUP_TIME = 0.6 -- temps entre le sabre levé et le coup : la fenêtre pour parer ou reculer
+local PARRY_DISTANCE = 3.5 -- distance entre les deux lames pour que la parade compte
+local STAGGER_TIME = 1.2 -- temps pendant lequel un bandit paré reste sonné
+local SHIELD_BLOCK_DISTANCE = 4.5 -- distance entre le bouclier et le sabre pour que le blocage compte
+local SHIELD_STAGGER_TIME = 0.5 -- un blocage au bouclier sonne moins longtemps qu'une parade
+local MAX_ENEMIES = 5
+local WAVE_PAUSE = 6
+
+-- Points d'apparition, devant la grande salle.
+local SPAWN_POINTS = {
+	Vector3.new(0, 0, -22),
+	Vector3.new(-12, 0, -22),
+	Vector3.new(12, 0, -22),
+	Vector3.new(-22, 0, -18),
+	Vector3.new(22, 0, -18),
+}
+
+local ROBE = Color3.fromRGB(38, 32, 48)
+local TROUSERS = Color3.fromRGB(25, 22, 30)
+local SKIN = Color3.fromRGB(215, 180, 140)
+local STRAW = Color3.fromRGB(200, 170, 100)
+local STEEL = Color3.fromRGB(200, 205, 215)
+
+local folder: Folder
+local weaponsFolder: Instance
+local feedbackRemote: RemoteEvent
+local started = false
+
+---------------------------------------------------------------------------
+-- Construction d'un bandit
+---------------------------------------------------------------------------
+
+local function limb(name: string, size: Vector3, color: Color3, parent: Model): Part
+	local part = Instance.new("Part")
+	part.Name = name
+	part.Size = size
+	part.Color = color
+	part.Material = Enum.Material.Fabric
+	part.TopSurface = Enum.SurfaceType.Smooth
+	part.BottomSurface = Enum.SurfaceType.Smooth
+	part.Parent = parent
+	return part
+end
+
+local function joint(name: string, part0: BasePart, part1: BasePart, c0: CFrame, c1: CFrame): Motor6D
+	local motor = Instance.new("Motor6D")
+	motor.Name = name
+	motor.Part0 = part0
+	motor.Part1 = part1
+	motor.C0 = c0
+	motor.C1 = c1
+	motor.MaxVelocity = 0.15
+	motor.Parent = part0
+	return motor
+end
+
+-- Accessoire soudé à une partie du corps, sans masse ni collision.
+local function accessory(name: string, size: Vector3, color: Color3, material: Enum.Material, attachTo: BasePart, offset: CFrame, parent: Model): Part
+	local part = Instance.new("Part")
+	part.Name = name
+	part.Size = size
+	part.Color = color
+	part.Material = material
+	part.TopSurface = Enum.SurfaceType.Smooth
+	part.BottomSurface = Enum.SurfaceType.Smooth
+	part.CanCollide = false
+	part.CanQuery = false -- les lames des joueurs ne doivent pas « toucher » un accessoire
+	part.CanTouch = false
+	part.Massless = true
+	part.Parent = parent
+
+	local weld = Instance.new("Weld")
+	weld.Part0 = attachTo
+	weld.Part1 = part
+	weld.C0 = offset
+	weld.Parent = part
+	return part
+end
+
+type Enemy = {
+	model: Model,
+	humanoid: Humanoid,
+	root: Part,
+	blade: Part,
+	swordArm: Motor6D,
+	otherArm: Motor6D,
+	leftHip: Motor6D,
+	rightHip: Motor6D,
+}
+
+local function buildEnemy(position: Vector3, health: number): Enemy
+	local model = Instance.new("Model")
+	model.Name = "Bandit"
+
+	local root = limb("HumanoidRootPart", Vector3.new(2, 2, 1), ROBE, model)
+	root.Transparency = 1
+	root.CanQuery = false
+	local torso = limb("Torso", Vector3.new(2, 2, 1), ROBE, model)
+	local head = limb("Head", Vector3.new(1.2, 1.2, 1.2), SKIN, model)
+	head.Material = Enum.Material.SmoothPlastic
+	local leftArm = limb("Left Arm", Vector3.new(1, 2, 1), ROBE, model)
+	local rightArm = limb("Right Arm", Vector3.new(1, 2, 1), ROBE, model)
+	local leftLeg = limb("Left Leg", Vector3.new(1, 2, 1), TROUSERS, model)
+	local rightLeg = limb("Right Leg", Vector3.new(1, 2, 1), TROUSERS, model)
+
+	local quarter = math.pi / 2
+	joint("RootJoint", root, torso, CFrame.new(), CFrame.new())
+	joint("Neck", torso, head, CFrame.new(0, 1, 0), CFrame.new(0, -0.6, 0))
+	local rightShoulder = joint("Right Shoulder", torso, rightArm, CFrame.new(1, 0.5, 0) * CFrame.Angles(0, quarter, 0), CFrame.new(-0.5, 0.5, 0) * CFrame.Angles(0, quarter, 0))
+	local leftShoulder = joint("Left Shoulder", torso, leftArm, CFrame.new(-1, 0.5, 0) * CFrame.Angles(0, -quarter, 0), CFrame.new(0.5, 0.5, 0) * CFrame.Angles(0, -quarter, 0))
+	local rightHip = joint("Right Hip", torso, rightLeg, CFrame.new(1, -1, 0) * CFrame.Angles(0, quarter, 0), CFrame.new(0.5, 1, 0) * CFrame.Angles(0, quarter, 0))
+	local leftHip = joint("Left Hip", torso, leftLeg, CFrame.new(-1, -1, 0) * CFrame.Angles(0, -quarter, 0), CFrame.new(-0.5, 1, 0) * CFrame.Angles(0, -quarter, 0))
+
+	-- Chapeau de paille conique.
+	local flat = CFrame.Angles(0, 0, quarter)
+	local brim = accessory("Chapeau", Vector3.new(0.25, 3, 3), STRAW, Enum.Material.Wood, head, CFrame.new(0, 0.7, 0) * flat, model)
+	brim.Shape = Enum.PartType.Cylinder
+	local crown = accessory("Chapeau", Vector3.new(0.5, 1.5, 1.5), STRAW, Enum.Material.Wood, head, CFrame.new(0, 1, 0) * flat, model)
+	crown.Shape = Enum.PartType.Cylinder
+
+	-- Ceinture rouge et sabre dans la main droite, lame vers l'avant.
+	accessory("Ceinture", Vector3.new(2.1, 0.4, 1.1), Color3.fromRGB(150, 38, 32), Enum.Material.Fabric, torso, CFrame.new(0, -0.6, 0), model)
+	accessory("Garde", Vector3.new(0.9, 0.3, 0.2), Color3.fromRGB(90, 95, 105), Enum.Material.Metal, rightArm, CFrame.new(0, -0.9, -0.6), model)
+	local blade = accessory("Sabre", Vector3.new(0.1, 0.35, 3.2), STEEL, Enum.Material.Metal, rightArm, CFrame.new(0, -0.9, -2.3), model)
+
+	local humanoid = Instance.new("Humanoid")
+	humanoid.DisplayName = "Bandit"
+	humanoid.RigType = Enum.HumanoidRigType.R6
+	humanoid.MaxHealth = health
+	humanoid.Health = health
+	humanoid.WalkSpeed = WALK_SPEED
+	humanoid.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOn
+	humanoid.Parent = model
+
+	model.PrimaryPart = root
+	Collisions.assign(model, Collisions.BODIES)
+	root.CFrame = CFrame.new(position + Vector3.new(0, 3, 0)) * CFrame.Angles(0, math.pi, 0) -- face au sud, vers les joueurs
+	model.Parent = folder
+
+	-- La physique du bandit reste sur le serveur.
+	pcall(function()
+		root:SetNetworkOwner(nil)
+	end)
+
+	rightShoulder.DesiredAngle = 0.6 -- sabre en garde
+
+	return {
+		model = model,
+		humanoid = humanoid,
+		root = root,
+		blade = blade,
+		swordArm = rightShoulder,
+		otherArm = leftShoulder,
+		leftHip = leftHip,
+		rightHip = rightHip,
+	}
+end
+
+---------------------------------------------------------------------------
+-- Comportement
+---------------------------------------------------------------------------
+
+local function nearestPlayer(position: Vector3): (Player?, Humanoid?, BasePart?, number)
+	local bestPlayer, bestHumanoid, bestRoot = nil, nil, nil
+	local bestDistance = math.huge
+	for _, player in Players:GetPlayers() do
+		local character = player.Character
+		local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+		local root = character and character:FindFirstChild("HumanoidRootPart")
+		if humanoid and humanoid.Health > 0 and root and root:IsA("BasePart") then
+			local distance = (root.Position - position).Magnitude
+			if distance < bestDistance then
+				bestPlayer, bestHumanoid, bestRoot, bestDistance = player, humanoid, root, distance
+			end
+		end
+	end
+	return bestPlayer, bestHumanoid, bestRoot, bestDistance
+end
+
+-- Cherche ce qui arrête le coup du bandit, au moment où il part.
+--  "Shield" : un bouclier tenu du côté du bandit, près de son sabre.
+--  "Parry"  : une lame du joueur tout près du sabre.
+-- Renvoie aussi la main qui a bloqué, pour la faire vibrer.
+local function findBlock(player: Player, blade: BasePart, enemyRoot: BasePart, targetRoot: BasePart): (string?, string?)
+	local toEnemy = enemyRoot.Position - targetRoot.Position
+	local towardEnemy = if toEnemy.Magnitude > 0.1 then toEnemy.Unit else Vector3.zero
+	local parrySide: string? = nil
+
+	for _, weapon in weaponsFolder:GetChildren() do
+		if weapon:GetAttribute("Holder") == player.UserId then
+			local side = weapon:GetAttribute("HolderHand")
+			for _, part in weapon:GetChildren() do
+				if part:IsA("BasePart") then
+					local distance = (part.Position - blade.Position).Magnitude
+					if part:GetAttribute("IsShield") then
+						-- Un bouclier tenu dans le dos ou sur le côté opposé ne protège pas.
+						local facesEnemy = (part.Position - targetRoot.Position):Dot(towardEnemy) > 0.5
+						if distance <= SHIELD_BLOCK_DISTANCE and facesEnemy then
+							return "Shield", side
+						end
+					elseif part:GetAttribute("IsBlade") and distance <= PARRY_DISTANCE then
+						parrySide = side
+					end
+				end
+			end
+		end
+	end
+
+	if parrySide then
+		return "Parry", parrySide
+	end
+	return nil, nil
+end
+
+local function spark(position: Vector3)
+	local flash = Instance.new("Part")
+	flash.Name = "Etincelle"
+	flash.Shape = Enum.PartType.Ball
+	flash.Size = Vector3.new(1.2, 1.2, 1.2)
+	flash.Color = Color3.fromRGB(255, 230, 120)
+	flash.Material = Enum.Material.Neon
+	flash.Anchored = true
+	flash.CanCollide = false
+	flash.CanQuery = false
+	flash.CFrame = CFrame.new(position)
+	flash.Parent = folder
+	Debris:AddItem(flash, 0.15)
+end
+
+local function attack(enemy: Enemy, player: Player, targetHumanoid: Humanoid, targetRoot: BasePart)
+	local root, humanoid, blade = enemy.root, enemy.humanoid, enemy.blade
+
+	-- Se tourne vers la cible et lève le sabre : la lame s'illumine pour prévenir le joueur.
+	local flatTarget = Vector3.new(targetRoot.Position.X, root.Position.Y, targetRoot.Position.Z)
+	if (flatTarget - root.Position).Magnitude > 0.1 then
+		root.CFrame = CFrame.lookAt(root.Position, flatTarget)
+	end
+	enemy.swordArm.MaxVelocity = 0.12
+	enemy.swordArm.DesiredAngle = 2.9
+	blade.Material = Enum.Material.Neon
+	blade.Color = Color3.fromRGB(255, 140, 60)
+	task.wait(WINDUP_TIME)
+	if humanoid.Health <= 0 then
+		return
+	end
+
+	-- Le coup part.
+	enemy.swordArm.MaxVelocity = 0.5
+	enemy.swordArm.DesiredAngle = 0.3
+	task.wait(0.12)
+	blade.Material = Enum.Material.Metal
+	blade.Color = STEEL
+	if humanoid.Health <= 0 then
+		return
+	end
+
+	local offset = targetRoot.Position - root.Position
+	local flatOffset = Vector3.new(offset.X, 0, offset.Z)
+	local inFront = flatOffset.Magnitude < 1 or flatOffset.Unit:Dot(root.CFrame.LookVector) > 0.3
+	if targetHumanoid.Health > 0 and offset.Magnitude <= STRIKE_RANGE and inFront then
+		local blockKind, blockSide = findBlock(player, blade, root, targetRoot)
+		if blockKind == "Shield" then
+			-- Le bouclier encaisse : pas de dégâts, le bandit est brièvement repoussé.
+			Sfx.play("Block", blade.Position, 1)
+			feedbackRemote:FireClient(player, blockSide, 1, 0.2)
+			enemy.swordArm.DesiredAngle = 1.6
+			task.wait(SHIELD_STAGGER_TIME)
+		elseif blockKind == "Parry" then
+			spark(blade.Position)
+			Sfx.play("Parry", blade.Position, 1)
+			feedbackRemote:FireClient(player, blockSide, 0.8, 0.12)
+			enemy.swordArm.DesiredAngle = 2.2 -- le sabre est repoussé vers le haut
+			task.wait(STAGGER_TIME)
+		else
+			targetHumanoid:TakeDamage(DAMAGE)
+			Sfx.play("Hurt", targetRoot, 1)
+		end
+	end
+
+	task.wait(0.3)
+	enemy.swordArm.MaxVelocity = 0.15
+	enemy.swordArm.DesiredAngle = 0.6
+end
+
+local function run(enemy: Enemy)
+	local humanoid, root = enemy.humanoid, enemy.root
+	local nextAttack = os.clock() + 1
+	local lastPosition = root.Position
+	local stuckTime = 0
+
+	while humanoid.Health > 0 and enemy.model.Parent do
+		local dt = task.wait(0.12)
+		if humanoid.Health <= 0 or not enemy.model.Parent then
+			break
+		end
+
+		local player, targetHumanoid, targetRoot, distance = nearestPlayer(root.Position)
+		if player and targetHumanoid and targetRoot and distance > ATTACK_RANGE then
+			humanoid:MoveTo(targetRoot.Position)
+			-- Bloqué contre un obstacle (le leitai, le râtelier) : il saute par-dessus.
+			if (root.Position - lastPosition).Magnitude < 0.1 then
+				stuckTime += dt
+				if stuckTime > 0.5 then
+					humanoid.Jump = true
+					stuckTime = 0
+				end
+			else
+				stuckTime = 0
+			end
+		else
+			humanoid:MoveTo(root.Position)
+			stuckTime = 0
+			if player and targetHumanoid and targetRoot and os.clock() >= nextAttack then
+				attack(enemy, player, targetHumanoid, targetRoot)
+				nextAttack = os.clock() + ATTACK_COOLDOWN
+			end
+		end
+
+		-- Balancement des jambes et du bras libre pendant la marche.
+		local velocity = root.AssemblyLinearVelocity
+		local swing = 0
+		if Vector3.new(velocity.X, 0, velocity.Z).Magnitude > 1 then
+			swing = math.sin(os.clock() * 9) * 0.8
+		end
+		enemy.rightHip.DesiredAngle = -swing
+		enemy.leftHip.DesiredAngle = -swing
+		enemy.otherArm.DesiredAngle = swing
+
+		lastPosition = root.Position
+	end
+end
+
+---------------------------------------------------------------------------
+-- Vagues
+---------------------------------------------------------------------------
+
+local function announce(text: string)
+	local anchor = Instance.new("Part")
+	anchor.Name = "Annonce"
+	anchor.Size = Vector3.new(1, 1, 1)
+	anchor.Transparency = 1
+	anchor.Anchored = true
+	anchor.CanCollide = false
+	anchor.CanQuery = false
+	anchor.CFrame = CFrame.new(0, 14, 0)
+
+	local gui = Instance.new("BillboardGui")
+	gui.Size = UDim2.fromScale(24, 6)
+	gui.AlwaysOnTop = true
+	gui.Parent = anchor
+
+	local label = Instance.new("TextLabel")
+	label.Size = UDim2.fromScale(1, 1)
+	label.BackgroundTransparency = 1
+	label.TextScaled = true
+	label.Font = Enum.Font.SourceSansBold
+	label.Text = text
+	label.TextColor3 = Color3.fromRGB(255, 215, 110)
+	label.TextStrokeTransparency = 0
+	label.Parent = gui
+
+	anchor.Parent = folder
+	Debris:AddItem(anchor, 4)
+end
+
+local function spawnEnemy(position: Vector3, health: number, onGone: () -> ())
+	local enemy = buildEnemy(position, health)
+	local gone = false
+	local function finish()
+		if gone then
+			return
+		end
+		gone = true
+		onGone()
+		Debris:AddItem(enemy.model, 3)
+	end
+	enemy.humanoid.Died:Connect(finish)
+	-- Filet de sécurité : un bandit tombé dans le vide est supprimé par le moteur.
+	enemy.model.AncestryChanged:Connect(function(_, parent)
+		if not parent then
+			finish()
+		end
+	end)
+	task.spawn(run, enemy)
+end
+
+-- `feedback` : RemoteEvent qui fait vibrer la manette du joueur quand il bloque ou pare.
+function Enemies.init(weapons: Instance, feedback: RemoteEvent)
+	weaponsFolder = weapons
+	feedbackRemote = feedback
+	folder = Instance.new("Folder")
+	folder.Name = "Enemies"
+	folder.Parent = workspace
+end
+
+-- Lance les vagues. Sans effet si elles tournent déjà.
+function Enemies.start()
+	if started then
+		return
+	end
+	started = true
+
+	task.spawn(function()
+		local wave = 0
+		while true do
+			wave += 1
+			announce("Vague " .. wave)
+			task.wait(2)
+
+			local count = math.min(wave, MAX_ENEMIES)
+			local health = math.min(BASE_HEALTH + HEALTH_PER_WAVE * (wave - 1), MAX_HEALTH)
+			local alive = count
+			for i = 1, count do
+				spawnEnemy(SPAWN_POINTS[i], health, function()
+					alive -= 1
+				end)
+				task.wait(0.4)
+			end
+
+			while alive > 0 do
+				task.wait(0.5)
+			end
+			task.wait(WAVE_PAUSE)
+		end
+	end)
+end
+
+return Enemies
+]]></ProtectedString>
+					<string name="ScriptGuid">{98BCF310-EBD9-4E95-86EB-C937F5E0B6CE}</string>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+					<bool name="DefinesCapabilities">false</bool>
+					<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+					<string name="Name">Enemies</string>
+					<BinaryString name="SerializedOverrides"></BinaryString>
+					<int64 name="SourceAssetId">-1</int64>
+					<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+					<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca00001133</UniqueId>
+				</Properties>
+			</Item>
+			<Item class="ModuleScript" referent="RBXB757BA54095D45BF894682FDCBD5E4D3">
+				<Properties>
+					<Content name="LinkedSource"><null></null></Content>
+					<ProtectedString name="Source"><![CDATA[-- Groupes de collision.
+-- Une arme tenue est solide contre le décor et contre les autres armes, mais elle traverse les corps
+-- (joueurs, bandits, mannequins) : c'est la détection de coups qui gère les corps, pas la physique.
+
+local PhysicsService = game:GetService("PhysicsService")
+
+local Collisions = {
+	BODIES = "Bodies",
+	HELD = "HeldWeapons",
+	DEFAULT = "Default",
+}
+
+PhysicsService:RegisterCollisionGroup(Collisions.BODIES)
+PhysicsService:RegisterCollisionGroup(Collisions.HELD)
+PhysicsService:CollisionGroupSetCollidable(Collisions.BODIES, Collisions.HELD, false)
+
+-- Place une pièce, ou toutes les pièces d'un modèle, dans un groupe.
+function Collisions.assign(root: Instance, group: string)
+	if root:IsA("BasePart") then
+		root.CollisionGroup = group
+	end
+	for _, item in root:GetDescendants() do
+		if item:IsA("BasePart") then
+			item.CollisionGroup = group
+		end
+	end
+end
+
+-- Comme `assign`, mais couvre aussi les pièces ajoutées plus tard (accessoires d'un avatar, par exemple).
+function Collisions.watch(root: Instance, group: string)
+	Collisions.assign(root, group)
+	root.DescendantAdded:Connect(function(item)
+		if item:IsA("BasePart") then
+			item.CollisionGroup = group
+		end
+	end)
+end
+
+return Collisions
+]]></ProtectedString>
+					<string name="ScriptGuid">{8C754014-BA21-436B-AAD9-527A18B291A5}</string>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+					<bool name="DefinesCapabilities">false</bool>
+					<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+					<string name="Name">Collisions</string>
+					<BinaryString name="SerializedOverrides"></BinaryString>
+					<int64 name="SourceAssetId">-1</int64>
+					<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+					<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca00001592</UniqueId>
+				</Properties>
+			</Item>
+			<Item class="ModuleScript" referent="RBX92F571DDC0A54E439F129D07E54690A7">
+				<Properties>
+					<Content name="LinkedSource"><null></null></Content>
+					<ProtectedString name="Source"><![CDATA[-- Joue les effets sonores définis dans Config.Sounds.
+-- Un son joué par le serveur est entendu par tous les joueurs, en 3D autour de sa source.
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Debris = game:GetService("Debris")
+
+local Config = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Config"))
+
+local Sfx = {}
+
+local random = Random.new()
+
+-- `target` : la pièce qui émet le son, ou une position dans le monde.
+-- `strength` : intensité de 0 à 1 environ (un choc violent sonne plus fort).
+function Sfx.play(name: string, target: BasePart | Vector3, strength: number?)
+	local def = Config.Sounds[name]
+	if not def or def.Id == "" then
+		return
+	end
+
+	local parent: Instance
+	local temporary: Instance? = nil
+	if typeof(target) == "Vector3" then
+		local anchor = Instance.new("Part")
+		anchor.Name = "SourceSonore"
+		anchor.Size = Vector3.new(0.2, 0.2, 0.2)
+		anchor.Transparency = 1
+		anchor.Anchored = true
+		anchor.CanCollide = false
+		anchor.CanQuery = false
+		anchor.CanTouch = false
+		anchor.CFrame = CFrame.new(target)
+		anchor.Parent = workspace
+		parent = anchor
+		temporary = anchor
+	else
+		parent = target
+	end
+
+	local sound = Instance.new("Sound")
+	sound.Name = "Sfx" .. name
+	sound.SoundId = def.Id
+	sound.Volume = def.Volume * math.clamp(strength or 1, 0.25, 1.5)
+	sound.PlaybackSpeed = def.Pitch * random:NextNumber(0.92, 1.08)
+	sound.RollOffMinDistance = 8
+	sound.RollOffMaxDistance = 90
+	sound.Parent = parent
+	sound:Play()
+
+	Debris:AddItem(temporary or sound, 3)
+end
+
+return Sfx
+]]></ProtectedString>
+					<string name="ScriptGuid">{5A9EAFAF-419E-4EFA-AE16-F29B1566B77A}</string>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+					<bool name="DefinesCapabilities">false</bool>
+					<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+					<string name="Name">Sfx</string>
+					<BinaryString name="SerializedOverrides"></BinaryString>
+					<int64 name="SourceAssetId">-1</int64>
+					<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+					<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca00001594</UniqueId>
+				</Properties>
+			</Item>
+		</Item>
+	</Item>
+	<Item class="ServerStorage" referent="RBX5F4518EECA1C4A4BB3316753CF8FB944">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">ServerStorage</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003d7</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="VideoService" referent="RBX7B45861FD38C4C5B8E9ECF802332373A">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">VideoService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003db</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="HttpService" referent="RBX2DB8845BA0D64AEFB9348FA69257085E">
+		<Properties>
+			<bool name="HttpEnabled">false</bool>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">HttpService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003dc</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="Lighting" referent="RBX1657EA4EEADA4D218E1EA201073EDBA0">
+		<Properties>
+			<Color3 name="Ambient">
+				<R>0.5</R>
+				<G>0.5</G>
+				<B>0.5</B>
+			</Color3>
+			<float name="Brightness">1</float>
+			<Color3 name="ColorShift_Bottom">
+				<R>0</R>
+				<G>0</G>
+				<B>0</B>
+			</Color3>
+			<Color3 name="ColorShift_Top">
+				<R>0</R>
+				<G>0</G>
+				<B>0</B>
+			</Color3>
+			<float name="EnvironmentDiffuseScale">0</float>
+			<float name="EnvironmentSpecularScale">0</float>
+			<float name="ExposureCompensation">0</float>
+			<token name="ExtendLightRangeTo120">0</token>
+			<Color3 name="FogColor">
+				<R>0.75</R>
+				<G>0.75</G>
+				<B>0.75</B>
+			</Color3>
+			<float name="FogEnd">100000</float>
+			<float name="FogStart">0</float>
+			<float name="GeographicLatitude">41.7332993</float>
+			<bool name="GlobalShadows">false</bool>
+			<token name="LightingStyle">0</token>
+			<Color3 name="OutdoorAmbient">
+				<R>0.5</R>
+				<G>0.5</G>
+				<B>0.5</B>
+			</Color3>
+			<bool name="Outlines">true</bool>
+			<bool name="PrioritizeLightingQuality">true</bool>
+			<float name="ShadowSoftness">0.5</float>
+			<token name="Technology">4</token>
+			<string name="TimeOfDay">14:00:00</string>
+			<BinaryString name="AttributesSerialize">AQAAACYAAABSQlhfTGlnaHRpbmdUZWNobm9sb2d5VW5pZmllZE1pZ3JhdGlvbgMB</BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">Lighting</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003fc</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="LodDataService" referent="RBX8B497726858E4736B68767E2BE2F9DF7">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">LodDataService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000003ff</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="VideoScreenCaptureService" referent="RBXBF012AF896E04EFBAB3F2A4C8D2F0B4A">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">VideoScreenCaptureService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca00000401</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="TestService" referent="RBXE4ED51D2FB754D6492F197C912AE16B2">
+		<Properties>
+			<bool name="AutoRuns">true</bool>
+			<string name="Description"></string>
+			<bool name="ExecuteWithStudioRun">false</bool>
+			<bool name="IsPhysicsEnvironmentalThrottled">true</bool>
+			<bool name="IsSleepAllowed">true</bool>
+			<int name="NumberOfPlayers">0</int>
+			<double name="SimulateSecondsLag">0</double>
+			<bool name="ThrottlePhysicsToRealtime">true</bool>
+			<double name="Timeout">10</double>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">TestService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca00000452</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="SerializationService" referent="RBX55979FD2D09C4262A3256AD781942C5A">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">SerializationService</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000005ae</UniqueId>
+		</Properties>
+	</Item>
+	<Item class="VirtualInputManager" referent="RBXC5187C7D388A4634BAA3F45ABF21364F">
+		<Properties>
+			<BinaryString name="AttributesSerialize"></BinaryString>
+			<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
+			<bool name="DefinesCapabilities">false</bool>
+			<UniqueId name="HistoryId">00000000000000000000000000000000</UniqueId>
+			<string name="Name">VirtualInputManager</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
+			<int64 name="SourceAssetId">-1</int64>
+			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
+			<UniqueId name="UniqueId">7e4a66a3e6ca6c6b0b088eca000005bd</UniqueId>
+		</Properties>
+	</Item>
+	<SharedStrings>
+		<SharedString md5="leDEa27wHRPaBssaK0OoqQ==">AQAAABUAAAACAAAAan8/AAUAAAAAAAADAAAAP39rIAMAAAAAAAAEAAAAf2Y/MAMAAAAAAAAF
+AAAAilY+UAMAAAAAAAAGAAAAj35fEAUAAAAAAAAHAAAAi21PEAIAAAAAAAAIAAAAZmxvgAMA
+AAAAAAAJAAAAZbDqEAYAAAAAAAAKAAAAw8faMAUAAAAAAAALAAAAiVpHkAMAAAAAAAAMAAAA
+Oi4kQAUAAAAAAAANAAAAHh4lFAMAAAAAAAAOAAAAZlw7UAUAAAAAAAAPAAAA6JxKJAMAAAAA
+AAAQAAAAc3trYAUAAAAAAAARAAAAhHtacAMAAAAAAAASAAAAgcLgAAYAAAAAAAATAAAAc4RK
+BAUAAAAAAAAUAAAAxr21cAUAAAAAAAAVAAAAzq2UNAMAAAAAAAAWAAAAlJSMRAMAAAAAAAA=</SharedString>
+		<SharedString md5="yuZpQdnvvUBOTYh1jqZ2cA=="></SharedString>
+	</SharedStrings>
+</roblox>

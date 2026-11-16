@@ -1,0 +1,9 @@
+# Fichiers de verrouillage et de sauvegarde automatique de Roblox Studio
+*.rbxl.lock
+*.rbxlx.lock
+*.rbxl.bak
+*.rbxlx.bak
+
+# Fichiers du système
+Thumbs.db
+.DS_Store
