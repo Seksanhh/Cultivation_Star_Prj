@@ -261,6 +261,7 @@ type Outfit = {
 	Hat: number?,
 	Face: number?,
 	MinLevel: number?,
+	Custom: boolean?, -- modèle 3D importé (ServerStorage.BanditModels) plutôt que tenue du catalogue
 }
 
 local OUTFITS: { Outfit } = {
@@ -340,6 +341,24 @@ local BODY_SHAPES: { BodyShape } = {
 		BodyTypeScale = 1, ProportionScale = 0, WidthScale = 1.05,
 	},
 }
+
+-- Modèles 3D importés (personnages Sketchfab préparés avec tools/blender, puis passés dans
+-- Avatar Setup de Studio). Ils sont rangés dans ServerStorage → dossier BanditModels :
+--   - un modèle nommé d'après une classe (« Fermier », « Combattant », « Moine », « Assassin »),
+--     ou un dossier à ce nom contenant plusieurs modèles (le bandit en tire un au hasard) ;
+--   - un modèle (ou dossier) « Boss » pour le Seigneur de guerre.
+-- Chaque modèle doit être un personnage R15 complet : Humanoid, HumanoidRootPart, Head, LeftHand,
+-- RightHand et les articulations LeftShoulder et RightShoulder (c'est ce que produit Avatar Setup).
+-- Un modèle incomplet est ignoré, avec un avertissement dans la fenêtre Sortie.
+-- Une classe qui a un modèle 3D ne porte plus que lui si PREFER_CUSTOM_MODELS est vrai ;
+-- sinon il s'ajoute aux tenues du catalogue au tirage. Les classes sans modèle gardent leurs tenues.
+local USE_CUSTOM_MODELS = true
+local PREFER_CUSTOM_MODELS = true
+local CUSTOM_MODELS_FOLDER = "BanditModels"
+local CUSTOM_BOSS_NAME = "Boss"
+-- Taille des modèles 3D, du dessous des pieds au sommet de la tête (studs). Un corps réaliste
+-- du catalogue mesure environ 5,6 studs ; les décors au-dessus de la tête (étendards) ne comptent pas.
+local CUSTOM_MODEL_HEIGHT = 5.6
 
 -- Gestes d'attaque.
 local STRIKE_TIME = 0.16 -- durée de la frappe elle-même (s) : le bras accélère jusqu'à l'impact
@@ -806,6 +825,12 @@ local function describe(outfit: Outfit, shape: BodyShape?, withBrows: boolean): 
 					AccessoryType = Enum.AccessoryType.Eyebrow,
 					IsLayered = false,
 				})
+				-- SetAccessories exige un ordre pour chaque accessoire (sinon : « Input table missing Order! »).
+				for index, entry in accessories do
+					if entry.Order == nil then
+						entry.Order = index
+					end
+				end
 				description:SetAccessories(accessories, true)
 			end)
 		end
@@ -870,12 +895,19 @@ local function loadOutfits()
 end
 
 -- Tire une tenue prête de la classe, parmi celles que le niveau du bandit autorise, ou nil s'il n'y en a pas.
+-- Avec PREFER_CUSTOM_MODELS, une classe qui a un modèle 3D prêt ne tire que parmi ses modèles 3D.
 local function pickOutfit(level: number, classId: string): Outfit?
-	local candidates = {}
+	local candidates, custom = {}, {}
 	for _, outfit in readyOutfits do
 		if outfit.Class == classId and level >= (outfit.MinLevel or 1) then
 			table.insert(candidates, outfit)
+			if outfit.Custom then
+				table.insert(custom, outfit)
+			end
 		end
+	end
+	if PREFER_CUSTOM_MODELS and #custom > 0 then
+		candidates = custom
 	end
 	if #candidates == 0 then
 		return nil
@@ -883,8 +915,18 @@ local function pickOutfit(level: number, classId: string): Outfit?
 	return candidates[random:NextInteger(1, #candidates)]
 end
 
--- La tenue prête de la classe qui demande le niveau le plus élevé (celle du boss), ou nil.
+-- La tenue du boss : son modèle 3D (« Boss ») s'il y en a un de prêt, sinon la tenue prête de la
+-- classe qui demande le niveau le plus élevé, ou nil.
 local function bestOutfit(classId: string): Outfit?
+	local bossModels = {}
+	for _, outfit in readyOutfits do
+		if outfit.Custom and outfit.Class == CUSTOM_BOSS_NAME then
+			table.insert(bossModels, outfit)
+		end
+	end
+	if #bossModels > 0 then
+		return bossModels[random:NextInteger(1, #bossModels)]
+	end
 	local best: Outfit? = nil
 	for _, outfit in readyOutfits do
 		if outfit.Class == classId and (not best or (outfit.MinLevel or 1) > (best.MinLevel or 1)) then
@@ -980,8 +1022,114 @@ local function dressedBody(outfit: Outfit): Body?
 		leftPivot = leftPivot,
 		rightPivot = rightPivot,
 		gripY = gripY,
-		strawHat = outfit.Hat == nil, -- pas de chapeau de paille par-dessus un masque ou un casque
+		-- Pas de chapeau de paille par-dessus un masque, un casque ou un modèle 3D (il a sa propre tête).
+		strawHat = outfit.Hat == nil and not outfit.Custom,
 	}
+end
+
+-- Prépare la copie d'un modèle 3D importé : pièces libres (Studio ancre les maillages importés),
+-- taille ramenée à CUSTOM_MODEL_HEIGHT, hauteur des hanches recalculée. Renvoie nil s'il n'est pas utilisable.
+local function prepareCustomModel(source: Model): (Model?, string?)
+	local model = source:Clone()
+	for _, item in model:GetDescendants() do
+		if item:IsA("LuaSourceContainer") then
+			item:Destroy()
+		elseif item:IsA("BasePart") then
+			item.Anchored = false
+		end
+	end
+
+	local humanoid = model:FindFirstChildOfClass("Humanoid")
+	local root = model:FindFirstChild("HumanoidRootPart")
+	local head = findPart(model, "Head")
+	if not humanoid or humanoid.RigType ~= Enum.HumanoidRigType.R15 then
+		model:Destroy()
+		return nil, "pas de Humanoid R15 (passe le modèle dans Avatar Setup)"
+	end
+	if not (root and root:IsA("BasePart") and head) then
+		model:Destroy()
+		return nil, "il manque HumanoidRootPart ou Head"
+	end
+	model.PrimaryPart = root
+
+	-- Hauteur du corps seul : du dessous des pieds au sommet de la tête.
+	local function feetBottom(): number
+		local bottom = math.huge
+		for _, name in { "LeftFoot", "RightFoot" } do
+			local foot = findPart(model, name)
+			if foot then
+				bottom = math.min(bottom, foot.Position.Y - foot.Size.Y / 2)
+			end
+		end
+		if bottom == math.huge then
+			local cframe, size = model:GetBoundingBox()
+			bottom = cframe.Position.Y - size.Y / 2
+		end
+		return bottom
+	end
+	local height = head.Position.Y + head.Size.Y / 2 - feetBottom()
+	if height <= 0.1 then
+		model:Destroy()
+		return nil, "taille illisible (tête sous les pieds ?)"
+	end
+	model:ScaleTo(model:GetScale() * CUSTOM_MODEL_HEIGHT / height)
+
+	-- R15 : la hauteur des hanches est l'écart entre le bas du HumanoidRootPart et le sol.
+	humanoid.HipHeight = math.max(0, root.Position.Y - root.Size.Y / 2 - feetBottom())
+	return model, nil
+end
+
+-- Charge les modèles 3D de ServerStorage.BanditModels comme des tenues à part entière.
+-- Chaque modèle est essayé une fois : s'il n'a pas la forme attendue, il est écarté avec un avertissement.
+local function loadCustomModels()
+	if not USE_CUSTOM_MODELS then
+		return
+	end
+	local container = game:GetService("ServerStorage"):FindFirstChild(CUSTOM_MODELS_FOLDER)
+	if not container then
+		print("[Enemies] Pas de dossier ServerStorage." .. CUSTOM_MODELS_FOLDER .. " : les bandits gardent les tenues du catalogue.")
+		return
+	end
+	local loaded: { string } = {}
+	for _, entry in container:GetChildren() do
+		local classId = entry.Name
+		if classId ~= CUSTOM_BOSS_NAME and not CLASS_BY_ID[classId] then
+			warn("[Enemies] Modèle 3D « " .. classId .. " » ignoré : le nom doit être une classe (Fermier, Combattant, Moine, Assassin) ou Boss")
+			continue
+		end
+		local sources = if entry:IsA("Model") then { entry } else entry:GetChildren()
+		for _, source in sources do
+			if not source:IsA("Model") then
+				continue
+			end
+			local label = classId .. " / " .. source.Name
+			local model, problem = prepareCustomModel(source)
+			if not model then
+				warn("[Enemies] Modèle 3D « " .. label .. " » ignoré : " .. tostring(problem))
+				continue
+			end
+			local outfit: Outfit = { Name = "Modèle 3D " .. source.Name, Class = classId, Shirt = 0, Pants = 0, Custom = true }
+			addTemplate(outfit, model)
+			-- Essai : le modèle doit offrir tout ce dont le combat a besoin (mains, épaules).
+			local trial = dressedBody(outfit)
+			if trial then
+				trial.model:Destroy()
+				table.insert(loaded, label)
+			else
+				outfitTemplates[outfit] = nil
+				table.remove(readyOutfits, table.find(readyOutfits, outfit))
+				model:Destroy()
+				warn("[Enemies] Modèle 3D « " .. label .. " » ignoré : il manque LeftHand, RightHand, LeftShoulder ou RightShoulder, ou le HumanoidRootPart n'est pas une Part")
+			end
+		end
+	end
+	if #loaded > 0 then
+		print("[Enemies] Modèles 3D prêts (" .. #loaded .. ") : " .. table.concat(loaded, ", "))
+	elseif #container:GetChildren() == 0 then
+		print("[Enemies] Dossier ServerStorage." .. CUSTOM_MODELS_FOLDER .. " vide : les bandits gardent les tenues du catalogue.")
+	else
+		warn("[Enemies] Aucun modèle 3D utilisable dans ServerStorage." .. CUSTOM_MODELS_FOLDER)
+	end
 end
 
 -- `offhandType` : arme tenue dans la main gauche, pour un bandit à deux armes.
@@ -1504,7 +1652,7 @@ local function attack(enemy: Enemy, player: Player, targetHumanoid: Humanoid, ta
 				blockVfx(shieldPart.Position, root.Position - shieldPart.Position)
 			end
 			Sfx.play("Block", strike.contact, 1)
-			feedbackRemote:FireClient(player, blockSide, 1, 0.2)
+			feedbackRemote:FireClient(player, blockSide, 1, 0.2, Config.CAMERA_SHAKE.SHIELD)
 			-- L'arme rebondit sur le bouclier : le bras est renvoyé, dépasse, puis se stabilise.
 			moveArm(hand, { angle = 1.6, push = 0.2, wrist = 0 }, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
 			enemy.model:SetAttribute("AttackLean", 0.8)
@@ -1514,7 +1662,7 @@ local function attack(enemy: Enemy, player: Player, targetHumanoid: Humanoid, ta
 			-- et vulnérable (les coups qu'il reçoit pendant ce temps sont multipliés).
 			perfectParryVfx(strike.contact)
 			Sfx.play("PerfectParry", strike.contact, 1.5)
-			feedbackRemote:FireClient(player, blockSide, 1, 0.3)
+			feedbackRemote:FireClient(player, blockSide, 1, 0.3, Config.CAMERA_SHAKE.PERFECT_PARRY)
 			-- Le sabre est rejeté en arrière, le buste part avec.
 			moveArm(hand, { angle = 3.1, push = 0.3, wrist = WRIST_COCK }, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
 			enemy.model:SetAttribute("AttackLean", 1.6)
@@ -1536,7 +1684,7 @@ local function attack(enemy: Enemy, player: Player, targetHumanoid: Humanoid, ta
 		elseif blockKind == "Parry" then
 			parryVfx(strike.contact)
 			Sfx.play("Parry", strike.contact, 1)
-			feedbackRemote:FireClient(player, blockSide, 0.8, 0.12)
+			feedbackRemote:FireClient(player, blockSide, 0.8, 0.12, Config.CAMERA_SHAKE.PARRY)
 			-- Le sabre est repoussé vers le haut.
 			moveArm(hand, { angle = 2.2, push = 0.15, wrist = 0.15 }, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
 			enemy.model:SetAttribute("AttackLean", 1)
@@ -2235,6 +2383,8 @@ function Enemies.init(weapons: Instance, feedback: RemoteEvent)
 	folder = Instance.new("Folder")
 	folder.Name = "Enemies"
 	folder.Parent = workspace
+	-- Les modèles 3D importés sont déjà dans la place : ils sont prêts tout de suite.
+	loadCustomModels()
 	-- Les tenues se chargent en arrière-plan : elles sont prêtes avant la première vague.
 	loadOutfits()
 end

@@ -109,6 +109,21 @@ Config.PlayerLevel = {
 Config.TRAIL_LIFETIME = 0.18
 Config.TRAIL_COLOR = Color3.fromRGB(235, 240, 255)
 
+-- Léger tremblement de l'écran quand on bloque ou pare un coup de bandit.
+-- La caméra oscille de quelques dixièmes de degré, puis l'oscillation s'éteint.
+-- En VR, bouger la vue sans que la tête bouge peut donner la nausée : VR_SCALE l'atténue (0 la coupe).
+Config.CAMERA_SHAKE = {
+	ENABLED = true,
+	ANGLE = 0.5, -- amplitude maximale en degrés, pour une intensité de 1
+	DURATION = 0.18, -- secondes
+	FREQUENCY = 30, -- oscillations par seconde
+	VR_SCALE = 0.4, -- multiplicateur appliqué avec un casque
+	-- Intensité selon la façon dont le coup est arrêté.
+	SHIELD = 1,
+	PARRY = 0.6,
+	PERFECT_PARRY = 1.2,
+}
+
 export type WeaponPart = {
 	Name: string,
 	Size: Vector3,

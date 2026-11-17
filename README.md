@@ -162,6 +162,8 @@ Deux boucliers ronds sont posés au début du râtelier et se saisissent comme u
 
 Un coup de bandit est bloqué si, au moment où il part, le bouclier est tenu du côté du bandit et près de son sabre : aucun dégât, un bruit sourd, une vibration dans la main, et le bandit est repoussé une demi-seconde. Un bouclier tenu dans le dos ou baissé ne protège pas.
 
+Chaque coup bloqué ou paré fait aussi trembler légèrement l'écran : un peu au bouclier, moins à la parade, un peu plus à la parade parfaite. Le tremblement dure 0,18 seconde. Il ne touche que la vue : les mains et les armes restent exactement sur les manettes. En VR, il est atténué (`VR_SCALE`), car une vue qui bouge sans la tête peut donner la nausée. Les réglages (amplitude, durée, intensité selon le blocage, `ENABLED` pour le couper) sont dans `Config.CAMERA_SHAKE` (`src/shared/Config.luau`), le code dans `src/client/CameraShake.client.luau`.
+
 Par rapport à la parade à l'épée, le bouclier est plus tolérant sur le placement, mais sonne le bandit moins longtemps (0,5 s contre 1,2 s). Il ne fait pas de dégâts.
 
 ## Parade parfaite
@@ -298,6 +300,15 @@ Les bandits portent des tenues du catalogue Roblox, tirées au hasard parmi cell
 Les tenues sont enfilées sur des corps réalistes R15 (membres arrondis, visage d'homme animé), tous publiés gratuitement par Roblox : le lot « Homme » et deux « Corps de base » (Charlie et Parker), coiffés du « Visage d'homme ». Chaque tenue est préparée sur chaque corps, et chaque bandit en tire une combinaison au hasard. Leurs bras restent tendus (coude et poignet fixes) et tiennent l'arme dans la main. Pour changer de corps, copie dans la table `BODY_SHAPES` les numéros des pièces d'un lot (tête, buste, bras, jambes) relevés sur sa page du catalogue. `USE_REALISTIC_BODIES = false` revient aux personnages R6 carrés.
 
 Les vêtements sont téléchargés au lancement du serveur. Tant qu'ils ne sont pas arrivés, ou si l'un d'eux a été retiré du catalogue, les bandits concernés apparaissent avec l'ancien corps en blocs, et un avertissement s'affiche dans la fenêtre Sortie.
+
+### Modèles 3D importés
+
+Une classe peut aussi porter un personnage 3D réaliste importé, à la place des tenues du catalogue : modèles Sketchfab préparés avec Blender, puis passés dans **Avatar Setup** de Studio. Ces modèles se rangent dans `ServerStorage` → `BanditModels`. Chaque modèle (ou dossier de modèles) porte le nom d'une classe (`Fermier`, `Combattant`, `Moine`, `Assassin`) ou `Boss` pour le Seigneur de guerre.
+
+- **Préparation :** au lancement du serveur, chaque modèle est vérifié : il doit être R15 et avoir des mains et des épaules. Il est ensuite mis à la taille d'un corps réaliste (`CUSTOM_MODEL_HEIGHT`, du dessous des pieds au sommet de la tête). Un modèle inutilisable est ignoré, avec un avertissement dans la fenêtre Sortie.
+- **Tirage :** une classe qui a un modèle 3D ne porte plus que lui (`PREFER_CUSTOM_MODELS`) ; les autres classes gardent leurs tenues. Les modèles 3D n'ont pas de chapeau de paille.
+- **Réglages :** `USE_CUSTOM_MODELS = false` les désactive. Les réglages sont en haut de `src/server/Enemies.luau`. La préparation dans Blender, l'import et les crédits des auteurs (licence CC BY, à citer dans la description du jeu) sont décrits dans `tools/blender/README.md`.
+- **Sauvegarde :** les modèles vivent dans la place, pas dans `src`. Enregistre-la depuis Studio : `build.ps1` les effacerait.
 
 Pour changer une tenue, ouvre la page d'un vêtement sur le catalogue Roblox et copie le nombre de son adresse dans la table `OUTFITS`, en haut de `src/server/Enemies.luau`. `USE_CATALOG_OUTFITS = false` revient aux bandits en blocs.
 

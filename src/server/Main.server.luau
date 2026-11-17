@@ -32,7 +32,7 @@ end
 local grabRemote = makeRemote("Grab")
 local releaseRemote = makeRemote("Release")
 local hitRemote = makeRemote("Hit")
-local feedbackRemote = makeRemote("Feedback") -- serveur → client : vibration (main, intensité, durée)
+local feedbackRemote = makeRemote("Feedback") -- serveur → client : vibration (main, intensité, durée) et, après un blocage, tremblement de l'écran (intensité)
 local unlockSkillRemote = makeRemote("UnlockSkill") -- client → serveur : débloquer une technique de cultivation
 local useTechniqueRemote = makeRemote("UseTechnique") -- client → serveur : déclencher une technique active
 remotes.Parent = ReplicatedStorage
