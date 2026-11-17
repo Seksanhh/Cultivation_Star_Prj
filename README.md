@@ -18,6 +18,14 @@ L'arène (sol, râtelier, mannequins) et les armes sont créées par le script a
 | Saisir une arme | Maintenir la gâchette de préhension (grip) près du manche | `E` (main droite), `Q` (main gauche) |
 | Lâcher | Relâcher le grip | `E` / `Q` à nouveau |
 | Frapper | Bouger réellement la main | Clic gauche |
+| Frapper à mains nues | Frapper avec une main vide | Clic gauche, main droite vide |
+| Dégainer | Grip sur la poignée, à la hanche gauche | `G` (main droite) |
+| Rengainer | Lâcher l'arme garde contre l'entrée du fourreau | `G` (main droite) |
+| Lancer une arme | Lâcher le grip en plein geste | — |
+| Rappeler l'arme lancée | Main vide, garder le grip serré un instant | `T` (main droite) |
+| Double saut | Sauter (bouton `A`) une seconde fois en l'air | `Espace` en l'air |
+| Courir sur un mur | En l'air, lancé le long d'un mur | idem |
+| Vol plané | Garder le saut enfoncé en tombant | `Espace` maintenu |
 | Tenir à deux mains | Grip de la seconde main sur le manche (épée longue, hache) | — |
 | Se déplacer | Joystick gauche | `ZQSD` / flèches |
 
@@ -57,6 +65,56 @@ Les armes sont des modèles détaillés, construits par code dans `src/shared/Co
 - Les pompons et cordons sont rigides et ne heurtent rien.
 
 Les dégâts sont proportionnels à la vitesse de pointe du coup : dégâts = dégâts de base × (vitesse / 25 studs/s), entre ×0,3 et ×2,5. Un coup deux fois plus rapide fait deux fois plus mal, et un coup sous la vitesse minimale ne compte pas.
+
+## Fourreau
+
+Chaque joueur porte un fourreau de laque rouge cerclé de laiton à la hanche gauche, avec un sabre rangé dedans à chaque apparition.
+
+- **Dégainer :** en VR, porte une main à la poignée qui dépasse de la hanche (un contour blanc apparaît) et serre le grip, comme pour saisir n'importe quelle arme. Au clavier, `G` dégaine dans la main droite.
+- **Rengainer :** en VR, amène la garde de l'arme contre l'entrée du fourreau (à moins de 1,8 stud) et relâche le grip : l'arme glisse dedans, avec son bruit de lame qui rentre. Au clavier, `G` rengaine l'arme de la main droite.
+- **Armes :** la dague, l'épée et le sabre entrent au fourreau. L'épée longue et les armes d'hast sont trop longues pour la hanche. Le fourreau s'ajuste à la longueur et à la largeur de la lame rangée, y compris pour une arme prise sur le râtelier.
+- **Arme rangée :** elle ne heurte rien, ne pèse rien et ne frappe pas. Seul son propriétaire peut la dégainer.
+- **Arme abandonnée :** le sabre de départ lâché par terre revient seul au fourreau après le délai habituel (`WEAPON_RETURN_TIME`), si le fourreau est vide. Sinon il disparaît. À la mort, une arme du râtelier qui était au fourreau retourne au râtelier.
+
+Les réglages sont dans `Config.SCABBARD` (`src/shared/Config.luau`) : armes acceptées, arme de départ (`START_WEAPON`, `nil` pour un fourreau vide), position et inclinaison à la hanche, distance pour rengainer, touche. Le code est dans `src/server/Scabbard.luau`.
+
+## Frappe de dégainé (居合, iai)
+
+Dégainer et frapper dans le même geste donne un coup critique : le premier coup porté moins de 0,8 seconde après avoir tiré la lame du fourreau, assez vite (14 studs/s), fait double dégâts.
+
+Pendant cette fenêtre, la traînée de la lame est dorée, et une fine lame de Qi dorée prolonge la pointe de 1,5 stud : le coup porte un peu plus loin (`REACH_BONUS`). Un coup réussi affiche « 居合 Iai », avec une fente dorée, un reflet en étoile, un éclair et un sifflement métallique. La fenêtre ne sert qu'une fois par dégainé. Réglages : `Config.IAI`.
+
+## Lancer d'armes et rappel
+
+**Lancer :** lâcher une arme en plein geste la lance (main à 18 studs/s ou plus). Elle part plus vite que la main (×1,6, 110 studs/s au plus), file sans heurter son lanceur et blesse la première cible traversée par sa lame (dégâts de l'arme ×1,2 selon la vitesse, affichés « 投 Lancer »). Elle s'y arrête et tombe. La dague se lance bien, la lance aussi, comme un javelot. Une arme lâchée doucement tombe simplement, comme avant.
+
+**Rappel :** main vide, garder le grip serré un instant (0,4 s) sans rien à saisir ramène la dernière arme lancée dans cette main, en vol courbe et en tournoyant. Au clavier, `T` la rappelle dans la main droite. Le rappel coûte 15 Qi, et l'arme doit être à moins de 80 studs. Une arme revenue au râtelier ne se rappelle plus.
+
+Réglages : `Config.THROW` et `Config.RECALL`.
+
+## Combos de calligraphie
+
+Enchaîner les bons traits de lame trace un caractère chinois en encre d'or dans l'air, et ce caractère devient le sort : il apparaît devant le joueur, lumineux, puis part produire son effet (voir le tableau). Un trait est un geste franc de la pointe (au moins 11 studs/s, 1,2 stud de long), lu tel que le joueur le voit : vertical ou horizontal à 35° près, diagonale entre les deux. Les traits d'un même caractère doivent se suivre à moins de 2,5 secondes, et un trait parasite glissé entre deux traits (lame repositionnée un peu vite) est toléré (`ALLOW_EXTRA_STROKE`). Un geste qui monte (lame ramenée en garde) n'est jamais un trait, pas plus qu'un geste court (moins de 1,6 stud face au joueur). Un fendant qui ralentit un instant au milieu reste un seul trait. Conseil pour 川 : entre deux fendants, remonte la lame par le même chemin, bien droit ; un retour de côté peut être lu comme 横 et donner 十 à la place. Chaque trait reconnu s'affiche devant les yeux en encre d'or (竖 vertical, 横 horizontal, 丿 diagonale gauche, ㇏ diagonale droite, 点 estoc), puis le nom du combo ; un combo en recharge s'affiche en gris. Avec `Calligraphy.DEBUG = true`, chaque trait, reconnu ou refusé, s'écrit aussi dans la fenêtre Sortie avec son déplacement, ainsi que chaque sort lancé ou refusé par le serveur (et pourquoi), pour régler les seuils. Au clavier, un clic donne toujours un fendant : seul 川 (trois clics rapides) y est possible.
+
+| Caractère | Traits | Effet | Recharge |
+| --- | --- | --- | --- |
+| 十 Croix du sabre | fendant (haut → bas), puis horizontal | le caractère file vers la cible la plus proche devant (visée dans un cône de 35°, 18 studs), fend tout sur son passage (30 dégâts) et éclate en croix à l'arrivée | 4 s |
+| 人 Souffle de l'homme | diagonale vers la gauche, puis vers la droite | le caractère, vert, revient se fondre dans la poitrine du joueur : rend 15 % des PV et 20 Qi | 10 s |
+| 川 Trois cascades | trois fendants | le caractère file droit devant et fait tomber trois lames de Qi sur son chemin (22 dégâts chacune) | 6 s |
+| 大 Grande onde | horizontal, diagonale gauche, diagonale droite | le caractère monte au-dessus du joueur et s'abat au sol : onde de 14 studs, 35 dégâts, repousse et sonne 1,2 s | 12 s |
+| 刺 Percée du dragon | trois estocs | le caractère part comme une flèche de Qi et transperce tout sur 24 studs (28 dégâts) | 7 s |
+
+Chaque trait reconnu donne une petite vibration. Il faut tenir une arme à lame. Les caractères, leurs traits et leurs effets sont dans `src/shared/Calligraphy.luau`. La reconnaissance est dans `src/client/Calligraphy.client.luau`, les effets dans `src/server/Combos.luau`.
+
+## Mains nues
+
+Une main vide frappe aussi : un coup de poing assez rapide (au moins 9 studs/s) blesse le bandit, le mannequin ou le joueur qu'il touche.
+
+- **Dégâts :** 8 de base. Comme pour les armes, ils suivent la vitesse du coup et profitent des bonus de niveau, de cultivation et de riposte. Le poing reste la plus faible des armes : la dague fait 12.
+- **Limites :** une main posée sur la hampe d'une arme à deux mains ne frappe pas. Le poing ne pare pas et ne bloque pas.
+- **Retour :** un son de choc plus sourd que celui d'une lame, et une vibration dans la manette.
+
+Les réglages (dégâts, vitesse minimale, taille de la zone de frappe, `ENABLED` pour désactiver) sont dans `Config.FIST` (`src/shared/Config.luau`).
 
 ## Avatar
 
@@ -173,13 +231,15 @@ Juste avant de s'abattre, la lame du bandit passe de l'orange au blanc pendant 0
 - le bandit prend 20 points de dégâts et son sabre est rejeté en arrière ;
 - il reste sonné 0,6 seconde, entouré d'un halo doré ;
 - pendant ce temps, tes coups lui font le double de dégâts (riposte) ;
-- une gerbe d'étincelles, une onde de choc lumineuse, un éclair de lumière, un tintement aigu et une longue vibration le signalent.
+- une gerbe d'étincelles étirées, un reflet en étoile, une onde de choc rayonnante, des rayons, un éclair de lumière, un tintement aigu et une longue vibration le signalent.
 
-Une lame immobile sur la trajectoire donne toujours une parade normale. Le bouclier ne permet pas de parade parfaite. Les réglages sont en haut de `src/server/Enemies.luau`, et le multiplicateur de riposte dans `src/shared/Config.luau`.
+Une lame immobile sur la trajectoire donne toujours une parade normale.
+
+Les effets des parades et des blocages utilisent des textures de packs de VFX gratuits du Creator Store de Roblox : traits d'étincelles, reflet en étoile, impact, anneau rayonnant, rayons, halo, anneau. Seules les images sont reprises, par leur numéro : les émetteurs de particules sont construits par le code, donc aucun script de la Toolbox n'entre dans le jeu. Les numéros sont dans la table `VFX_TEXTURES` et les effets dans `perfectParryVfx`, `parryVfx` et `blockVfx` (`src/server/Enemies.luau`). Le bouclier ne permet pas de parade parfaite. Les réglages sont en haut de `src/server/Enemies.luau`, et le multiplicateur de riposte dans `src/shared/Config.luau`.
 
 ## Ennemis
 
-Les bandits arrivent par vagues dès qu'un joueur saisit une arme : un bandit à la première vague, un de plus à chaque vague, cinq au maximum. Ils apparaissent devant la grande salle et poursuivent le joueur le plus proche.
+Les bandits arrivent par vagues dès qu'un joueur saisit une arme ou porte un premier coup de poing (sur un mannequin, par exemple) : un bandit à la première vague, un de plus à chaque vague, cinq au maximum. Ils apparaissent devant la grande salle et poursuivent le joueur le plus proche.
 
 Avant de frapper, un bandit lève son sabre et la lame devient orange pendant 0,6 seconde. C'est le moment de reculer, ou de parer en plaçant ta propre lame contre la sienne : une parade réussie fait une étincelle et sonne le bandit un instant.
 
@@ -212,6 +272,39 @@ Les bandits varient leurs coups, et la pose d'armement annonce d'où le coup vie
 La dague pique surtout, l'épée connaît tous les coups, l'épée longue tous sauf le montant, et la hache ne donne ni estoc ni montant. Pour parer ou bloquer, ta lame ou ton bouclier doit se trouver sur la trajectoire du coup : une garde haute n'arrête pas un fauchage.
 
 À partir de la vague 2, un combattant à l'épée ou au sabre a 40 % de chances de porter une seconde arme (épée ou sabre) dans la main gauche, et un assassin 75 % de chances de porter une seconde dague ; son nom l'indique (« Combattant · Épée + Sabre »). Il frappe d'une main puis de l'autre, chaque arme gardant ses dégâts, sa portée et ses coups, et il enchaîne plus vite (temps entre deux attaques ×0,65). Les coups de la main gauche sont en miroir. Les armes à deux mains (épée longue, hache, lance, guandao, bâton) ne se portent jamais par paire.
+
+### Archers et lanceurs de couteaux
+
+Deux classes se battent à distance. Elles gardent leurs distances, se décalent de côté entre deux tirs, reculent si on s'approche, et ne sortent leur dague qu'au contact.
+
+- **Archer** (dès la vague 5) : un arc devant la poitrine. Quand il vise, une flèche apparaît, pointe orangée, et l'arc se bande avec un bruit de souffle : un peu plus d'une seconde plus tard, la flèche part (14 dégâts au niveau 1).
+- **Lanceur de couteaux** (dès la vague 6) : son bras armé recule et sa lame s'illumine, puis il lance une salve de trois couteaux qui tournoient (8 dégâts chacun).
+
+Les projectiles volent vraiment, avec une légère chute et une traînée claire. Leur sifflement voyage avec eux, on les entend arriver. Ils visent le haut du buste et anticipent à moitié le déplacement du joueur. Pour s'en protéger :
+
+- **Les couper en vol :** une lame qui croise le projectile en mouvement rapide le coupe en deux (étincelles dorées, son de parade parfaite).
+- **Les dévier :** une lame tenue immobile sur le trajet le dévie (étincelles orangées).
+- **Les bloquer :** le bouclier les arrête.
+- **Les éviter :** se décaler suffit, ils ne tournent pas.
+
+Un projectile qui manque se plante dans le décor (flèche) ou tombe (couteau). Il ne blesse jamais les bandits. Les réglages de chaque classe sont dans le champ `Ranged` de la table `CLASSES` (`src/server/Enemies.luau`), le vol dans `src/server/Projectiles.luau`.
+
+### Attaques coordonnées
+
+À partir de la vague 3, toutes les 7 à 12 secondes, deux bandits au contact du même joueur et de deux côtés différents (au moins 70° d'écart) frappent ensemble. On entend les deux lames dégainer en même temps, et leurs lames virent au **rouge** au lieu de l'orange. Leur armement commun est un peu plus long (0,95 s) pour laisser le temps de lire la situation : parer l'un et esquiver l'autre, ou parer des deux mains. Réglages : `COORD_*` en haut de `src/server/Enemies.luau`.
+
+### Maître d'armes
+
+À partir de la vague 7, une vague impaire sur deux compte un **maître d'armes** : une robe blanche, un casque, une épée ou un sabre. Il a plus de deux fois plus de vie et frappe plus fort et plus vite. Il vaut trois fois l'expérience d'un bandit.
+
+Surtout, il **pare** : sa garde suit ta lame, avec un temps de retard (0,35 s). Un coup qui arrive du côté de sa garde est paré (étincelles, choc dans la main) et il riposte aussitôt. Pour le toucher :
+
+- **feinter :** montrer la lame d'un côté, puis frapper vite de l'autre ;
+- **frapper pendant son attaque :** il ne pare pas en frappant ;
+- **parer parfaitement**, puis riposter pendant qu'il est sonné et vulnérable ;
+- **le sonner** avec une technique (Rugissement du lion, Grande onde).
+
+Il dévie aussi les armes lancées du côté de sa garde. Réglages : `MASTER_*` en haut de `src/server/Enemies.luau`.
 
 ### Mouvements
 
@@ -288,6 +381,9 @@ Chaque bandit appartient à une classe, affichée dans son nom (« Niv. 3 · Moi
 | Combattant | 2 | épée, sabre, lance (4), épée longue (5), guandao (7) ; 40 % portent une 2e épée ou un 2e sabre | rônin noir, robe blanche, brigand masqué, capitaine casqué (niv. 6) | ×1 | ×1 | ×1 | ×1 | ×1 |
 | Moine | 3 | bâton surtout, lance (5) | robes shaolin safran, brune, grise, rouge (niv. 6), crâne rasé | ×1,15 | ×0,9 | ×1,15 | ×1,1 | ×1,2 |
 | Assassin | 4 | dague surtout, sabre ; 75 % portent une 2e dague | ombre, assassin rouge (niv. 6) | ×0,75 | ×1,1 | ×1,25 | ×1,2 | ×1,1 |
+| Archer | 5 | arc (tir à distance), dague au contact | archer en toile, archer brigand | ×0,7 | ×1 | ×1 | ×1 | ×1,1 |
+| Lanceur | 6 | salves de trois couteaux, dague au contact | lanceur sombre, lanceur rouge (niv. 6), masque de brigand | ×0,8 | ×1 | ×1,1 | ×1,1 | ×1,1 |
+| Maître d'armes | 7 (une vague impaire sur deux) | épée ou sabre ; pare les coups du côté de sa garde | robe blanche, casque | ×2,2 | ×1,2 | ×1,25 | ×1,05 | ×3 |
 
 Une classe fait son entrée en tête de sa première vague, annoncée avec le numéro de la vague. Ensuite, les bandits sont tirés au hasard parmi les classes déjà apparues : les fermiers, nombreux au début, se raréfient au fil des vagues, tandis que les autres deviennent plus fréquents. Les fermiers ont la silhouette « Homme » ou « Corps de base 2 », les moines et assassins les deux « Corps de base » ; les combattants les trois. Le boss est un combattant et porte la tenue de capitaine.
 
@@ -334,6 +430,40 @@ Les réglages (équipement par arme, délais, nombre maximal) sont en haut de `s
 Une arme tenue est solide : elle s'arrête contre les murs, le sol, le décor et les autres armes, et la manette vibre au contact. Elle traverse en revanche les corps (joueurs, bandits, mannequins), pour que les coups passent au travers au lieu de bousculer la cible.
 
 Chaque choc, coup porté, parade, blocage et saisie joue un son, tiré de la bibliothèque audio Roblox (catalogue ProSoundEffects). Pour en changer un, ouvre la Toolbox de Studio (onglet Audio), choisis un son et colle son numéro dans `Config.Sounds` (`src/shared/Config.luau`) sous la forme `"rbxassetid://NUMERO"`.
+
+Les chocs de lames (arme contre arme, parade, parade parfaite) sont des prises « Blade Hits Metal Rod » et « Sword Impact » du catalogue ProSoundEffects. Elles ont été retenues après analyse du son : un seul impact, une attaque sèche, de l'aigu et une résonance métallique qui tinte. Les prises de coups dans le vide, de frottement ou de plusieurs chocs enchaînés ont été écartées. Chacun de ces sons a trois prises (champ `Ids`), tirées au hasard à chaque choc avec une légère variation de hauteur, pour que deux parades ne sonnent jamais pareil. Les prises de lame contre tige sont jouées un peu plus bas (`Pitch` 0,8 à 0,85) pour sonner comme un sabre lourd. Le blocage au bouclier garde son bruit de bois.
+
+## Qinggong (轻功)
+
+L'art de la légèreté : trois mouvements aériens, contre du Qi.
+
+- **Double saut :** sauter une seconde fois en l'air (8 Qi). Un anneau de Qi apparaît sous les pieds.
+- **Course sur les murs :** en l'air, lancé assez vite (10 studs/s) le long d'un mur, on s'y accroche et on court dessus jusqu'à 1,4 seconde (6 Qi par seconde). Sauter pendant la course repousse du mur, vers le haut et vers l'avant, et rend le double saut.
+- **Vol plané :** garder le saut enfoncé en tombant limite la chute à 8 studs/s (5 Qi par seconde).
+
+Le saut est `Espace` au clavier et le bouton `A` de la manette droite en VR. Ces mouvements font bouger la vue sans que la tête bouge : en VR, ils peuvent donner la nausée. `Config.QINGGONG.ENABLED = false` les désactive. Réglages : `Config.QINGGONG`, code dans `src/client/Qinggong.client.luau`.
+
+## Tribulation céleste (天劫)
+
+Atteindre le niveau d'un nouveau royaume (5, 9, 13, 17) ne suffit plus : il faut le **consolider** en survivant à la foudre du ciel.
+
+- **Déclenchement :** au passage de niveau, « 天劫 Le ciel s'assombrit… ». La tribulation attend que les bandits en jeu soient tous tombés, puis les vagues se mettent en pause.
+- **Déroulement :** le ciel vire au violet sombre, le tonnerre gronde. La foudre tombe là où se tient le joueur : 6 éclairs pour le premier royaume, 2 de plus pour chaque royaume suivant, de plus en plus rapprochés. Chaque éclair est annoncé par un cercle violet au sol qui se resserre pendant 1,2 seconde.
+- **Se défendre :** sortir du cercle évite l'éclair. **Lever sa lame**, pointe vers le ciel au-dessus de la tête, au moment où il tombe l'absorbe : pas de dégâts, et 15 Qi en plus. Un éclair reçu coûte 12 % des points de vie maximaux.
+- **Réussite :** « Percée ! », le royaume est consolidé, et le bonus est permanent et sauvegardé : +5 % de dégâts et +10 points de vie maximaux par royaume consolidé. Le Qi est rempli, les points de vie aussi.
+- **Échec :** mourir l'interrompt. Elle revient 15 secondes après la réapparition.
+
+Une sauvegarde d'avant cette mise à jour garde ses royaumes déjà atteints, considérés comme consolidés. Réglages : `Config.TRIBULATION`, code dans `src/server/Tribulation.luau`.
+
+## Souffle des lames
+
+Une arme tenue fait entendre le vent qu'elle fend : un souffle discret sur un geste lent, un sifflement aigu et fort sur un vrai coup.
+
+- **Ce qui le règle :** le volume et la hauteur suivent la vitesse de la pointe de la lame. C'est le geste de la manette, rotation du poignet comprise, sans compter le déplacement du joueur. Le souffle démarre dès 6 studs/s et atteint son maximum à 45 studs/s. Il monte aussitôt avec le geste, puis retombe en un peu plus d'un dixième de seconde.
+- **Pour tous les joueurs :** on entend aussi les lames des autres joueurs, en 3D. Le bouclier, sans lame, ne souffle pas, pas plus qu'une arme posée ou rangée au fourreau.
+- **Son :** une boucle de vent de ProSoundEffects, choisie pour son souffle régulier, sans rafales ni sifflement propre.
+
+Les réglages (vitesses, volume, hauteurs, `ENABLED`) sont dans `Config.BLADE_WIND` (`src/shared/Config.luau`), le code dans `src/client/BladeWind.client.luau`.
 
 ## Traînées
 

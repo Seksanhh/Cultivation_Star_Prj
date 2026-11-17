@@ -14,7 +14,12 @@ local random = Random.new()
 -- `strength` : intensité de 0 à 1 environ (un choc violent sonne plus fort).
 function Sfx.play(name: string, target: BasePart | Vector3, strength: number?)
 	local def = Config.Sounds[name]
-	if not def or def.Id == "" then
+	if not def then
+		return
+	end
+	-- `Ids` : plusieurs prises du même bruit, tirées au hasard pour que les chocs ne se répètent pas.
+	local id = if def.Ids and #def.Ids > 0 then def.Ids[random:NextInteger(1, #def.Ids)] else def.Id
+	if not id or id == "" then
 		return
 	end
 
@@ -39,7 +44,7 @@ function Sfx.play(name: string, target: BasePart | Vector3, strength: number?)
 
 	local sound = Instance.new("Sound")
 	sound.Name = "Sfx" .. name
-	sound.SoundId = def.Id
+	sound.SoundId = id
 	sound.Volume = def.Volume * math.clamp(strength or 1, 0.25, 1.5)
 	sound.PlaybackSpeed = def.Pitch * random:NextNumber(0.92, 1.08)
 	sound.RollOffMinDistance = 8

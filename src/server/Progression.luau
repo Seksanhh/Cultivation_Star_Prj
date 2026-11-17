@@ -19,7 +19,8 @@ local settings = Config.PlayerLevel
 -- `skills` : techniques de cultivation débloquées ({ [Id] = true }).
 -- `canSave` : false si la lecture de la sauvegarde a échoué. Dans ce cas on n'écrit rien,
 -- pour ne pas remplacer une vraie progression par un niveau 1.
-type Stats = { level: number, xp: number, skills: { [string]: boolean }, canSave: boolean }
+-- `breakthrough` : niveau d'entrée du dernier royaume consolidé par une tribulation céleste.
+type Stats = { level: number, xp: number, skills: { [string]: boolean }, canSave: boolean, breakthrough: number }
 
 local stats: { [Player]: Stats } = {}
 
@@ -50,9 +51,9 @@ local function storeKey(userId: number): string
 end
 
 -- Lit la sauvegarde d'un joueur. Renvoie (réussite, niveau, xp, techniques).
-local function load(userId: number): (boolean, number, number, { [string]: boolean })
+local function load(userId: number): (boolean, number, number, { [string]: boolean }, number)
 	if not store then
-		return false, 1, 0, {}
+		return false, 1, 0, {}, 1
 	end
 	for attempt = 1, 3 do
 		local ok, result = pcall(function()
@@ -73,14 +74,18 @@ local function load(userId: number): (boolean, number, number, { [string]: boole
 				if Skills.spentPoints(skills) > Skills.totalPoints(level) then
 					skills = {}
 				end
-				return true, level, math.max(result.xp, 0), skills
+				-- Une sauvegarde d'avant les tribulations : ses royaumes comptent comme consolidés.
+				local breakthrough = if typeof(result.breakthrough) == "number"
+					then math.clamp(math.floor(result.breakthrough), 1, level)
+					else Skills.realm(level).MinLevel
+				return true, level, math.max(result.xp, 0), skills, breakthrough
 			end
-			return true, 1, 0, {} -- première visite
+			return true, 1, 0, {}, 1 -- première visite
 		end
 		warn("[Progression] Lecture de la sauvegarde échouée (essai " .. attempt .. ") : " .. tostring(result))
 		task.wait(2)
 	end
-	return false, 1, 0, {}
+	return false, 1, 0, {}, 1
 end
 
 local function save(userId: number, data: Stats)
@@ -92,7 +97,7 @@ local function save(userId: number, data: Stats)
 		table.insert(skillList, id)
 	end
 	local ok, message = pcall(function()
-		(store :: DataStore):SetAsync(storeKey(userId), { level = data.level, xp = data.xp, skills = skillList })
+		(store :: DataStore):SetAsync(storeKey(userId), { level = data.level, xp = data.xp, skills = skillList, breakthrough = data.breakthrough })
 	end)
 	if not ok then
 		warn("[Progression] Écriture de la sauvegarde échouée : " .. tostring(message))
@@ -118,8 +123,22 @@ local function effectOf(data: Stats?, key: string): number
 	return total
 end
 
+-- Nombre de royaumes consolidés par une tribulation (le premier, Raffinement du Qi, n'en demande pas).
+local function breakthroughs(data: Stats?): number
+	local count = 0
+	if data then
+		for _, realm in Skills.REALMS do
+			if realm.MinLevel > 1 and realm.MinLevel <= data.breakthrough then
+				count += 1
+			end
+		end
+	end
+	return count
+end
+
 local function maxHealth(data: Stats): number
 	return settings.BASE_HEALTH + settings.HEALTH_PER_LEVEL * (data.level - 1) + effectOf(data, "Health")
+		+ Config.TRIBULATION.HEALTH_BONUS * breakthroughs(data)
 end
 
 -- Recopie les valeurs dans le tableau des scores et dans des attributs du joueur
@@ -221,10 +240,16 @@ local function levelUpEffects(player: Player, level: number)
 
 	local front = root.Position + root.CFrame.LookVector * 5 + Vector3.new(0, 1.5, 0)
 	popup(front, "Niveau " .. level .. " !", gold, 1.6, 2.5)
-	-- Entrée dans un nouveau royaume de cultivation.
+	-- Seuil d'un nouveau royaume : il faudra le consolider en survivant à la tribulation céleste.
 	local realm = Skills.realm(level)
 	if realm.MinLevel == level and level > 1 then
-		popup(front + Vector3.new(0, -1.6, 0), realm.Hanzi .. "  " .. realm.Name, Color3.fromRGB(120, 235, 180), 1.2, 3.5)
+		local data = stats[player]
+		if data and data.breakthrough < realm.MinLevel and Config.TRIBULATION.ENABLED then
+			popup(front + Vector3.new(0, -1.6, 0), "天劫 Le ciel s'assombrit…", Color3.fromRGB(190, 160, 255), 1.2, 3.5)
+			Progression.realmReachedEvent:Fire(player)
+		else
+			popup(front + Vector3.new(0, -1.6, 0), realm.Hanzi .. "  " .. realm.Name, Color3.fromRGB(120, 235, 180), 1.2, 3.5)
+		end
 	end
 
 	local glow = Instance.new("Highlight")
@@ -260,6 +285,44 @@ local function levelUpEffects(player: Player, level: number)
 	Sfx.play("LevelUp", root, 1)
 end
 
+-- Émis quand un joueur atteint le seuil d'un royaume qu'il n'a pas encore consolidé.
+local realmReachedEvent = Instance.new("BindableEvent")
+Progression.realmReached = realmReachedEvent.Event :: RBXScriptSignal
+Progression.realmReachedEvent = realmReachedEvent
+
+-- Royaume atteint par le niveau du joueur mais pas encore consolidé par une tribulation, ou nil.
+function Progression.pendingRealm(player: Player): { MinLevel: number, Name: string, Hanzi: string }?
+	local data = stats[player]
+	if not data or not Config.TRIBULATION.ENABLED then
+		return nil
+	end
+	local realm = Skills.realm(data.level)
+	if realm.MinLevel > 1 and realm.MinLevel > data.breakthrough then
+		return realm
+	end
+	return nil
+end
+
+-- Tribulation réussie : le royaume est consolidé (bonus de vie et de dégâts), le joueur est soigné.
+function Progression.consolidate(player: Player, minLevel: number)
+	local data = stats[player]
+	if not data then
+		return
+	end
+	data.breakthrough = math.max(data.breakthrough, minLevel)
+	publish(player)
+	applyHealth(player, true)
+end
+
+-- Texte flottant devant le joueur (pour les annonces de la tribulation).
+function Progression.popupFor(player: Player, text: string, color: Color3, size: number, duration: number)
+	local character = player.Character
+	local root = character and character:FindFirstChild("HumanoidRootPart")
+	if root and root:IsA("BasePart") then
+		popup(root.Position + root.CFrame.LookVector * 5 + Vector3.new(0, 1.5, 0), text, color, size, duration)
+	end
+end
+
 function Progression.getLevel(player: Player): number
 	local data = stats[player]
 	return if data then data.level else 1
@@ -268,6 +331,7 @@ end
 -- Multiplicateur appliqué aux dégâts des coups du joueur.
 function Progression.damageMultiplier(player: Player): number
 	return 1 + settings.DAMAGE_PER_LEVEL * (Progression.getLevel(player) - 1) + effectOf(stats[player], "Damage")
+		+ Config.TRIBULATION.DAMAGE_BONUS * breakthroughs(stats[player])
 end
 
 -- Somme d'un effet de cultivation pour ce joueur (clés décrites dans Skills.luau).
@@ -390,10 +454,10 @@ local function onPlayerAdded(player: Player)
 
 	-- Niveau 1 en attendant la sauvegarde : le joueur peut déjà se battre,
 	-- et l'expérience gagnée pendant la lecture s'ajoute à celle retrouvée.
-	local data: Stats = { level = 1, xp = 0, skills = {}, canSave = false }
+	local data: Stats = { level = 1, xp = 0, skills = {}, canSave = false, breakthrough = 1 }
 	stats[player] = data
 	task.spawn(function()
-		local ok, level, xp, skills = load(player.UserId)
+		local ok, level, xp, skills, breakthrough = load(player.UserId)
 		if stats[player] ~= data then
 			return -- le joueur est parti pendant la lecture
 		end
@@ -405,6 +469,7 @@ local function onPlayerAdded(player: Player)
 		data.level = level
 		data.xp = xp
 		data.skills = skills
+		data.breakthrough = breakthrough
 		data.canSave = ok
 		publish(player)
 		applyHealth(player, true)

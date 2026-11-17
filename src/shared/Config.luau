@@ -35,6 +35,122 @@ Config.RIPOSTE_MULTIPLIER = 2
 -- Délai minimal entre deux coups de la même arme sur la même cible (secondes).
 Config.HIT_COOLDOWN = 0.35
 
+-- Souffle de la lame : un bruit de vent en boucle sur chaque arme tenue, dont le volume et la
+-- hauteur suivent la vitesse de la pointe (geste de la manette, rotation du poignet comprise).
+-- Le son vient de ProSoundEffects, « Spiraling Wind Data Tunnel Travelling 3 », choisi pour son
+-- souffle régulier, sans rafales ni sifflement.
+Config.BLADE_WIND = {
+	ENABLED = true,
+	SOUND = "rbxassetid://9119462210",
+	MIN_SPEED = 6, -- en dessous (studs/s), silence
+	MAX_SPEED = 45, -- à partir de là, volume et hauteur maximaux
+	VOLUME = 0.9, -- volume maximal
+	PITCH_MIN = 0.8, -- hauteur à la vitesse minimale : souffle grave et lent
+	PITCH_MAX = 1.7, -- hauteur à la vitesse maximale : sifflement aigu d'un coup rapide
+	RELEASE_TIME = 0.12, -- temps (s) pour que le souffle retombe quand la lame ralentit
+}
+
+-- Fourreau porté à la hanche gauche. On y range une arme à lame en la lâchant près de l'entrée
+-- (ou touche G, main droite), et on la dégaine en la saisissant par la poignée (ou touche G).
+Config.SCABBARD = {
+	ENABLED = true,
+	-- Armes qui entrent au fourreau. L'épée longue et les armes d'hast sont trop longues pour la hanche.
+	WEAPONS = { Dague = true, Epee = true, Sabre = true },
+	START_WEAPON = "Sabre", -- arme rangée au fourreau à chaque apparition (nil : fourreau vide)
+	-- Entrée du fourreau par rapport au HumanoidRootPart (studs) : à gauche, un peu sous la taille, devant.
+	MOUTH_OFFSET = Vector3.new(-1.05, -0.55, -0.45),
+	-- Direction de la lame rangée, de l'entrée vers la pointe : vers l'arrière et le bas, un peu en dehors.
+	DIRECTION = Vector3.new(0.15, -0.55, 1),
+	SHEATHE_RADIUS = 1.8, -- lâcher l'arme à cette distance de l'entrée la range au fourreau (studs)
+	KEYS = { Enum.KeyCode.G }, -- dégainer / rengainer avec la main droite (clavier)
+}
+
+-- Frappe de dégainé (居合, iai) : le premier coup porté juste après avoir tiré l'arme du fourreau,
+-- dans le même geste, est un coup critique. La traînée de la lame est dorée pendant la fenêtre.
+Config.IAI = {
+	ENABLED = true,
+	WINDOW = 0.8, -- secondes après le dégainé pendant lesquelles le coup compte comme iai
+	MIN_SPEED = 14, -- le geste doit être franc (studs/s)
+	MULTIPLIER = 2, -- dégâts ×2
+	-- Pendant la fenêtre, une lame de Qi dorée prolonge la pointe : le coup porte un peu plus loin.
+	REACH_BONUS = 1.5, -- studs au-delà de la pointe
+	TRAIL_COLOR = Color3.fromRGB(255, 205, 90),
+}
+
+-- Lancer d'armes : lâcher une arme pendant un geste rapide la lance. Elle file droit, traverse
+-- l'air sans heurter son lanceur, et blesse la première cible qu'elle touche.
+Config.THROW = {
+	ENABLED = true,
+	MIN_SPEED = 18, -- vitesse de la main au lâcher pour que ce soit un lancer (studs/s)
+	BOOST = 1.6, -- le lancer part plus vite que la main : un bras en VR lance mollement
+	MAX_SPEED = 110, -- vitesse maximale d'un lancer (studs/s)
+	FLIGHT_TIME = 2, -- au-delà, l'arme retombe comme une arme lâchée
+	DAMAGE_SCALE = 1.2, -- dégâts = dégâts de l'arme × ce facteur × (vitesse / REFERENCE_SPEED)
+}
+
+-- Rappel d'une arme lancée (technique de Qi, comme un « doigt d'épée ») : main vide, garder le
+-- grip serré un instant (ou touche T) ramène dans la main la dernière arme lancée.
+Config.RECALL = {
+	ENABLED = true,
+	QI_COST = 15,
+	RANGE = 80, -- distance maximale de l'arme (studs)
+	RETURN_TIME = 0.35, -- durée du vol de retour (s)
+	HOLD_TIME = 0.4, -- grip serré main vide pendant ce temps → rappel (VR)
+	KEYS = { Enum.KeyCode.T }, -- rappel dans la main droite (clavier)
+}
+
+-- Qinggong (轻功, l'art de la légèreté) : double saut, course sur les murs et vol plané, contre du Qi.
+-- Saut : Espace au clavier, bouton A de la manette droite en VR (la touche de saut de Roblox).
+--   - double saut : sauter une seconde fois en l'air ;
+--   - course sur un mur : en l'air, lancé assez vite le long d'un mur, on y court quelques instants ;
+--     sauter pendant la course repousse du mur, vers le haut et vers l'avant ;
+--   - vol plané : en l'air, garder le saut enfoncé en tombant ralentit la chute.
+-- Ces mouvements font bouger la vue sans que la tête bouge : en VR, ils peuvent donner la nausée.
+Config.QINGGONG = {
+	ENABLED = true,
+	DOUBLE_JUMP_QI = 8,
+	DOUBLE_JUMP_POWER = 55, -- vitesse verticale donnée par le double saut (studs/s)
+	WALL_RUN_QI_PER_SECOND = 6,
+	WALL_RUN_MAX_TIME = 1.4, -- secondes sur un même mur
+	WALL_RUN_MIN_SPEED = 10, -- vitesse horizontale minimale pour s'accrocher au mur (studs/s)
+	WALL_RUN_DISTANCE = 2.6, -- distance du mur, depuis le centre du corps (studs)
+	WALL_KICK = 38, -- élan horizontal du saut depuis le mur
+	WALL_KICK_UP = 48, -- élan vertical du saut depuis le mur
+	GLIDE_QI_PER_SECOND = 5,
+	GLIDE_FALL_SPEED = 8, -- vitesse de chute maximale en vol plané (studs/s)
+}
+
+-- Tribulation céleste (天劫) : atteindre le niveau d'un nouveau royaume ne suffit plus, il faut le
+-- consolider en survivant à la foudre du ciel. Elle commence entre deux vagues (les vagues attendent).
+-- Chaque éclair est annoncé par un cercle au sol : on l'évite, ou on l'absorbe en levant sa lame,
+-- pointe vers le ciel, au moment où il tombe (il rend alors du Qi au lieu de blesser).
+Config.TRIBULATION = {
+	ENABLED = true,
+	BOLTS = 6, -- éclairs pour le premier royaume…
+	BOLTS_PER_REALM = 2, -- … et autant de plus pour chaque royaume suivant
+	INTERVAL = 1.7, -- temps entre deux éclairs au début (s) ; il raccourcit jusqu'à MIN_INTERVAL
+	MIN_INTERVAL = 1,
+	WARNING = 1.2, -- temps entre l'apparition du cercle et l'éclair (s)
+	RADIUS = 4, -- rayon du cercle frappé (studs)
+	DAMAGE = 0.12, -- part des points de vie maximaux perdue par éclair reçu
+	ABSORB_QI = 15, -- Qi rendu par un éclair absorbé avec la lame
+	RETRY_DELAY = 15, -- après une mort pendant la tribulation, elle revient ce temps après la réapparition (s)
+	-- Récompense de chaque royaume consolidé, permanente.
+	DAMAGE_BONUS = 0.05, -- +5 % de dégâts
+	HEALTH_BONUS = 10, -- +10 points de vie maximaux
+}
+
+-- Coups à mains nues : une main vide frappe ce qu'elle touche en bougeant assez vite.
+-- Mêmes règles que les armes : dégâts = DAMAGE × (vitesse / REFERENCE_SPEED), bornés par
+-- MIN/MAX_DAMAGE_SCALE, avec les bonus de niveau, de cultivation et de riposte.
+Config.FIST = {
+	ENABLED = true,
+	DAMAGE = 8, -- dégâts de base (la dague en fait 12)
+	MIN_SPEED = 9, -- vitesse minimale de la main (studs/s) pour que le coup compte
+	RADIUS = 0.7, -- rayon de la zone de frappe autour de la main (studs)
+	REACH = 5, -- distance maximale entre la main et la cible acceptée par le serveur (studs)
+}
+
 -- Les joueurs peuvent-ils se blesser entre eux ?
 Config.PVP_ENABLED = true
 
@@ -47,21 +163,60 @@ Config.WEAPON_RETURN_TIME = 40
 -- Sons de la bibliothèque audio Roblox, publiés par ProSoundEffects (catalogue sous licence Roblox,
 -- utilisable dans tous les jeux). Le nom d'origine de chaque son est indiqué en commentaire.
 Config.Sounds = {
-	-- Arme contre arme ou contre du métal — « Shield Clang As Hit Metal Sword Hubcap 1 »
-	Metal = { Id = "rbxassetid://9119072660", Pitch = 1, Volume = 1 },
+	-- Chocs de lames : prises de la bibliothèque ProSoundEffects (publiée par Roblox), retenues après
+	-- analyse du son pour n'avoir qu'un seul impact, une attaque sèche (5 à 10 ms) et une résonance
+	-- métallique qui tinte. `Ids` donne plusieurs prises : chaque choc en tire une au hasard.
+	-- Les prises « Blade Hits Metal Rod » sont jouées plus bas (Pitch < 1) pour sonner comme
+	-- un sabre lourd plutôt que comme un couteau.
+	-- Arme contre arme ou contre du métal — « Blade Hits Metal Rod On Knife Impacts 2 / 8 / 10 »
+	Metal = {
+		Ids = { "rbxassetid://9113449244", "rbxassetid://9113449505", "rbxassetid://9113449585" },
+		Pitch = 0.8,
+		Volume = 0.9,
+	},
 	-- Arme contre le décor — « Wood Impacts 3 »
 	Thud = { Id = "rbxassetid://9120916241", Pitch = 1, Volume = 0.9 },
 	-- Coup qui touche une cible — « Boxing Hits 14 »
 	Flesh = { Id = "rbxassetid://9113573976", Pitch = 1, Volume = 1 },
-	-- Parade réussie — « Shield Clang As Hit Metal Sword Hubcap 2 »
-	Parry = { Id = "rbxassetid://9119072674", Pitch = 1.1, Volume = 1.2 },
-	-- Parade parfaite — le même tintement que Metal, plus aigu et plus fort
-	PerfectParry = { Id = "rbxassetid://9119072660", Pitch = 1.5, Volume = 1.5 },
+	Punch = { Id = "rbxassetid://9113573976", Pitch = 0.75, Volume = 0.8 }, -- coup de poing : le choc de chair, plus sourd
+	-- Parade réussie : lame contre lame — « Blade Hits Metal Rod On Knife Impacts 6 / 12 / 13 »
+	Parry = {
+		Ids = { "rbxassetid://9113449364", "rbxassetid://9113449672", "rbxassetid://9113449792" },
+		Pitch = 0.85,
+		Volume = 1.2,
+	},
+	-- Parade parfaite : un choc plus clair et plus fort, qui tinte — « Sword Impact 102 »,
+	-- « Blade Hits Metal Rod On Knife Impacts 1 / 9 »
+	PerfectParry = {
+		Ids = { "rbxassetid://9119747120", "rbxassetid://9113449143", "rbxassetid://9113449513" },
+		Pitch = 1,
+		Volume = 1.5,
+	},
 	-- Coup arrêté par un bouclier — « Wood Impact 18 »
 	Block = { Id = "rbxassetid://9120908635", Pitch = 0.9, Volume = 1.4 },
 	-- Dash d'un bandit — son de fente livré avec Roblox
 	Dash = { Id = "rbxasset://sounds/swordlunge.wav", Pitch = 0.75, Volume = 0.7 },
-	-- Arme saisie — « Sword Draw Clang Unsheathing Two Sabers 30 »
+	-- Tribulation céleste : coup de tonnerre de l'éclair — « Thunder Cracks Big Rumbling Blasts Booming 1 / 2 / 3 »
+	Thunder = {
+		Ids = { "rbxassetid://9120016037", "rbxassetid://9120016021", "rbxassetid://9120016256" },
+		Pitch = 1,
+		Volume = 1.6,
+	},
+	-- Crépitement du cercle qui annonce l'éclair — « Lightning Flashes Quick Electrical Bursts 1 »
+	ThunderWarning = { Id = "rbxassetid://9116272073", Pitch = 1, Volume = 0.8 },
+	-- Grondement lointain au début de la tribulation — « Thunder Distant Boom Thud Rapid Hits 20 »
+	ThunderRumble = { Id = "rbxassetid://9120018172", Pitch = 0.8, Volume = 1.2 },
+	-- Flèche d'archer en vol — « Arrow Out Whooshing Pass By 1 » (ProSoundEffects)
+	ArrowShot = { Id = "rbxassetid://9113166206", Pitch = 1, Volume = 1 },
+	-- Couteau lancé — « Whooshes Fast Wipes Quick Airy Slices 3 » (ProSoundEffects)
+	KnifeThrow = { Id = "rbxassetid://9120704978", Pitch = 1.1, Volume = 0.9 },
+	-- Arc bandé (l'archer va tirer) — « Wind Suck Backwards Swooshing Build Up 4 » (ProSoundEffects)
+	BowDraw = { Id = "rbxassetid://9120768247", Pitch = 1.3, Volume = 0.6 },
+	-- Frappe de dégainé réussie — « Swish Suck Reversed Metallic Swoosh Impact 1 » (ProSoundEffects)
+	Iai = { Id = "rbxassetid://9119707097", Pitch = 1, Volume = 1.3 },
+	-- Arme rengainée — « Sword Slide Into Scabbard 2 » (ProSoundEffects)
+	Sheathe = { Id = "rbxassetid://9119748925", Pitch = 1, Volume = 0.8 },
+	-- Arme saisie ou dégainée — « Sword Draw Clang Unsheathing Two Sabers 30 »
 	Grab = { Id = "rbxassetid://9119744718", Pitch = 1, Volume = 0.6 },
 	-- Passage de niveau — son livré avec Roblox
 	LevelUp = { Id = "rbxasset://sounds/victory.wav", Pitch = 1, Volume = 0.8 },

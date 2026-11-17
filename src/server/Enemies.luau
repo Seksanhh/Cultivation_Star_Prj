@@ -12,6 +12,8 @@ local Sfx = require(script.Parent:WaitForChild("Sfx"))
 local Weapons = require(script.Parent:WaitForChild("Weapons"))
 local Progression = require(script.Parent:WaitForChild("Progression"))
 local Ragdoll = require(script.Parent:WaitForChild("Ragdoll"))
+local Vfx = require(script.Parent:WaitForChild("Vfx"))
+local Projectiles = require(script.Parent:WaitForChild("Projectiles"))
 local Config = require(game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Config"))
 
 local Enemies = {}
@@ -145,6 +147,26 @@ type EnemyClass = {
 	DashRate: number, -- fréquence des dashs (1 = normale, 0 = jamais)
 	StrawHat: boolean,
 	Bodies: { string }?,
+	Ranged: RangedSpec?, -- tireur : garde ses distances et tire (archer, lanceur de couteaux)
+}
+
+-- Attaque à distance d'une classe de tireurs (projectiles : voir Projectiles.luau).
+--   MinRange, MaxRange : distances qu'il cherche à garder ; plus près que MeleeRange, il se bat au corps à corps
+--   Windup   : temps de visée (arc bandé, bras armé) : le signal pour se préparer
+--   Count, Interval : nombre de projectiles par salve et temps entre eux
+--   Spread   : dispersion (degrés)
+export type RangedSpec = {
+	Kind: Projectiles.Kind,
+	MinRange: number,
+	MaxRange: number,
+	MeleeRange: number,
+	Windup: number,
+	Cooldown: number,
+	Damage: number,
+	Speed: number,
+	Count: number,
+	Interval: number,
+	Spread: number,
 }
 
 local CLASSES: { EnemyClass } = {
@@ -206,6 +228,45 @@ local CLASSES: { EnemyClass } = {
 		StrawHat = false,
 		Bodies = { "Corps de base 1", "Corps de base 2" },
 	},
+	-- Archers : restent loin et tirent des flèches qu'on coupe en vol, qu'on bloque au bouclier
+	-- ou qu'on évite. L'arc bandé (pointe de la flèche orangée) annonce le tir. Au contact, une dague.
+	{
+		Id = "Archer", Name = "Archer", MinWave = 5, Weight = 1.5, WeightPerWave = 0.15,
+		Weapons = { { Weapon = "Dague", Weight = 1 } },
+		DualChance = 0,
+		HealthScale = 0.7, DamageScale = 1, AttackSpeedScale = 1, WalkSpeedScale = 1, XpScale = 1.1,
+		DashRate = 0.8,
+		StrawHat = true,
+		Ranged = {
+			Kind = "Arrow", MinRange = 16, MaxRange = 34, MeleeRange = 6,
+			Windup = 1.1, Cooldown = 2.8, Damage = 14, Speed = 60, Count = 1, Interval = 0, Spread = 1.5,
+		},
+	},
+	-- Maître d'armes : rare et redoutable, il pare les coups portés du côté de sa garde.
+	-- Jamais tiré au hasard (Weight = 0) : un seul par vague impaire à partir de la vague 7.
+	{
+		Id = "Maitre", Name = "Maître d'armes", MinWave = 7, Weight = 0, WeightPerWave = 0,
+		Weapons = { { Weapon = "Epee", Weight = 1 }, { Weapon = "Sabre", Weight = 1 } },
+		DualChance = 0,
+		HealthScale = 2.2, DamageScale = 1.2, AttackSpeedScale = 1.25, WalkSpeedScale = 1.05, XpScale = 3,
+		DashRate = 1.3,
+		StrawHat = false,
+		Bodies = { "Corps de base 1" },
+	},
+	-- Lanceurs de couteaux : à mi-distance, une salve de trois couteaux rapides. Agiles.
+	{
+		Id = "Lanceur", Name = "Lanceur", MinWave = 6, Weight = 1.2, WeightPerWave = 0.15,
+		Weapons = { { Weapon = "Dague", Weight = 1 } },
+		DualChance = 0,
+		HealthScale = 0.8, DamageScale = 1, AttackSpeedScale = 1.1, WalkSpeedScale = 1.1, XpScale = 1.1,
+		DashRate = 1.5,
+		StrawHat = false,
+		Bodies = { "Corps de base 1", "Corps de base 2" },
+		Ranged = {
+			Kind = "Knife", MinRange = 9, MaxRange = 20, MeleeRange = 5,
+			Windup = 0.55, Cooldown = 2.4, Damage = 8, Speed = 70, Count = 3, Interval = 0.18, Spread = 4,
+		},
+	},
 }
 
 local CLASS_BY_ID: { [string]: EnemyClass } = {}
@@ -242,6 +303,24 @@ local PERFECT_STAGGER_TIME = 0.6 -- temps pendant lequel le bandit reste sonné 
 local SHIELD_BLOCK_DISTANCE = 4.5 -- distance entre le bouclier et le sabre pour que le blocage compte
 local SHIELD_STAGGER_TIME = 0.5 -- un blocage au bouclier sonne moins longtemps qu'une parade
 local MAX_ENEMIES = 5
+
+-- Attaques coordonnées : deux bandits au contact du même joueur, de deux côtés différents,
+-- lancent leur coup ensemble. Leurs lames virent au rouge (au lieu de l'orange) pendant l'armement,
+-- plus long que d'habitude pour laisser le temps de lire la situation : parer l'un et esquiver
+-- l'autre, ou parer des deux mains.
+local COORD_FIRST_WAVE = 3 -- pas d'attaque coordonnée avant cette vague
+local COORD_GAP = { 7, 12 } -- secondes entre deux attaques coordonnées (tirage dans cet intervalle)
+local COORD_MIN_ANGLE = 70 -- écart minimal (degrés) entre les deux bandits, vus du joueur
+local COORD_WINDUP = 0.95 -- armement commun (s)
+local COORD_GLOW = Color3.fromRGB(255, 50, 50)
+
+-- Maître d'armes : il pare les coups qui arrivent du côté où il tient sa garde. Sa garde suit la
+-- lame du joueur avec un temps de retard (MASTER_GUARD_LAG) : une feinte rapide d'un côté à
+-- l'autre, un coup pendant qu'il attaque, ou une riposte après une parade parfaite passent.
+local MASTER_EVERY_ODD_WAVE_FROM = 7 -- un maître dans chaque vague impaire à partir de celle-ci
+local MASTER_GUARD_LAG = 0.35 -- temps (s) que met sa garde à suivre la lame du joueur
+local MASTER_GUARD_ANGLE = 50 -- un coup qui arrive à moins de cet angle de sa garde est paré (degrés)
+local MASTER_COUNTER_DELAY = 0.25 -- après une parade, il riposte aussitôt (s)
 local WAVE_PAUSE = 6
 
 -- Tenues du catalogue Roblox portées par les bandits. Chaque bandit en tire une de sa classe au hasard.
@@ -291,6 +370,17 @@ local OUTFITS: { Outfit } = {
 	{ Name = "Ombre", Class = "Assassin", Shirt = 11404365, Pants = 11404375, Hat = 1309911 },
 	-- « Classic Roblox OG Red Ninja » (haut et bas) + « Ninja Mask of Fire » (Roblox)
 	{ Name = "Assassin rouge", Class = "Assassin", Shirt = 7743066694, Pants = 9572296500, Hat = 124745856, MinLevel = 6 },
+
+	-- Archers : habits de toile des paysans et kimono gris des brigands, sous le chapeau de paille.
+	{ Name = "Archer en toile", Class = "Archer", Shirt = 4972468540, Pants = 4972371861 },
+	{ Name = "Archer brigand", Class = "Archer", Shirt = 7456262449, Pants = 7456298584 },
+
+	-- Maître d'armes : robe blanche de bretteur et casque de capitaine.
+	{ Name = "Maître en blanc", Class = "Maitre", Shirt = 6238966041, Pants = 6940703426, Hat = 8569514 },
+
+	-- Lanceurs de couteaux : tenues sombres d'assassin, masque de brigand.
+	{ Name = "Lanceur sombre", Class = "Lanceur", Shirt = 9572711986, Pants = 9572709674, Face = 93050572 },
+	{ Name = "Lanceur rouge", Class = "Lanceur", Shirt = 7743066694, Pants = 9572296500, Face = 93050572, MinLevel = 6 },
 }
 
 -- Corps réalistes (R15, membres arrondis et visage animé) sur lesquels on enfile les tenues.
@@ -509,6 +599,13 @@ type Enemy = {
 	damageScale: number, -- multiplicateur de dégâts de sa classe
 	dashRate: number, -- fréquence de ses dashs (voir DASH_* et DashRate des classes)
 	tick: ((Enemy) -> ())?, -- comportement propre (attaques spéciales du boss), appelé à chaque tour de boucle
+	ranged: RangedSpec?, -- tireur (archer, lanceur de couteaux)
+	bowTip: BasePart?, -- pointe de la flèche encochée, qui s'illumine quand l'archer vise
+	attacking: boolean?, -- en plein coup (armement, frappe, recul)
+	syncAt: number?, -- attaque coordonnée : instant où le coup doit partir
+	master: boolean?, -- maître d'armes : pare les coups du côté de sa garde
+	guard: Vector2?, -- direction de sa garde, vue de face (x vers sa droite, y vers le haut)
+	counterAt: number?, -- maître : riposte programmée après une parade
 }
 
 -- Une main armée et son arme.
@@ -825,12 +922,8 @@ local function describe(outfit: Outfit, shape: BodyShape?, withBrows: boolean): 
 					AccessoryType = Enum.AccessoryType.Eyebrow,
 					IsLayered = false,
 				})
-				-- SetAccessories exige un ordre pour chaque accessoire (sinon : « Input table missing Order! »).
-				for index, entry in accessories do
-					if entry.Order == nil then
-						entry.Order = index
-					end
-				end
+				-- Roblox affiche « Input table missing Order! » pour ces accessoires rigides : c'est sans effet.
+				-- Leur donner un ordre est refusé (« IsLayered is required to be true… »), donc on n'en met pas.
 				description:SetAccessories(accessories, true)
 			end)
 		end
@@ -1408,40 +1501,73 @@ local function pickAttack(hand: Hand): Attack
 	return ATTACKS[name]
 end
 
--- Effet visuel de la parade parfaite, au point de contact des lames :
--- une gerbe d'étincelles, une onde de choc qui se dilate et un éclair de lumière.
+-- Outils d'effets visuels partagés (textures du Creator Store, gerbes de particules) : voir Vfx.luau.
+local VFX_TEXTURES = Vfx.TEXTURES
+local vfxAnchor = Vfx.anchor
+local burst = Vfx.burst
+local grow = Vfx.grow
+local fadeAfter = Vfx.fadeAfter
+
+-- Effet visuel de la parade parfaite, au point de contact des lames : une gerbe d'étincelles
+-- étirées, un reflet en étoile, une onde de choc rayonnante, des rayons et un éclair de lumière.
 local function perfectParryVfx(position: Vector3)
 	local white = Color3.fromRGB(255, 255, 255)
 	local gold = Color3.fromRGB(255, 205, 90)
+	local anchor = vfxAnchor("ParadeParfaite", position)
 
-	local anchor = Instance.new("Part")
-	anchor.Name = "ParadeParfaite"
-	anchor.Size = Vector3.new(0.2, 0.2, 0.2)
-	anchor.Transparency = 1
-	anchor.Anchored = true
-	anchor.CanCollide = false
-	anchor.CanQuery = false
-	anchor.CanTouch = false
-	anchor.CFrame = CFrame.new(position)
-	anchor.Parent = folder
+	-- Étincelles projetées dans toutes les directions, étirées dans le sens de leur course.
+	burst(anchor, {
+		Texture = VFX_TEXTURES.Streak,
+		Count = 45,
+		Color = ColorSequence.new(white, gold),
+		Size = grow(1.6, 0.2),
+		Lifetime = NumberRange.new(0.25, 0.55),
+		Speed = NumberRange.new(20, 40),
+		Spread = Vector2.new(180, 180),
+		Orientation = Enum.ParticleOrientation.VelocityParallel,
+		Rotation = NumberRange.new(0),
+		Drag = 3,
+		Acceleration = Vector3.new(0, -35, 0),
+	})
+	-- Reflet en étoile au point de choc.
+	burst(anchor, {
+		Texture = VFX_TEXTURES.Glint,
+		Count = 1,
+		Color = ColorSequence.new(white),
+		Size = grow(7, 0),
+		Transparency = fadeAfter(0.3),
+		Lifetime = NumberRange.new(0.3),
+		Rotation = NumberRange.new(-20, 20),
+		ZOffset = 1,
+	})
+	-- Onde de choc : un anneau rayonnant qui se dilate en s'effaçant.
+	burst(anchor, {
+		Texture = VFX_TEXTURES.ShockRing,
+		Count = 1,
+		Color = ColorSequence.new(white, gold),
+		Size = grow(1, 15),
+		Transparency = fadeAfter(0.35),
+		Lifetime = NumberRange.new(0.4),
+	})
+	-- Rayons qui partent du centre.
+	burst(anchor, {
+		Texture = VFX_TEXTURES.Rays,
+		Count = 1,
+		Color = ColorSequence.new(gold),
+		Size = grow(2, 11),
+		Transparency = fadeAfter(0.2),
+		Lifetime = NumberRange.new(0.35),
+	})
+	-- Éclair de lumière bref.
+	burst(anchor, {
+		Texture = VFX_TEXTURES.Glow,
+		Count = 1,
+		Color = ColorSequence.new(gold),
+		Size = grow(6, 3),
+		Transparency = fadeAfter(0),
+		Lifetime = NumberRange.new(0.18),
+	})
 
-	-- Étincelles projetées dans toutes les directions, qui retombent en s'éteignant.
-	local sparks = Instance.new("ParticleEmitter")
-	sparks.Enabled = false
-	sparks.Rate = 0
-	sparks.Color = ColorSequence.new(white, gold)
-	sparks.LightEmission = 1
-	sparks.Size = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.7), NumberSequenceKeypoint.new(1, 0) })
-	sparks.Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(1, 1) })
-	sparks.Lifetime = NumberRange.new(0.25, 0.6)
-	sparks.Speed = NumberRange.new(18, 36)
-	sparks.SpreadAngle = Vector2.new(180, 180)
-	sparks.Drag = 3
-	sparks.Acceleration = Vector3.new(0, -35, 0)
-	sparks.Parent = anchor
-	sparks:Emit(50)
-
-	-- Éclair de lumière qui s'éteint vite.
 	local light = Instance.new("PointLight")
 	light.Color = gold
 	light.Range = 26
@@ -1449,43 +1575,13 @@ local function perfectParryVfx(position: Vector3)
 	light.Parent = anchor
 	TweenService:Create(light, TweenInfo.new(0.4), { Brightness = 0 }):Play()
 
-	-- Onde de choc : une sphère lumineuse qui se dilate en devenant transparente.
-	local wave = Instance.new("Part")
-	wave.Name = "OndeDeChoc"
-	wave.Shape = Enum.PartType.Ball
-	wave.Size = Vector3.new(1, 1, 1)
-	wave.Color = white
-	wave.Material = Enum.Material.Neon
-	wave.Transparency = 0.25
-	wave.Anchored = true
-	wave.CanCollide = false
-	wave.CanQuery = false
-	wave.CanTouch = false
-	wave.CastShadow = false
-	wave.CFrame = CFrame.new(position)
-	wave.Parent = folder
-	TweenService:Create(wave, TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-		Size = Vector3.new(13, 13, 13),
-		Transparency = 1,
-	}):Play()
-
-	Debris:AddItem(wave, 0.5)
 	Debris:AddItem(anchor, 1.2)
 end
 
--- Effet visuel du blocage au bouclier, sur le plateau : des éclats de bois qui volent
--- et un anneau d'impact plaqué contre le bouclier, tourné vers l'attaquant (`normal`).
+-- Effet visuel du blocage au bouclier, sur le plateau : des éclats de bois qui volent, un impact
+-- et un anneau plaqué contre le bouclier, tourné vers l'attaquant (`normal`).
 local function blockVfx(position: Vector3, normal: Vector3)
-	local anchor = Instance.new("Part")
-	anchor.Name = "Blocage"
-	anchor.Size = Vector3.new(0.2, 0.2, 0.2)
-	anchor.Transparency = 1
-	anchor.Anchored = true
-	anchor.CanCollide = false
-	anchor.CanQuery = false
-	anchor.CanTouch = false
-	anchor.CFrame = CFrame.new(position)
-	anchor.Parent = folder
+	local anchor = vfxAnchor("Blocage", position, normal)
 
 	-- Éclats de bois et poussière : plus gros, plus lents et plus lourds que des étincelles.
 	local chips = Instance.new("ParticleEmitter")
@@ -1505,63 +1601,72 @@ local function blockVfx(position: Vector3, normal: Vector3)
 	chips.Parent = anchor
 	chips:Emit(22)
 
-	-- Anneau d'impact : un disque clair qui s'élargit sur la face du bouclier en s'effaçant.
-	local ring = Instance.new("Part")
-	ring.Name = "AnneauImpact"
-	ring.Shape = Enum.PartType.Cylinder
-	ring.Size = Vector3.new(0.12, 1.5, 1.5)
-	ring.Color = Color3.fromRGB(255, 240, 210)
-	ring.Material = Enum.Material.Neon
-	ring.Transparency = 0.35
-	ring.Anchored = true
-	ring.CanCollide = false
-	ring.CanQuery = false
-	ring.CanTouch = false
-	ring.CastShadow = false
-	-- L'axe d'un cylindre est son axe X : on l'aligne sur la direction de l'attaquant.
-	local facing = if normal.Magnitude > 0.1 then normal.Unit else Vector3.zAxis
-	ring.CFrame = CFrame.lookAt(position, position + facing) * CFrame.Angles(0, math.rad(90), 0)
-	ring.Parent = folder
-	TweenService:Create(ring, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-		Size = Vector3.new(0.12, 7, 7),
-		Transparency = 1,
-	}):Play()
+	-- Impact en pointes, couleur de bois clair.
+	burst(anchor, {
+		Texture = VFX_TEXTURES.Burst,
+		Count = 1,
+		Color = ColorSequence.new(Color3.fromRGB(255, 235, 200)),
+		Size = grow(2, 5),
+		Transparency = fadeAfter(0.2),
+		Lifetime = NumberRange.new(0.2),
+		LightEmission = 0.6,
+	})
+	-- Anneau d'impact : il part du bouclier vers l'attaquant, à plat contre le plateau
+	-- (une particule « perpendiculaire à sa vitesse » se tient face à la direction où elle va).
+	burst(anchor, {
+		Texture = VFX_TEXTURES.Ring,
+		Count = 1,
+		Color = ColorSequence.new(Color3.fromRGB(255, 240, 210)),
+		Size = grow(0.8, 4),
+		Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.2), NumberSequenceKeypoint.new(1, 1) }),
+		Lifetime = NumberRange.new(0.25),
+		Speed = NumberRange.new(0.5),
+		Direction = Enum.NormalId.Front,
+		Orientation = Enum.ParticleOrientation.VelocityPerpendicular,
+		LightEmission = 0.5,
+	})
 
-	Debris:AddItem(ring, 0.4)
 	Debris:AddItem(anchor, 1)
 end
 
--- Effet visuel de la parade normale : une petite gerbe d'étincelles orangées et un bref éclat,
--- volontairement plus discret que celui de la parade parfaite (pas d'onde de choc).
+-- Effet visuel de la parade normale : une petite gerbe d'étincelles orangées étirées, un reflet
+-- et un bref éclat, volontairement plus discret que la parade parfaite (pas d'onde de choc).
 local function parryVfx(position: Vector3)
 	local yellow = Color3.fromRGB(255, 235, 150)
 	local orange = Color3.fromRGB(255, 140, 50)
+	local anchor = vfxAnchor("Parade", position)
 
-	local anchor = Instance.new("Part")
-	anchor.Name = "Parade"
-	anchor.Size = Vector3.new(0.2, 0.2, 0.2)
-	anchor.Transparency = 1
-	anchor.Anchored = true
-	anchor.CanCollide = false
-	anchor.CanQuery = false
-	anchor.CanTouch = false
-	anchor.CFrame = CFrame.new(position)
-	anchor.Parent = folder
-
-	local sparks = Instance.new("ParticleEmitter")
-	sparks.Enabled = false
-	sparks.Rate = 0
-	sparks.Color = ColorSequence.new(yellow, orange)
-	sparks.LightEmission = 1
-	sparks.Size = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.4), NumberSequenceKeypoint.new(1, 0) })
-	sparks.Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(1, 1) })
-	sparks.Lifetime = NumberRange.new(0.15, 0.35)
-	sparks.Speed = NumberRange.new(10, 22)
-	sparks.SpreadAngle = Vector2.new(180, 180)
-	sparks.Drag = 4
-	sparks.Acceleration = Vector3.new(0, -35, 0)
-	sparks.Parent = anchor
-	sparks:Emit(18)
+	burst(anchor, {
+		Texture = VFX_TEXTURES.Streak,
+		Count = 18,
+		Color = ColorSequence.new(yellow, orange),
+		Size = grow(1, 0.1),
+		Lifetime = NumberRange.new(0.15, 0.35),
+		Speed = NumberRange.new(12, 24),
+		Spread = Vector2.new(180, 180),
+		Orientation = Enum.ParticleOrientation.VelocityParallel,
+		Rotation = NumberRange.new(0),
+		Drag = 4,
+		Acceleration = Vector3.new(0, -35, 0),
+	})
+	burst(anchor, {
+		Texture = VFX_TEXTURES.Glint,
+		Count = 1,
+		Color = ColorSequence.new(yellow),
+		Size = grow(3.5, 0),
+		Transparency = fadeAfter(0.3),
+		Lifetime = NumberRange.new(0.2),
+		Rotation = NumberRange.new(-20, 20),
+		ZOffset = 1,
+	})
+	burst(anchor, {
+		Texture = VFX_TEXTURES.Burst,
+		Count = 1,
+		Color = ColorSequence.new(orange),
+		Size = grow(1.5, 3),
+		Transparency = fadeAfter(0.2),
+		Lifetime = NumberRange.new(0.14),
+	})
 
 	local light = Instance.new("PointLight")
 	light.Color = orange
@@ -1573,7 +1678,8 @@ local function parryVfx(position: Vector3)
 	Debris:AddItem(anchor, 0.8)
 end
 
-local function attack(enemy: Enemy, player: Player, targetHumanoid: Humanoid, targetRoot: BasePart)
+-- `syncWindup` / `glow` : armement imposé et couleur de lame d'une attaque coordonnée.
+local function attack(enemy: Enemy, player: Player, targetHumanoid: Humanoid, targetRoot: BasePart, syncWindup: number?, glow: Color3?)
 	-- Un bandit à deux armes frappe d'une main puis de l'autre.
 	local hand = enemy.hands[enemy.nextHand]
 	enemy.nextHand = enemy.nextHand % #enemy.hands + 1
@@ -1586,7 +1692,7 @@ local function attack(enemy: Enemy, player: Player, targetHumanoid: Humanoid, ta
 	-- La pose d'armement dépend du coup choisi : c'est elle qui annonce d'où il viendra.
 	local style = pickAttack(hand)
 	-- Plus le niveau est élevé, plus l'armement est court.
-	local windup = math.max(hand.loadout.Windup * style.WindupScale / enemy.attackSpeed, MIN_WINDUP)
+	local windup = syncWindup or math.max(hand.loadout.Windup * style.WindupScale / enemy.attackSpeed, MIN_WINDUP)
 	-- Sens du coup : +1 si le bras descend (fendant), -1 s'il monte (montant, fauchage).
 	local sweep = if style.Finish < style.Raise then 1 else -1
 
@@ -1600,7 +1706,7 @@ local function attack(enemy: Enemy, player: Player, targetHumanoid: Humanoid, ta
 		moveArm(hand, { angle = style.Raise, roll = style.Roll, push = 0.15, wrist = WRIST_COCK * sweep }, raiseTime)
 	end
 	enemy.model:SetAttribute("AttackLean", 0.6)
-	setGlow(hand, Color3.fromRGB(255, 140, 60))
+	setGlow(hand, glow or Color3.fromRGB(255, 140, 60))
 	task.wait(raiseTime)
 	if humanoid.Health <= 0 then
 		enemy.model:SetAttribute("AttackLean", 0)
@@ -1847,6 +1953,232 @@ local function incomingBlade(position: Vector3, range: number): Vector3?
 	return nil
 end
 
+---------------------------------------------------------------------------
+-- Bandits en jeu, garde du maître d'armes
+---------------------------------------------------------------------------
+
+local active: { [Model]: Enemy } = {}
+
+-- Pointe de la lame tenue par le joueur la plus proche du bandit, ou nil.
+local function playerBladeTip(player: Player, near: Vector3): Vector3?
+	local best: Vector3? = nil
+	for _, weapon in weaponsFolder:GetChildren() do
+		if weapon:GetAttribute("Holder") == player.UserId then
+			for _, part in weapon:GetChildren() do
+				if part:IsA("BasePart") and part:GetAttribute("IsBlade") then
+					local tip = part.CFrame * Vector3.new(0, part.Size.Y / 2, 0)
+					if not best or (tip - near).Magnitude < (best - near).Magnitude then
+						best = tip
+					end
+				end
+			end
+		end
+	end
+	return best
+end
+
+-- Direction d'un point vu de face par le bandit : x vers sa droite, y vers le haut, depuis sa poitrine.
+local function guardDirection(enemy: Enemy, point: Vector3): Vector2?
+	local relative = enemy.root.CFrame:PointToObjectSpace(point) - Vector3.new(0, 1.2 * enemy.model:GetScale(), 0)
+	local flat = Vector2.new(relative.X, relative.Y)
+	if flat.Magnitude < 0.2 then
+		return nil
+	end
+	return flat.Unit
+end
+
+-- La garde du maître suit la lame du joueur, avec retard ; son bras armé se place en conséquence.
+local function updateGuard(enemy: Enemy, player: Player, dt: number)
+	local tip = playerBladeTip(player, enemy.root.Position)
+	local wanted = tip and guardDirection(enemy, tip)
+	if not wanted then
+		return
+	end
+	local current = enemy.guard or wanted
+	local blend = 1 - math.exp(-dt / MASTER_GUARD_LAG)
+	local mixed = current:Lerp(wanted, blend)
+	enemy.guard = if mixed.Magnitude > 0.05 then mixed.Unit else wanted
+	local guard = enemy.guard :: Vector2
+	-- Garde haute : le bras monte ; garde de côté : le plan de la lame s'incline.
+	moveArm(enemy.hands[1], {
+		angle = 1.5 + guard.Y * 0.7,
+		roll = math.clamp(-guard.X * 1.3, -1.3, 1.3),
+		push = 0.1,
+		wrist = guard.Y * 0.3,
+	}, 0.12)
+end
+
+-- Appelé par le serveur avant d'appliquer le coup d'un joueur : le maître d'armes le pare-t-il ?
+-- `tip` : position de la pointe de la lame au moment du coup. `side` : la main qui frappe.
+function Enemies.tryParry(model: Model, player: Player, tip: Vector3, side: string?): boolean
+	local enemy = active[model]
+	if not enemy or not enemy.master or enemy.attacking or enemy.humanoid.Health <= 0 then
+		return false
+	end
+	if model:GetAttribute("Vulnerable") then
+		return false
+	end
+	local stunnedUntil = model:GetAttribute("StunnedUntil")
+	if typeof(stunnedUntil) == "number" and os.clock() < stunnedUntil then
+		return false
+	end
+	local incoming = guardDirection(enemy, tip)
+	local guard = enemy.guard
+	if not incoming or not guard or incoming:Dot(guard) < math.cos(math.rad(MASTER_GUARD_ANGLE)) then
+		return false
+	end
+	-- Paré : étincelles sur sa lame, choc dans la main du joueur, et riposte immédiate.
+	local contact = enemy.hands[1].blade.Position:Lerp(tip, 0.5)
+	parryVfx(contact)
+	Sfx.play("Parry", contact, 1)
+	if side then
+		feedbackRemote:FireClient(player, side, 0.9, 0.15, Config.CAMERA_SHAKE.PARRY)
+	end
+	enemy.counterAt = os.clock() + MASTER_COUNTER_DELAY
+	return true
+end
+
+---------------------------------------------------------------------------
+-- Tireurs (archers, lanceurs de couteaux)
+---------------------------------------------------------------------------
+
+-- Arc tenu devant la poitrine de l'archer, avec une flèche encochée qui n'apparaît que pendant
+-- la visée. Le corps du bandit se tourne vers sa cible, donc l'arc la vise aussi.
+-- Renvoie la pointe de la flèche encochée.
+local function attachBow(enemy: Enemy): BasePart?
+	local torso = enemy.model:FindFirstChild("UpperTorso") or enemy.model:FindFirstChild("Torso")
+	if not torso or not torso:IsA("BasePart") then
+		return nil
+	end
+	local scale = enemy.model:GetScale()
+	local base = torso.CFrame * CFrame.new(-0.35 * scale, 0.15 * scale, -1.2 * scale)
+	local radius = 1.7 * scale
+	local function bowPart(name: string, size: Vector3, localCFrame: CFrame, color: Color3, material: Enum.Material): Part
+		local part = Instance.new("Part")
+		part.Name = name
+		part.Size = size
+		part.Color = color
+		part.Material = material
+		part.CanCollide = false
+		part.CanQuery = false
+		part.CanTouch = false
+		part.Massless = true
+		part.CFrame = base * localCFrame
+		part.Parent = enemy.model
+		local weld = Instance.new("WeldConstraint")
+		weld.Part0 = torso
+		weld.Part1 = part
+		weld.Parent = part
+		return part
+	end
+	-- Les branches de l'arc : un arc de cercle dont le dos fait face à la cible (-Z).
+	local segments, spanDeg = 6, 110
+	local function arcPoint(angle: number): Vector3
+		return Vector3.new(0, radius * math.sin(angle), radius * (1 - math.cos(angle)) - radius * 0.35)
+	end
+	for i = 0, segments - 1 do
+		local a0 = math.rad(-spanDeg / 2 + spanDeg * i / segments)
+		local a1 = math.rad(-spanDeg / 2 + spanDeg * (i + 1) / segments)
+		local p0, p1 = arcPoint(a0), arcPoint(a1)
+		local tangent = (p1 - p0).Unit
+		local middle = (p0 + p1) / 2
+		local look = Vector3.xAxis:Cross(tangent)
+		bowPart("Arc", Vector3.new(0.14 * scale, (p1 - p0).Magnitude + 0.04, 0.16 * scale),
+			CFrame.fromMatrix(middle, Vector3.xAxis, tangent, -look), Color3.fromRGB(95, 55, 30), Enum.Material.Wood)
+	end
+	-- La corde, tendue entre les deux bouts de l'arc.
+	local top, bottom = arcPoint(math.rad(spanDeg / 2)), arcPoint(math.rad(-spanDeg / 2))
+	bowPart("Corde", Vector3.new(0.03, (top - bottom).Magnitude, 0.03), CFrame.new((top + bottom) / 2),
+		Color3.fromRGB(230, 225, 210), Enum.Material.Fabric)
+	-- Flèche encochée (cachée hors visée), pointe vers la cible.
+	local stringZ = top.Z
+	local length = 2.4 * scale
+	local shaft = bowPart("FlecheEncochee", Vector3.new(0.06, 0.06, length), CFrame.new(0, 0, stringZ - length / 2),
+		Color3.fromRGB(150, 110, 70), Enum.Material.Wood)
+	shaft.Transparency = 1
+	local tip = bowPart("PointeEncochee", Vector3.new(0.14, 0.05, 0.3), CFrame.new(0, 0, stringZ - length - 0.1),
+		Color3.fromRGB(205, 210, 220), Enum.Material.Metal)
+	tip.Transparency = 1
+	return tip
+end
+
+local function showNockedArrow(enemy: Enemy, visible: boolean)
+	local tip = enemy.bowTip
+	if not tip then
+		return
+	end
+	tip.Transparency = if visible then 0 else 1
+	tip.Material = if visible then Enum.Material.Neon else Enum.Material.Metal
+	tip.Color = if visible then Color3.fromRGB(255, 140, 60) else Color3.fromRGB(205, 210, 220)
+	local shaft = enemy.model:FindFirstChild("FlecheEncochee")
+	if shaft and shaft:IsA("BasePart") then
+		shaft.Transparency = if visible then 0 else 1
+	end
+end
+
+-- Point visé sur le joueur : le haut du buste (entre le bassin et la tête).
+local function aimPoint(targetRoot: BasePart): Vector3
+	local character = targetRoot.Parent
+	local head = character and character:FindFirstChild("Head")
+	if head and head:IsA("BasePart") then
+		return (targetRoot.Position + head.Position) / 2
+	end
+	return targetRoot.Position + Vector3.new(0, 1, 0)
+end
+
+-- Tir : visée annoncée (pointe orangée, bras armé), puis une flèche ou une salve de couteaux.
+local function rangedAttack(enemy: Enemy, targetRoot: BasePart)
+	local spec = enemy.ranged :: RangedSpec
+	local root, humanoid = enemy.root, enemy.humanoid
+	local hand = enemy.hands[1]
+	humanoid:MoveTo(root.Position)
+	faceToward(enemy, targetRoot.Position)
+	local windup = math.max(spec.Windup / enemy.attackSpeed, 0.35)
+	local levelScale = (1 + DAMAGE_PER_LEVEL * (enemy.level - 1)) * enemy.damageScale
+
+	if spec.Kind == "Arrow" then
+		showNockedArrow(enemy, true)
+		Sfx.play("BowDraw", root, 1)
+	else
+		-- Le bras armé part en arrière, la lame s'illumine.
+		moveArm(hand, { angle = 2.7, roll = 0.35, push = 0.15, wrist = WRIST_COCK }, windup)
+		setGlow(hand, Color3.fromRGB(255, 140, 60))
+	end
+	enemy.model:SetAttribute("AttackLean", 0.6)
+	task.wait(windup)
+
+	for shot = 1, spec.Count do
+		if humanoid.Health <= 0 or not targetRoot.Parent then
+			break
+		end
+		faceToward(enemy, targetRoot.Position)
+		local origin: Vector3
+		if spec.Kind == "Arrow" then
+			origin = if enemy.bowTip then enemy.bowTip.Position else root.Position + root.CFrame.LookVector * 2
+			showNockedArrow(enemy, false)
+		else
+			moveArm(hand, { angle = 1.2, push = -0.2, wrist = -WRIST_SNAP }, 0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+			task.wait(0.06)
+			origin = hand.blade.Position
+		end
+		local lead = targetRoot.AssemblyLinearVelocity * Vector3.new(1, 0, 1)
+		Projectiles.fire(spec.Kind, origin, aimPoint(targetRoot), lead, spec.Speed, spec.Damage * levelScale, spec.Spread)
+		enemy.model:SetAttribute("AttackLean", -0.6)
+		if shot < spec.Count then
+			task.wait(spec.Interval)
+			if spec.Kind == "Knife" then
+				moveArm(hand, { angle = 2.4, push = 0.1, wrist = WRIST_COCK }, spec.Interval * 0.6)
+			end
+		end
+	end
+
+	setGlow(hand, nil)
+	showNockedArrow(enemy, false)
+	task.wait(0.2)
+	enemy.model:SetAttribute("AttackLean", 0)
+	moveArm(hand, { angle = GUARD_ANGLE, roll = 0, push = 0, wrist = 0 }, GUARD_RETURN_TIME)
+end
+
 local function run(enemy: Enemy)
 	local humanoid, root = enemy.humanoid, enemy.root
 	local nextAttack = os.clock() + 1
@@ -1949,6 +2281,34 @@ local function run(enemy: Enemy)
 			end
 		end
 
+		-- Tireur : il garde ses distances, se décale entre deux tirs, et ne se bat au corps à corps
+		-- que si le joueur arrive tout près.
+		local spec = enemy.ranged
+		if spec and player and targetHumanoid and targetRoot and distance > spec.MeleeRange then
+			humanoid.WalkSpeed = enemy.walkSpeed
+			local away = (root.Position - targetRoot.Position) * Vector3.new(1, 0, 1)
+			local awayDirection = if away.Magnitude > 0.1 then away.Unit else -root.CFrame.LookVector
+			if distance > spec.MaxRange then
+				humanoid:MoveTo(targetRoot.Position + awayDirection * spec.MaxRange * 0.85)
+			elseif distance < spec.MinRange then
+				-- Trop près : il recule, parfois d'un bond.
+				if not tryDash(DASH_DODGE_CHANCE, awayDirection, DASH_DODGE_DISTANCE) then
+					humanoid:MoveTo(root.Position + awayDirection * 8)
+				end
+			elseif os.clock() >= nextAttack then
+				rangedAttack(enemy, targetRoot)
+				nextAttack = os.clock() + spec.Cooldown / enemy.attackSpeed * random:NextNumber(0.85, 1.2)
+			else
+				-- Entre deux tirs, il se décale de côté autour du joueur.
+				local side = if enemy.flank >= 0 then 1 else -1
+				local direction = CFrame.Angles(0, math.rad(CIRCLE_STEP) * side, 0):VectorToWorldSpace(awayDirection)
+				humanoid.WalkSpeed = enemy.walkSpeed * CIRCLE_SPEED
+				humanoid:MoveTo(targetRoot.Position + direction * distance)
+			end
+			lastPosition = root.Position
+			continue
+		end
+
 		if player and targetHumanoid and targetRoot and distance > enemy.loadout.AttackRange then
 			humanoid.WalkSpeed = enemy.walkSpeed
 			-- Il n'arrive pas en ligne droite : chaque bandit vise un point décalé autour du joueur,
@@ -2012,8 +2372,28 @@ local function run(enemy: Enemy)
 			else
 				humanoid:MoveTo(root.Position)
 			end
-			if player and targetHumanoid and targetRoot and os.clock() >= nextAttack then
-				attack(enemy, player, targetHumanoid, targetRoot)
+			-- Maître d'armes : entre deux coups, sa garde suit la lame du joueur.
+			if enemy.master and player and not enemy.syncAt and os.clock() < nextAttack and not enemy.counterAt then
+				updateGuard(enemy, player, dt)
+			end
+			-- Une attaque coordonnée attend son signal ; une riposte du maître part sans attendre.
+			local synced = enemy.syncAt ~= nil and os.clock() >= (enemy.syncAt :: number)
+			local countering = enemy.counterAt ~= nil and os.clock() >= (enemy.counterAt :: number)
+			if enemy.syncAt and os.clock() > (enemy.syncAt :: number) + 1 then
+				enemy.syncAt = nil -- signal manqué (il était occupé) : on oublie
+				synced = false
+			end
+			local ready = os.clock() >= nextAttack and not enemy.syncAt
+			if player and targetHumanoid and targetRoot and (synced or countering or ready) then
+				enemy.syncAt = nil
+				enemy.counterAt = nil
+				enemy.attacking = true
+				if synced then
+					attack(enemy, player, targetHumanoid, targetRoot, COORD_WINDUP, COORD_GLOW)
+				else
+					attack(enemy, player, targetHumanoid, targetRoot)
+				end
+				enemy.attacking = false
 				-- Avec deux armes, les coups s'enchaînent plus vite.
 				local cooldown = enemy.loadout.Cooldown / enemy.attackSpeed
 				if #enemy.hands > 1 then
@@ -2101,6 +2481,10 @@ local function pickClass(wave: number): EnemyClass
 		if wave < candidate.MinWave then
 			return 0
 		end
+		-- Une classe de poids nul (le maître d'armes) n'est jamais tirée au hasard.
+		if candidate.Weight <= 0 and candidate.WeightPerWave <= 0 then
+			return 0
+		end
 		-- Une classe déjà apparue garde toujours une petite chance d'être tirée.
 		return math.max(candidate.Weight + candidate.WeightPerWave * (wave - candidate.MinWave), 0.5)
 	end)
@@ -2166,15 +2550,26 @@ end
 local function spawnEnemy(position: Vector3, class: EnemyClass, wave: number, onGone: () -> ())
 	local weaponType = pickWeapon(class, wave)
 	local enemy = buildEnemy(position, pickLevel(wave), class, weaponType, pickOffhand(class, weaponType, wave))
+	enemy.ranged = class.Ranged
+	if class.Ranged and class.Ranged.Kind == "Arrow" then
+		enemy.bowTip = attachBow(enemy)
+	end
+	enemy.master = class.Id == "Maitre"
+	active[enemy.model] = enemy
 	local gone = false
 	local function finish()
 		if gone then
 			return
 		end
 		gone = true
+		active[enemy.model] = nil
 		-- Le joueur qui l'a blessé en dernier gagne de l'expérience (rien s'il est tombé dans le vide).
+		-- La vague doit toujours être prévenue, même si le calcul de l'expérience échoue.
 		if enemy.humanoid.Health <= 0 then
-			Progression.creditKill(enemy.model, enemy.xpLevels, enemy.root.Position)
+			local ok, problem = pcall(Progression.creditKill, enemy.model, enemy.xpLevels, enemy.root.Position)
+			if not ok then
+				warn("[Enemies] Expérience non attribuée : " .. tostring(problem))
+			end
 		end
 		onGone()
 		if enemy.model.Parent then
@@ -2353,14 +2748,20 @@ local function spawnBoss(wave: number, onGone: () -> ())
 		end
 	end
 
+	active[enemy.model] = enemy
 	local gone = false
 	local function finish()
 		if gone then
 			return
 		end
 		gone = true
+		active[enemy.model] = nil
+		-- La vague doit toujours être prévenue, même si le calcul de l'expérience échoue.
 		if enemy.humanoid.Health <= 0 then
-			Progression.creditKill(enemy.model, enemy.xpLevels, enemy.root.Position)
+			local ok, problem = pcall(Progression.creditKill, enemy.model, enemy.xpLevels, enemy.root.Position)
+			if not ok then
+				warn("[Enemies] Expérience non attribuée : " .. tostring(problem))
+			end
 		end
 		onGone()
 		if enemy.model.Parent then
@@ -2383,6 +2784,8 @@ function Enemies.init(weapons: Instance, feedback: RemoteEvent)
 	folder = Instance.new("Folder")
 	folder.Name = "Enemies"
 	folder.Parent = workspace
+	-- Les projectiles des bandits traversent les bandits eux-mêmes et les effets visuels.
+	Projectiles.init(weapons, feedback, { folder, Vfx.folder })
 	-- Les modèles 3D importés sont déjà dans la place : ils sont prêts tout de suite.
 	loadCustomModels()
 	-- Les tenues se chargent en arrière-plan : elles sont prêtes avant la première vague.
@@ -2390,6 +2793,80 @@ function Enemies.init(weapons: Instance, feedback: RemoteEvent)
 end
 
 -- Lance les vagues. Sans effet si elles tournent déjà.
+-- Pause des vagues (tribulation céleste) : la vague suivante attend la fin de la pause.
+local paused = false
+
+function Enemies.setPaused(value: boolean)
+	paused = value
+end
+
+-- Nombre de bandits encore en jeu.
+function Enemies.activeCount(): number
+	local count = 0
+	for _ in active do
+		count += 1
+	end
+	return count
+end
+
+-- Annonce en grand, vue par tous (vagues, boss, tribulation).
+function Enemies.announce(text: string)
+	announce(text)
+end
+
+-- Choisit, pour un joueur, deux bandits au contact de deux côtés différents et leur donne le même signal.
+local currentWave = 0
+
+local function coordinate()
+	if currentWave < COORD_FIRST_WAVE then
+		return
+	end
+	for _, player in Players:GetPlayers() do
+		local character = player.Character
+		local targetRoot = character and character:FindFirstChild("HumanoidRootPart")
+		if not targetRoot or not targetRoot:IsA("BasePart") then
+			continue
+		end
+		-- Candidats : bandits de mêlée, au contact de ce joueur, libres.
+		local candidates: { Enemy } = {}
+		for _, enemy in active do
+			if enemy.ranged or enemy.isBoss or enemy.attacking or enemy.syncAt or enemy.humanoid.Health <= 0 then
+				continue
+			end
+			if enemy.model:GetAttribute("Vulnerable") then
+				continue
+			end
+			local distance = (enemy.root.Position - targetRoot.Position).Magnitude
+			if distance <= enemy.loadout.AttackRange + 2 then
+				table.insert(candidates, enemy)
+			end
+		end
+		-- La paire la plus écartée autour du joueur.
+		local bestA, bestB, bestAngle = nil, nil, COORD_MIN_ANGLE
+		for i = 1, #candidates do
+			for j = i + 1, #candidates do
+				local a = (candidates[i].root.Position - targetRoot.Position) * Vector3.new(1, 0, 1)
+				local b = (candidates[j].root.Position - targetRoot.Position) * Vector3.new(1, 0, 1)
+				if a.Magnitude > 0.1 and b.Magnitude > 0.1 then
+					local angle = math.deg(math.acos(math.clamp(a.Unit:Dot(b.Unit), -1, 1)))
+					if angle >= bestAngle then
+						bestA, bestB, bestAngle = candidates[i], candidates[j], angle
+					end
+				end
+			end
+		end
+		if bestA and bestB then
+			local at = os.clock() + 0.25
+			for _, enemy in { bestA, bestB } do
+				enemy.syncAt = at
+				Sfx.play("Grab", enemy.root, 1) -- ils dégainent d'un même geste : le signal s'entend
+			end
+			return true
+		end
+	end
+	return false
+end
+
 function Enemies.start()
 	if started then
 		return
@@ -2397,9 +2874,23 @@ function Enemies.start()
 	started = true
 
 	task.spawn(function()
+		local nextCoordination = os.clock() + random:NextNumber(COORD_GAP[1], COORD_GAP[2])
+		while true do
+			task.wait(0.5)
+			if os.clock() >= nextCoordination and coordinate() then
+				nextCoordination = os.clock() + random:NextNumber(COORD_GAP[1], COORD_GAP[2])
+			end
+		end
+	end)
+
+	task.spawn(function()
 		local wave = 0
 		while true do
+			while paused do
+				task.wait(0.5)
+			end
 			wave += 1
+			currentWave = wave
 			-- Une classe qui fait son entrée dans cette vague ouvre la marche ; les autres bandits
 			-- sont tirés au hasard parmi les classes déjà apparues.
 			local newcomer: EnemyClass? = nil
@@ -2412,10 +2903,18 @@ function Enemies.start()
 			announce("Vague " .. wave .. (if newcomer then " · nouveaux ennemis : " .. newcomer.Name .. "s" else ""))
 			task.wait(2)
 
+			-- Une tribulation a pu commencer pendant l'annonce : les bandits attendent qu'elle finisse.
+			while paused do
+				task.wait(0.5)
+			end
 			local count = math.min(wave, MAX_ENEMIES)
 			local alive = count
+			-- Un maître d'armes dans chaque vague impaire à partir de la vague 7 (le dernier de la vague).
+			local withMaster = wave >= MASTER_EVERY_ODD_WAVE_FROM and wave % 2 == 1 and not (newcomer and newcomer.Id == "Maitre")
 			for i = 1, count do
-				local class = if i == 1 and newcomer then newcomer else pickClass(wave)
+				local class = if i == 1 and newcomer then newcomer
+					elseif i == count and withMaster then CLASS_BY_ID.Maitre
+					else pickClass(wave)
 				spawnEnemy(SPAWN_POINTS[i], class, wave, function()
 					alive -= 1
 				end)

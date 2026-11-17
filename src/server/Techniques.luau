@@ -526,6 +526,28 @@ function Techniques.use(player: Player, skillId: any, argument: any)
 	end
 end
 
+-- Outils réutilisés par les combos de calligraphie et la tribulation.
+Techniques.targetsNear = targetsNear
+Techniques.strike = strike
+Techniques.rootOf = rootOf
+
+-- Dépense `amount` points de Qi s'il y en a assez. Pour les actions hors de l'arbre (rappel d'arme…).
+function Techniques.spendQi(player: Player, amount: number): boolean
+	local current = qi[player] or 0
+	if current < amount then
+		return false
+	end
+	setQi(player, current - amount)
+	return true
+end
+
+-- Rend (ou retire, si négatif) du Qi, dans les limites de la réserve.
+function Techniques.addQi(player: Player, amount: number)
+	if qi[player] then
+		setQi(player, qi[player] + amount)
+	end
+end
+
 function Techniques.init(weapons: Instance, feedback: RemoteEvent, useRemote: RemoteEvent)
 	weaponsFolder = weapons
 	feedbackRemote = feedback

@@ -15,6 +15,9 @@ local remotes = ReplicatedStorage:WaitForChild("Remotes")
 local grabRemote = remotes:WaitForChild("Grab") :: RemoteEvent
 local releaseRemote = remotes:WaitForChild("Release") :: RemoteEvent
 local hitRemote = remotes:WaitForChild("Hit") :: RemoteEvent
+local punchRemote = remotes:WaitForChild("Punch") :: RemoteEvent
+local sheatheRemote = remotes:WaitForChild("Sheathe") :: RemoteEvent
+local recallRemote = remotes:WaitForChild("Recall") :: RemoteEvent
 
 local handsFolder = workspace:WaitForChild("VRHands")
 local weaponsFolder = workspace:WaitForChild("Weapons")
@@ -89,7 +92,9 @@ local function findNearestFreeWeapon(position: Vector3): (Model?, number)
 	local nearest: Model? = nil
 	local nearestDistance = Config.GRAB_RADIUS
 	for _, weapon in weaponsFolder:GetChildren() do
-		if weapon:IsA("Model") and not weapon:GetAttribute("Holder") then
+		-- Une arme au fourreau d'un autre joueur ne se saisit pas ; la sienne se dégaine.
+		local sheathedBy = weapon:GetAttribute("SheathedBy")
+		if weapon:IsA("Model") and not weapon:GetAttribute("Holder") and (sheathedBy == nil or sheathedBy == player.UserId) then
 			local distance = distanceToHandle(weapon, position)
 			if distance <= nearestDistance then
 				nearest = weapon
@@ -116,8 +121,11 @@ local function controllerCFrame(side: string): CFrame
 		local t = (os.clock() - swingStart) / SWING_TIME
 		if t >= 1 then
 			swingStart = nil
-		else
+		elseif getHeldWeapon("Right") then
 			base *= CFrame.Angles(math.rad(40 - 130 * t), 0, 0)
+		else
+			-- Main vide : coup de poing droit devant, aller-retour (environ 17 studs/s au plus vite).
+			base *= CFrame.new(0, 0, -1.5 * math.sin(math.pi * t))
 		end
 	end
 	return base
@@ -162,9 +170,43 @@ end
 -- Saisir / lâcher
 ---------------------------------------------------------------------------
 
-local function tryGrab(side: string)
-	if getHeldWeapon(side) then
+-- Vitesse de pointe de chaque main sur le dernier dixième de seconde : c'est l'élan d'un lancer.
+local THROW_WINDOW = 0.12
+local handPeaks: { [string]: { velocity: Vector3, time: number } } = {}
+local lastTargetPositions: { [string]: Vector3 } = {}
+
+local function trackHandVelocity(side: string, position: Vector3, dt: number)
+	local last = lastTargetPositions[side]
+	lastTargetPositions[side] = position
+	if not last or dt <= 0 then
 		return
+	end
+	local velocity = (position - last) / dt
+	if velocity.Magnitude > MAX_PLAUSIBLE_SPEED then
+		return -- téléportation de la vue (rotation par cran, réapparition) : pas un geste
+	end
+	local now = os.clock()
+	local peak = handPeaks[side]
+	if not peak or velocity.Magnitude >= peak.velocity.Magnitude or now - peak.time > THROW_WINDOW then
+		handPeaks[side] = { velocity = velocity, time = now }
+	end
+end
+
+local function throwVelocity(side: string): Vector3?
+	local peak = handPeaks[side]
+	if peak and os.clock() - peak.time <= THROW_WINDOW then
+		return peak.velocity
+	end
+	return nil
+end
+
+-- Rappel : main vide, grip serré sans rien à saisir ; au bout de RECALL.HOLD_TIME, l'arme lancée revient.
+local recallStart: { [string]: number? } = {}
+
+-- Renvoie true si la main a trouvé quelque chose à saisir (arme ou hampe d'une arme à deux mains).
+local function tryGrab(side: string): boolean
+	if getHeldWeapon(side) then
+		return true
 	end
 	local handPosition = controllerCFrame(side).Position
 	local nearest, nearestDistance = findNearestFreeWeapon(handPosition)
@@ -181,25 +223,29 @@ local function tryGrab(side: string)
 			local sign = if (handPosition - primaryPosition):Dot(bladeDirection) >= 0 then 1 else -1
 			support = { side = side, weapon = otherWeapon, sign = sign }
 			pulse(side, 0.3)
-			return
+			return true
 		end
 	end
 
 	if nearest then
 		grabRemote:FireServer(nearest, side)
 		pulse(side, 0.4)
+		return true
 	end
+	return false
 end
 
 local function letGo(side: string)
 	wantHold[side] = false
+	recallStart[side] = nil
 	if support and support.side == side then
 		support = nil
 		return
 	end
 	if getHeldWeapon(side) then
 		lastReleaseSent[side] = os.clock()
-		releaseRemote:FireServer(side)
+		-- La vitesse de la main part avec : lâchée en plein geste, l'arme est lancée.
+		releaseRemote:FireServer(side, throwVelocity(side))
 	end
 end
 
@@ -213,7 +259,9 @@ local function press(side: string, forceToggle: boolean)
 		return
 	end
 	wantHold[side] = true
-	tryGrab(side)
+	if not tryGrab(side) and Config.RECALL.ENABLED then
+		recallStart[side] = os.clock()
+	end
 end
 
 local GRIP_KEYS: { [Enum.KeyCode]: string } = {
@@ -230,7 +278,14 @@ UserInputService.InputBegan:Connect(function(input, processed)
 	if processed or VRService.VREnabled then
 		return
 	end
-	if input.KeyCode == Enum.KeyCode.E then
+	if table.find(Config.RECALL.KEYS, input.KeyCode) then
+		if not getHeldWeapon("Right") then
+			recallRemote:FireServer("Right")
+		end
+	elseif table.find(Config.SCABBARD.KEYS, input.KeyCode) then
+		-- Dégainer ou rengainer avec la main droite (le serveur choisit selon ce qu'elle tient).
+		sheatheRemote:FireServer()
+	elseif input.KeyCode == Enum.KeyCode.E then
 		press("Right", true)
 	elseif input.KeyCode == Enum.KeyCode.Q then
 		press("Left", true)
@@ -275,7 +330,18 @@ local function checkHits(weapon: Model, side: string, dt: number, rootVelocity: 
 				speed = if peak and now - peak.time <= PEAK_WINDOW then peak.speed else 0
 
 				if speed >= def.MinSpeed then
-					for _, hit in workspace:GetPartsInPart(part, overlapParams) do
+					local touched = workspace:GetPartsInPart(part, overlapParams)
+					-- Frappe de dégainé : tant que la fenêtre est ouverte (attribut posé par le serveur),
+					-- la zone de frappe se prolonge au-delà de la pointe.
+					local bonus = if weapon:GetAttribute("DrawnAt") then Config.IAI.REACH_BONUS else 0
+					if bonus > 0 then
+						local extension = part.CFrame * CFrame.new(0, part.Size.Y / 2 + bonus / 2, 0)
+						local size = Vector3.new(part.Size.X + 0.3, bonus, part.Size.Z + 0.3)
+						for _, extra in workspace:GetPartBoundsInBox(extension, size, overlapParams) do
+							table.insert(touched, extra)
+						end
+					end
+					for _, hit in touched do
 						local humanoid = findHumanoid(hit)
 						if humanoid and humanoid.Health > 0 then
 							local now = os.clock()
@@ -288,6 +354,48 @@ local function checkHits(weapon: Model, side: string, dt: number, rootVelocity: 
 						end
 					end
 				end
+			end
+		end
+	end
+end
+
+-- Coups à mains nues (Config.FIST) : une main vide qui passe assez vite à travers un corps frappe.
+-- Même mesure de vitesse que pour une lame (vitesse de pointe du geste, déplacement du joueur retiré).
+local punchHits: { [string]: { [Humanoid]: number } } = {
+	Left = setmetatable({}, { __mode = "k" }) :: any,
+	Right = setmetatable({}, { __mode = "k" }) :: any,
+}
+
+local lastFist: { [string]: { position: Vector3, time: number } } = {}
+
+local function checkPunch(hand: BasePart, side: string, dt: number, rootVelocity: Vector3)
+	local fist = Config.FIST
+	local position = hand.Position
+	local now = os.clock()
+	local last = lastFist[side]
+	lastFist[side] = { position = position, time = now }
+	-- Pas de mesure si la main tenait une arme juste avant : l'écart de position serait faussé.
+	if not last or dt <= 0 or now - last.time > 0.1 then
+		return
+	end
+	local speed = ((position - last.position) / dt - rootVelocity).Magnitude
+	local peak = peakSpeeds[hand]
+	if speed <= MAX_PLAUSIBLE_SPEED and (not peak or speed >= peak.speed or now - peak.time > PEAK_WINDOW) then
+		peak = { speed = speed, time = now }
+		peakSpeeds[hand] = peak
+	end
+	speed = if peak and now - peak.time <= PEAK_WINDOW then peak.speed else 0
+	if speed < fist.MIN_SPEED then
+		return
+	end
+	for _, hit in workspace:GetPartBoundsInRadius(position, fist.RADIUS, overlapParams) do
+		local humanoid = findHumanoid(hit)
+		if humanoid and humanoid.Health > 0 then
+			local previous = punchHits[side][humanoid]
+			if not previous or now - previous >= Config.HIT_COOLDOWN then
+				punchHits[side][humanoid] = now
+				punchRemote:FireServer(side, hit, speed)
+				pulse(side, math.clamp(speed / Config.REFERENCE_SPEED, 0.4, 1))
 			end
 		end
 	end
@@ -438,6 +546,15 @@ local function update(dt: number)
 				followExactly(hand, side, targets[side], dt)
 			end
 		end
+		trackHandVelocity(side, targets[side].Position, dt)
+
+		-- Grip serré main vide depuis assez longtemps : rappel de l'arme lancée.
+		local started = recallStart[side]
+		if started and wantHold[side] and not isHolding(side) and os.clock() - started >= Config.RECALL.HOLD_TIME then
+			recallStart[side] = nil
+			recallRemote:FireServer(side)
+			pulse(side, 0.5)
+		end
 	end
 
 	local character = player.Character
@@ -465,9 +582,15 @@ local function update(dt: number)
 			checkHits(weapon, side, dt, rootVelocity)
 		else
 			-- Contour blanc sur l'arme que cette main peut saisir.
-			local nearest = if support and support.side == side then nil else findNearestFreeWeapon(targets[side].Position)
+			local supporting = support ~= nil and support.side == side
+			local nearest = if supporting then nil else findNearestFreeWeapon(targets[side].Position)
 			highlight.Adornee = nearest
 			highlight.Enabled = nearest ~= nil
+			-- Main vide (et pas posée sur la hampe d'une arme à deux mains) : elle peut frapper.
+			local hand = hands:FindFirstChild(side)
+			if Config.FIST.ENABLED and not supporting and hand and hand:IsA("BasePart") then
+				checkPunch(hand, side, dt, rootVelocity)
+			end
 		end
 	end
 end
