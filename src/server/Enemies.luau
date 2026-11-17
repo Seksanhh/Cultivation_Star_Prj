@@ -11,6 +11,7 @@ local Collisions = require(script.Parent:WaitForChild("Collisions"))
 local Sfx = require(script.Parent:WaitForChild("Sfx"))
 local Weapons = require(script.Parent:WaitForChild("Weapons"))
 local Progression = require(script.Parent:WaitForChild("Progression"))
+local Ragdoll = require(script.Parent:WaitForChild("Ragdoll"))
 local Config = require(game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Config"))
 
 local Enemies = {}
@@ -118,12 +119,103 @@ local LOADOUTS: { [string]: Loadout } = {
 	},
 }
 
--- Ordre d'apparition des armes : chaque vague en ajoute une, puis elles sont tirées au hasard.
-local WEAPON_ORDER = { "Epee", "Dague", "Sabre", "Hache", "Lance", "EpeeLongue", "Baton", "Guandao" }
--- Bandits à deux armes : seuls ceux dont l'arme principale se tient à une main (dague, épée).
-local DUAL_CHANCE = 0.4 -- probabilité qu'un tel bandit porte une seconde arme
+-- Classes de bandits. Chacune a ses armes, ses tenues (table OUTFITS), ses corps et ses forces.
+--   MinWave       : première vague où elle apparaît (le premier ennemi de cette vague en est un)
+--   Weight        : poids au tirage dans sa première vague ; WeightPerWave l'ajuste à chaque vague
+--   Weapons       : armes possibles, avec leur poids au tirage et leur vague d'apparition
+--   DualChance    : probabilité de porter une seconde arme (armes à une main seulement), tirée dans Offhand
+--   *Scale        : multiplicateurs de points de vie, dégâts, vitesse d'attaque, vitesse de marche, expérience
+--   StrawHat      : chapeau de paille quand la tenue n'a ni masque ni casque
+--   Bodies        : noms des corps réalistes (BODY_SHAPES) qu'elle peut avoir ; tous si absent
+type WeaponChoice = { Weapon: string, Weight: number, MinWave: number? }
+type EnemyClass = {
+	Id: string,
+	Name: string,
+	MinWave: number,
+	Weight: number,
+	WeightPerWave: number,
+	Weapons: { WeaponChoice },
+	DualChance: number,
+	Offhand: { string }?,
+	HealthScale: number,
+	DamageScale: number,
+	AttackSpeedScale: number,
+	WalkSpeedScale: number,
+	XpScale: number,
+	DashRate: number, -- fréquence des dashs (1 = normale, 0 = jamais)
+	StrawHat: boolean,
+	Bodies: { string }?,
+}
+
+local CLASSES: { EnemyClass } = {
+	-- Paysans enrôlés de force : outils de la ferme, peu de vie, coups lents et faibles.
+	-- Nombreux au début, de plus en plus rares ensuite.
+	{
+		Id = "Fermier", Name = "Fermier", MinWave = 1, Weight = 4, WeightPerWave = -0.4,
+		Weapons = {
+			{ Weapon = "Baton", Weight = 3 },
+			{ Weapon = "Dague", Weight = 1 },
+			{ Weapon = "Hache", Weight = 2, MinWave = 3 },
+		},
+		DualChance = 0,
+		HealthScale = 0.8, DamageScale = 0.8, AttackSpeedScale = 0.9, WalkSpeedScale = 0.95, XpScale = 0.75,
+		DashRate = 0.35, -- un paysan ne sait guère esquiver
+		StrawHat = true,
+		Bodies = { "Homme", "Corps de base 2" },
+	},
+	-- Bretteurs et soldats déserteurs : épées et armes d'hast, parfois une seconde lame.
+	{
+		Id = "Combattant", Name = "Combattant", MinWave = 2, Weight = 3, WeightPerWave = 0.2,
+		Weapons = {
+			{ Weapon = "Epee", Weight = 3 },
+			{ Weapon = "Sabre", Weight = 3 },
+			{ Weapon = "Lance", Weight = 2, MinWave = 4 },
+			{ Weapon = "EpeeLongue", Weight = 2, MinWave = 5 },
+			{ Weapon = "Guandao", Weight = 1, MinWave = 7 },
+		},
+		DualChance = 0.4,
+		Offhand = { "Epee", "Sabre" },
+		HealthScale = 1, DamageScale = 1, AttackSpeedScale = 1, WalkSpeedScale = 1, XpScale = 1,
+		DashRate = 1,
+		StrawHat = true,
+	},
+	-- Moines guerriers : le bâton avant tout, résistants et vifs, mais frappent moins fort. Crâne rasé.
+	{
+		Id = "Moine", Name = "Moine", MinWave = 3, Weight = 2, WeightPerWave = 0.15,
+		Weapons = {
+			{ Weapon = "Baton", Weight = 4 },
+			{ Weapon = "Lance", Weight = 1, MinWave = 5 },
+		},
+		DualChance = 0,
+		HealthScale = 1.15, DamageScale = 0.9, AttackSpeedScale = 1.15, WalkSpeedScale = 1.1, XpScale = 1.2,
+		DashRate = 1.2,
+		StrawHat = false,
+		Bodies = { "Corps de base 1", "Corps de base 2" },
+	},
+	-- Assassins masqués : dagues, souvent une dans chaque main. Fragiles, mais très rapides.
+	{
+		Id = "Assassin", Name = "Assassin", MinWave = 4, Weight = 1.5, WeightPerWave = 0.15,
+		Weapons = {
+			{ Weapon = "Dague", Weight = 3 },
+			{ Weapon = "Sabre", Weight = 1 },
+		},
+		DualChance = 0.75,
+		Offhand = { "Dague" },
+		HealthScale = 0.75, DamageScale = 1.1, AttackSpeedScale = 1.25, WalkSpeedScale = 1.2, XpScale = 1.1,
+		DashRate = 2, -- toujours en mouvement
+		StrawHat = false,
+		Bodies = { "Corps de base 1", "Corps de base 2" },
+	},
+}
+
+local CLASS_BY_ID: { [string]: EnemyClass } = {}
+for _, class in CLASSES do
+	CLASS_BY_ID[class.Id] = class
+end
+local BOSS_CLASS = "Combattant" -- le boss porte la tenue la plus prestigieuse de cette classe
+
+-- Bandits à deux armes : seuls ceux dont l'arme principale se tient à une main.
 local DUAL_FIRST_WAVE = 2 -- pas de bandit à deux armes avant cette vague
-local OFFHAND_WEAPONS = { "Dague", "Epee", "Sabre" } -- armes possibles dans la main gauche
 local DUAL_COOLDOWN_SCALE = 0.65 -- multiplicateur du temps entre deux attaques
 -- Niveaux : chaque bandit a un niveau, affiché au-dessus de sa tête, qui fixe ses points de vie
 -- et sa vitesse d'attaque. Le niveau suit le numéro de la vague, à LEVEL_SPREAD près.
@@ -134,6 +226,9 @@ local HEALTH_PER_LEVEL = 0.15 -- +15 % de points de vie par niveau (niveau 10 : 
 -- +7 % de vitesse d'attaque par niveau (niveau 10 : ×1,63). Elle raccourcit le temps d'armement
 -- et le temps entre deux attaques : un bandit de haut niveau laisse moins de temps pour parer.
 local ATTACK_SPEED_PER_LEVEL = 0.07
+-- Vitesse d'attaque de départ des bandits ordinaires (le boss garde la sienne) : ×1,3 = armement
+-- et temps entre deux attaques environ 23 % plus courts. Se cumule avec le bonus de niveau.
+local BASE_ATTACK_SPEED = 1.3
 local DAMAGE_PER_LEVEL = 0.1 -- +10 % de dégâts par niveau (niveau 10 : ×1,9)
 local MIN_WINDUP = 0.25 -- temps d'armement minimal (s), pour que le coup reste lisible
 local PARRY_DISTANCE = 3.5 -- distance entre les deux lames pour que la parade compte
@@ -143,15 +238,16 @@ local STAGGER_TIME = 1.2 -- temps pendant lequel un bandit paré reste sonné
 local PERFECT_WINDOW = 0.15 -- durée (s) avant le coup pendant laquelle la lame du bandit devient blanche
 local PERFECT_PARRY_SPEED = 12 -- vitesse minimale (studs/s) de la lame du joueur pendant cette fenêtre
 local PERFECT_PARRY_DAMAGE = 20 -- dégâts renvoyés au bandit
-local PERFECT_STAGGER_TIME = 2.5 -- temps pendant lequel le bandit reste sonné et vulnérable
+local PERFECT_STAGGER_TIME = 0.6 -- temps pendant lequel le bandit reste sonné et vulnérable
 local SHIELD_BLOCK_DISTANCE = 4.5 -- distance entre le bouclier et le sabre pour que le blocage compte
 local SHIELD_STAGGER_TIME = 0.5 -- un blocage au bouclier sonne moins longtemps qu'une parade
 local MAX_ENEMIES = 5
 local WAVE_PAUSE = 6
 
--- Tenues du catalogue Roblox portées par les bandits. Chaque bandit en tire une au hasard.
+-- Tenues du catalogue Roblox portées par les bandits. Chaque bandit en tire une de sa classe au hasard.
+--   Class        : classe qui porte cette tenue (voir CLASSES)
 --   Shirt, Pants : numéros des vêtements (le nombre dans l'adresse de la page du catalogue)
---   Hat          : couvre-chef du catalogue ; sans lui, le bandit garde son chapeau de paille
+--   Hat          : couvre-chef du catalogue ; sans lui, le bandit garde le chapeau de paille si sa classe en porte
 --   Face         : accessoire de visage
 --   MinLevel     : niveau minimal du bandit pour porter cette tenue
 -- Mettre USE_CATALOG_OUTFITS à false pour revenir aux bandits en blocs.
@@ -159,6 +255,7 @@ local USE_CATALOG_OUTFITS = true
 
 type Outfit = {
 	Name: string,
+	Class: string,
 	Shirt: number,
 	Pants: number,
 	Hat: number?,
@@ -167,18 +264,81 @@ type Outfit = {
 }
 
 local OUTFITS: { Outfit } = {
+	-- Fermiers : habits de paysan (haut « + » et bas « - » d'un même créateur), sous le chapeau de paille.
+	{ Name = "Paysan", Class = "Fermier", Shirt = 9313401861, Pants = 9313405331 }, -- « Paysan » (Winterhall)
+	{ Name = "Paysan en toile", Class = "Fermier", Shirt = 4972468540, Pants = 4972371861 }, -- « Vêtements de paysan »
+	{ Name = "Paysan rapiécé", Class = "Fermier", Shirt = 4646368942, Pants = 4646372722 }, -- « Paysan » (Blotnik)
+
+	-- Combattants.
 	-- « Black Samurai Robes with armored sleeves » + « Samurai (Shogun) Pants »
-	{ Name = "Rônin noir", Shirt = 6523934448, Pants = 5666905795 },
+	{ Name = "Rônin noir", Class = "Combattant", Shirt = 6523934448, Pants = 5666905795 },
 	-- « White Samurai Robe » (haut et bas)
-	{ Name = "Robe blanche", Shirt = 6238966041, Pants = 6940703426 },
+	{ Name = "Robe blanche", Class = "Combattant", Shirt = 6238966041, Pants = 6940703426 },
 	-- « Foggy White & Grey Kimono » (haut et bas) + « Deluxe Bandit Mask » (Roblox)
-	{ Name = "Brigand masqué", Shirt = 7456262449, Pants = 7456298584, Face = 93050572 },
-	-- « Ninja Suit of Darkness » + « Ninja Pants of Darkness » + « Ninja Mask of Shadows » (Roblox)
-	{ Name = "Ombre", Shirt = 11404365, Pants = 11404375, Hat = 1309911, MinLevel = 2 },
-	-- « Classic Roblox OG Red Ninja » (haut et bas) + « Ninja Mask of Fire » (Roblox)
-	{ Name = "Assassin rouge", Shirt = 7743066694, Pants = 9572296500, Hat = 124745856, MinLevel = 4 },
+	{ Name = "Brigand masqué", Class = "Combattant", Shirt = 7456262449, Pants = 7456298584, Face = 93050572 },
 	-- « Classic Shadow Black Ninja Old Samurai Assassin » (haut et bas) + « Samurai Helmet » (Roblox)
-	{ Name = "Capitaine", Shirt = 9572711986, Pants = 9572709674, Hat = 8569514, MinLevel = 6 },
+	{ Name = "Capitaine", Class = "Combattant", Shirt = 9572711986, Pants = 9572709674, Hat = 8569514, MinLevel = 6 },
+
+	-- Moines : robes « Moine Shaolin » (Dimbo's Apparel), la rouge pour les plus aguerris.
+	{ Name = "Moine safran", Class = "Moine", Shirt = 120586814747060, Pants = 128745458661099 },
+	{ Name = "Moine brun", Class = "Moine", Shirt = 111462365570728, Pants = 82924987994787 },
+	{ Name = "Moine gris", Class = "Moine", Shirt = 128076986857660, Pants = 86720590692463 },
+	{ Name = "Moine rouge", Class = "Moine", Shirt = 113215206048423, Pants = 81801145364561, MinLevel = 6 },
+
+	-- Assassins.
+	-- « Ninja Suit of Darkness » + « Ninja Pants of Darkness » + « Ninja Mask of Shadows » (Roblox)
+	{ Name = "Ombre", Class = "Assassin", Shirt = 11404365, Pants = 11404375, Hat = 1309911 },
+	-- « Classic Roblox OG Red Ninja » (haut et bas) + « Ninja Mask of Fire » (Roblox)
+	{ Name = "Assassin rouge", Class = "Assassin", Shirt = 7743066694, Pants = 9572296500, Hat = 124745856, MinLevel = 6 },
+}
+
+-- Corps réalistes (R15, membres arrondis et visage animé) sur lesquels on enfile les tenues.
+-- Tous publiés par Roblox lui-même : ils ne disparaîtront pas du catalogue. Les numéros sont ceux
+-- des pièces du corps (pas du lot), relevés sur la page de chaque lot du catalogue.
+-- Chaque tenue est préparée sur chaque corps : un même habit peut apparaître sur deux silhouettes.
+-- Mettre USE_REALISTIC_BODIES à false pour revenir aux personnages R6 (carrés).
+local USE_REALISTIC_BODIES = true
+
+type BodyShape = {
+	Name: string,
+	Head: number,
+	Torso: number,
+	LeftArm: number,
+	RightArm: number,
+	LeftLeg: number,
+	RightLeg: number,
+	Mood: number?, -- animation du visage
+	Eyebrows: number?,
+	BodyTypeScale: number?, -- 0 = proportions classiques, 1 = proportions réalistes
+	ProportionScale: number?, -- 0 = carrure large, 1 = élancée
+	HeightScale: number?,
+	WidthScale: number?,
+}
+
+-- Visage d'homme animé (lot « Visage d'homme », Roblox).
+local MAN_HEAD, MAN_MOOD, MAN_BROWS = 10725826963, 10725833199, 10725837187
+
+local BODY_SHAPES: { BodyShape } = {
+	-- Lot « Homme » (Roblox, gratuit)
+	{
+		Name = "Homme",
+		Head = MAN_HEAD, Mood = MAN_MOOD, Eyebrows = MAN_BROWS,
+		Torso = 86500008, LeftArm = 86500054, RightArm = 86500036, LeftLeg = 86500064, RightLeg = 86500078,
+	},
+	-- Lot « Corps de base - Charlie » (Roblox, gratuit), avec le visage d'homme
+	{
+		Name = "Corps de base 1",
+		Head = MAN_HEAD, Mood = MAN_MOOD, Eyebrows = MAN_BROWS,
+		Torso = 11572083496, LeftArm = 11572074613, RightArm = 11572079320, LeftLeg = 11572076845, RightLeg = 11572081357,
+		BodyTypeScale = 1, ProportionScale = 0,
+	},
+	-- Lot « Corps de base - Parker » (Roblox, gratuit), avec le visage d'homme
+	{
+		Name = "Corps de base 2",
+		Head = MAN_HEAD, Mood = MAN_MOOD, Eyebrows = MAN_BROWS,
+		Torso = 11584241181, LeftArm = 11584231502, RightArm = 11584238141, LeftLeg = 11584235843, RightLeg = 11584239464,
+		BodyTypeScale = 1, ProportionScale = 0, WidthScale = 1.05,
+	},
 }
 
 -- Gestes d'attaque.
@@ -194,6 +354,33 @@ local TURN_RESPONSIVENESS = 14 -- souplesse du pivotement (plus bas = plus lent 
 local FLANK_ANGLE = 40 -- angle maximal (degrés) dont un bandit contourne le joueur en approchant
 local CIRCLE_STEP = 25 -- entre deux attaques, il vise un point décalé de cet angle autour du joueur
 local CIRCLE_SPEED = 0.4 -- part de sa vitesse de marche pendant qu'il tourne autour du joueur
+
+-- Dash : une brusque accélération au ras du sol, sur quelques mètres. Trois usages :
+--   ruée      : il comble d'un coup la distance qui le sépare du joueur ;
+--   esquive   : touché, il bondit en arrière (en biais) pour reprendre ses distances ;
+--   pas chassé : en tournant autour du joueur, il fait un brusque écart de côté.
+-- Les chances sont tirées à chaque tour de boucle (0,12 s), multipliées par la fréquence de la classe.
+local DASH_SPEED = 55 -- studs/s
+local DASH_DISTANCE = 12 -- distance maximale d'un dash (studs)
+local DASH_COOLDOWN = 3.5 -- délai minimal entre deux dashs (secondes, divisé par la fréquence de la classe)
+local DASH_CLOSE_MIN_GAP = 7 -- ruée : seulement s'il est au moins à cette distance au-delà de sa portée
+local DASH_CLOSE_MAX_DISTANCE = 26 -- ruée : pas plus loin que cela du joueur
+local DASH_CLOSE_CHANCE = 0.1
+local DASH_SIDE_CHANCE = 0.04
+local DASH_DODGE_CHANCE = 0.4 -- juste après avoir été touché
+local DASH_SIDE_DISTANCE = 7
+-- Dashs latéraux :
+--   esquive réflexe : une lame de joueur arrive vite tout près de lui, il s'écarte du côté opposé ;
+--   zigzag          : en approchant, il fait des écarts de côté (en avançant un peu) pour être
+--                     plus difficile à cueillir.
+local DASH_EVADE_CHANCE = 0.3
+local DASH_EVADE_BLADE_SPEED = 18 -- vitesse de lame (studs/s) qu'il perçoit comme une menace
+local DASH_EVADE_RANGE = 8 -- distance de la lame à son corps (studs)
+local DASH_ZIGZAG_CHANCE = 0.06
+local DASH_ZIGZAG_DISTANCE = 8
+local DASH_ZIGZAG_FORWARD = 0.5 -- part d'avancée dans un écart de zigzag (0 = purement latéral)
+local DASH_DODGE_DISTANCE = 9
+local BOSS_DASH_RATE = 0.5
 
 -- Boss : un chef de guerre géant qui clôt chaque cycle de vagues.
 local BOSS_EVERY = 5 -- un boss après les vagues 5, 10, 15...
@@ -300,9 +487,9 @@ type Enemy = {
 	flank: number, -- de -1 à 1 : de quel côté et à quel point il contourne le joueur
 	isBoss: boolean,
 	xpLevels: number, -- l'expérience donnée vaut celle d'un bandit de ce niveau
+	damageScale: number, -- multiplicateur de dégâts de sa classe
+	dashRate: number, -- fréquence de ses dashs (voir DASH_* et DashRate des classes)
 	tick: ((Enemy) -> ())?, -- comportement propre (attaques spéciales du boss), appelé à chaque tour de boucle
-	leftHip: Motor6D,
-	rightHip: Motor6D,
 }
 
 -- Une main armée et son arme.
@@ -312,8 +499,12 @@ type Hand = {
 	arm: Motor6D,
 	wrist: Weld, -- soudure du manche dans la main : la faire tourner oriente la lame
 	gripOffset: number,
-	blade: Part, -- la pièce tranchante de l'arme
-	bladeColor: Color3,
+	-- Corps R15 : position de l'épaule dans le haut du buste (taille 1). nil pour un corps R6.
+	pivot: Vector3?,
+	gripY: number, -- hauteur du manche par rapport au centre de la pièce qui le tient (bras R6 ou main R15)
+	blade: Part, -- la pièce tranchante de l'arme (zone de frappe invisible)
+	-- Acier visible de la lame, avec son aspect d'origine : il s'illumine pendant les attaques.
+	glow: { [BasePart]: { color: Color3, material: Enum.Material } },
 	loadout: Loadout, -- dégâts, portée et coups de cette arme
 	lastAttack: string?,
 	pose: ArmPose, -- pose actuelle du bras
@@ -344,10 +535,19 @@ end
 
 -- Position du manche dans la main. À `wrist` = 0 la lame pointe devant le bras pendant ;
 -- une valeur négative la rabat vers l'axe du bras (pour pointer en avant, bras tendu).
-local function gripC0(gripOffset: number, wrist: number, scale: number?): CFrame
+-- `gripY` : hauteur de la prise par rapport au centre de la pièce tenue (-0,9 dans un bras R6).
+local R6_GRIP_Y = -0.9
+local function gripC0(gripOffset: number, wrist: number, scale: number?, gripY: number?): CFrame
 	local s = scale or 1
-	return CFrame.new(0, -0.9 * s, 0) * CFrame.Angles(-QUARTER + wrist, 0, 0) * CFrame.new(0, -gripOffset * s, 0)
+	return CFrame.new(0, (gripY or R6_GRIP_Y) * s, 0) * CFrame.Angles(-QUARTER + wrist, 0, 0) * CFrame.new(0, -gripOffset * s, 0)
 end
+
+-- Attache côté bras de l'épaule R6, droite puis gauche. Les gestes sont calculés pour un corps R6 ;
+-- pour un corps R15, on en tire l'orientation du bras par rapport au buste, que l'on rapporte à son épaule.
+local R6_ARM_C1_INVERSE = {
+	[1] = (CFrame.new(-0.5, 0.5, 0) * CFrame.Angles(0, QUARTER, 0)):Inverse(),
+	[-1] = (CFrame.new(0.5, 0.5, 0) * CFrame.Angles(0, -QUARTER, 0)):Inverse(),
+}
 
 ---------------------------------------------------------------------------
 -- Gestes du bras armé
@@ -364,8 +564,25 @@ local movingHands: { [Hand]: boolean } = {}
 local function applyPose(hand: Hand)
 	local pose = hand.pose
 	-- Le moteur de l'épaule gauche tourne dans l'autre sens : `side` rétablit le signe.
-	hand.arm.C0 = shoulderC0(hand.side, pose.roll, pose.push, hand.scale) * CFrame.Angles(0, 0, hand.side * pose.angle)
-	hand.wrist.C0 = gripC0(hand.gripOffset, pose.wrist, hand.scale)
+	local c0 = shoulderC0(hand.side, pose.roll, pose.push, hand.scale) * CFrame.Angles(0, 0, hand.side * pose.angle)
+	local pivot = hand.pivot
+	if pivot then
+		-- Corps R15 : même orientation du bras que le geste R6, autour de la vraie épaule.
+		-- Le bras R15 au repos pend le long du buste sans rotation, comme le bras R6 à angle nul.
+		local s = hand.scale
+		local rotation = (c0 * R6_ARM_C1_INVERSE[hand.side]).Rotation
+		c0 = CFrame.new(pivot * s + Vector3.new(0, 0, pose.push * s)) * rotation * hand.arm.C1.Rotation
+	end
+	hand.arm.C0 = c0
+	hand.wrist.C0 = gripC0(hand.gripOffset, pose.wrist, hand.scale, hand.gripY)
+end
+
+-- Illumine l'acier de la lame (couleur donnée), ou lui rend son aspect d'origine (nil).
+local function setGlow(hand: Hand, color: Color3?)
+	for part, original in hand.glow do
+		part.Material = if color then Enum.Material.Neon else original.material
+		part.Color = color or original.color
+	end
 end
 
 -- Amène le bras vers `target` en `duration` secondes. Les valeurs absentes de `target` ne changent pas.
@@ -425,23 +642,31 @@ end)
 -- Construit une arme dans la main d'un bandit, avec les mêmes pièces que celle des joueurs.
 -- Le manche est tourné pour que la lame (son axe +Y) pointe vers l'avant du bras.
 -- Les autres pièces sont soudées au manche : tourner le poignet oriente toute l'arme.
-local function equip(model: Model, arm: BasePart, shoulder: Motor6D, side: number, weaponType: string): Hand
+-- `grip` : la pièce qui tient l'arme (le bras R6, ou la main R15).
+-- `pivot`, `gripY` : voir le type Hand.
+local function equip(model: Model, grip: BasePart, shoulder: Motor6D, side: number, weaponType: string, pivot: Vector3?, gripY: number): Hand
 	local def = Config.Weapons[weaponType]
 	local loadout = LOADOUTS[weaponType]
 	assert(def and loadout, "Arme de bandit inconnue : " .. weaponType)
 
-	local handle = accessory("Manche", Vector3.new(0.28, def.HandleLength, 0.28), def.HandleColor or Color3.fromRGB(105, 70, 40), def.HandleMaterial or Enum.Material.Wood, arm, gripC0(def.GripOffset, 0), model)
+	local handle = accessory("Manche", Vector3.new(0.28, def.HandleLength, 0.28), def.HandleColor or Config.HANDLE_WOOD, def.HandleMaterial or Enum.Material.Wood, grip, gripC0(def.GripOffset, 0, 1, gripY), model)
+	handle.Transparency = 1 -- le manche rond visible est la pièce « Fut » de Config
 	local wrist = handle:FindFirstChildOfClass("Weld") :: Weld
 	local blade: Part? = nil
+	local glow = {}
 	for _, info in def.Parts do
 		local offset = CFrame.new(info.Offset) * (info.Rotation or CFrame.new())
 		local part = accessory(info.Name, info.Size, info.Color, info.Material, handle, offset, model, info.Wedge)
 		part.Reflectance = info.Reflectance or 0
+		part.Transparency = if info.Hidden then 1 else 0
 		if info.Shape and not info.Wedge then
 			part.Shape = info.Shape
 		end
 		if info.Blade and not blade then
 			blade = part
+		end
+		if info.Glow or (info.Blade and not info.Hidden) then
+			glow[part] = { color = part.Color, material = part.Material }
 		end
 	end
 	assert(blade, "L'arme " .. weaponType .. " n'a pas de lame")
@@ -453,8 +678,10 @@ local function equip(model: Model, arm: BasePart, shoulder: Motor6D, side: numbe
 		arm = shoulder,
 		wrist = wrist,
 		gripOffset = def.GripOffset,
+		pivot = pivot,
+		gripY = gripY,
 		blade = blade,
-		bladeColor = blade.Color,
+		glow = glow,
 		loadout = loadout,
 		lastAttack = nil,
 		pose = { angle = GUARD_ANGLE, roll = 0, push = 0, wrist = 0 },
@@ -470,12 +697,13 @@ type Body = {
 	humanoid: Humanoid,
 	root: Part,
 	head: BasePart,
-	leftArm: BasePart,
-	rightArm: BasePart,
+	leftGrip: BasePart, -- pièce qui tient l'arme : le bras (R6) ou la main (R15)
+	rightGrip: BasePart,
 	leftShoulder: Motor6D,
 	rightShoulder: Motor6D,
-	leftHip: Motor6D,
-	rightHip: Motor6D,
+	leftPivot: Vector3?, -- position des épaules dans le haut du buste (R15 seulement)
+	rightPivot: Vector3?,
+	gripY: number, -- hauteur de la prise par rapport au centre de la pièce qui tient l'arme
 	strawHat: boolean, -- true : on lui ajoute le chapeau de paille
 }
 
@@ -491,6 +719,12 @@ local function blockBody(): Body
 	local torso = limb("Torso", Vector3.new(2, 2, 1), ROBE, model)
 	local head = limb("Head", Vector3.new(1.2, 1.2, 1.2), SKIN, model)
 	head.Material = Enum.Material.SmoothPlastic
+	-- Visage classique livré avec Roblox, pour qu'un corps de secours ne soit jamais sans visage.
+	local face = Instance.new("Decal")
+	face.Name = "face"
+	face.Face = Enum.NormalId.Front
+	face.Texture = "rbxasset://textures/face.png"
+	face.Parent = head
 	local leftArm = limb("Left Arm", Vector3.new(1, 2, 1), ROBE, model)
 	local rightArm = limb("Right Arm", Vector3.new(1, 2, 1), ROBE, model)
 	local leftLeg = limb("Left Leg", Vector3.new(1, 2, 1), TROUSERS, model)
@@ -500,8 +734,8 @@ local function blockBody(): Body
 	joint("Neck", torso, head, CFrame.new(0, 1, 0), CFrame.new(0, -0.6, 0))
 	local rightShoulder = joint("Right Shoulder", torso, rightArm, shoulderC0(1, 0, 0), CFrame.new(-0.5, 0.5, 0) * CFrame.Angles(0, QUARTER, 0))
 	local leftShoulder = joint("Left Shoulder", torso, leftArm, shoulderC0(-1, 0, 0), CFrame.new(0.5, 0.5, 0) * CFrame.Angles(0, -QUARTER, 0))
-	local rightHip = joint("Right Hip", torso, rightLeg, CFrame.new(1, -1, 0) * CFrame.Angles(0, QUARTER, 0), CFrame.new(0.5, 1, 0) * CFrame.Angles(0, QUARTER, 0))
-	local leftHip = joint("Left Hip", torso, leftLeg, CFrame.new(-1, -1, 0) * CFrame.Angles(0, -QUARTER, 0), CFrame.new(-0.5, 1, 0) * CFrame.Angles(0, -QUARTER, 0))
+	joint("Right Hip", torso, rightLeg, CFrame.new(1, -1, 0) * CFrame.Angles(0, QUARTER, 0), CFrame.new(0.5, 1, 0) * CFrame.Angles(0, QUARTER, 0))
+	joint("Left Hip", torso, leftLeg, CFrame.new(-1, -1, 0) * CFrame.Angles(0, -QUARTER, 0), CFrame.new(-0.5, 1, 0) * CFrame.Angles(0, -QUARTER, 0))
 
 	-- Ceinture rouge.
 	accessory("Ceinture", Vector3.new(2.1, 0.4, 1.1), Color3.fromRGB(150, 38, 32), Enum.Material.Fabric, torso, CFrame.new(0, -0.6, 0), model)
@@ -515,62 +749,131 @@ local function blockBody(): Body
 		humanoid = humanoid,
 		root = root,
 		head = head,
-		leftArm = leftArm,
-		rightArm = rightArm,
+		leftGrip = leftArm,
+		rightGrip = rightArm,
 		leftShoulder = leftShoulder,
 		rightShoulder = rightShoulder,
-		leftHip = leftHip,
-		rightHip = rightHip,
+		leftPivot = nil,
+		rightPivot = nil,
+		gripY = R6_GRIP_Y,
 		strawHat = true,
 	}
 end
 
--- Modèles habillés, un par tenue, fabriqués une seule fois puis copiés à chaque apparition.
-local outfitTemplates: { [Outfit]: Model } = {}
+-- Modèles habillés, fabriqués une seule fois puis copiés à chaque apparition : pour chaque tenue,
+-- un modèle par corps réaliste (ou un seul personnage R6 si les corps réalistes sont désactivés).
+local outfitTemplates: { [Outfit]: { Model } } = {}
 local readyOutfits: { Outfit } = {}
 
--- Demande à Roblox un personnage R6 portant chaque tenue. L'appel télécharge les vêtements :
--- il prend un instant et peut échouer (objet retiré du catalogue, pas de connexion).
+-- `withBrows` : ajoute les sourcils du corps (accessoire). Sans effet si le corps n'en a pas.
+local function describe(outfit: Outfit, shape: BodyShape?, withBrows: boolean): HumanoidDescription
+	local description = Instance.new("HumanoidDescription")
+	description.Shirt = outfit.Shirt
+	description.Pants = outfit.Pants
+	if outfit.Hat then
+		description.HatAccessory = tostring(outfit.Hat)
+	end
+	if outfit.Face then
+		description.FaceAccessory = tostring(outfit.Face)
+	end
+	description.HeadColor = SKIN
+	description.TorsoColor = SKIN
+	description.LeftArmColor = SKIN
+	description.RightArmColor = SKIN
+	description.LeftLegColor = SKIN
+	description.RightLegColor = SKIN
+	if shape then
+		description.Head = shape.Head
+		description.Torso = shape.Torso
+		description.LeftArm = shape.LeftArm
+		description.RightArm = shape.RightArm
+		description.LeftLeg = shape.LeftLeg
+		description.RightLeg = shape.RightLeg
+		description.MoodAnimation = shape.Mood or 0
+		description.BodyTypeScale = shape.BodyTypeScale or description.BodyTypeScale
+		description.ProportionScale = shape.ProportionScale or description.ProportionScale
+		description.HeightScale = shape.HeightScale or 1
+		description.WidthScale = shape.WidthScale or 1
+
+		-- Les sourcils n'ont pas de propriété dédiée : ils s'ajoutent à la liste des accessoires,
+		-- avec le chapeau et le masque déjà déclarés ci-dessus.
+		if withBrows and shape.Eyebrows then
+			local brows = shape.Eyebrows
+			pcall(function()
+				local accessories = description:GetAccessories(true)
+				table.insert(accessories, {
+					AssetId = brows,
+					AccessoryType = Enum.AccessoryType.Eyebrow,
+					IsLayered = false,
+				})
+				description:SetAccessories(accessories, true)
+			end)
+		end
+	end
+	return description
+end
+
+-- Ajoute un modèle prêt pour une tenue ; la tenue devient tirable dès son premier modèle.
+local function addTemplate(outfit: Outfit, model: Model)
+	local list = outfitTemplates[outfit]
+	if not list then
+		list = {}
+		outfitTemplates[outfit] = list
+		table.insert(readyOutfits, outfit)
+	end
+	table.insert(list, model)
+end
+
+-- Demande à Roblox un personnage portant chaque tenue, sur chaque corps. L'appel télécharge
+-- les vêtements et le corps : il prend un instant et peut échouer (objet retiré, pas de connexion).
 local function loadOutfits()
 	if not USE_CATALOG_OUTFITS then
 		return
 	end
 	for _, outfit in OUTFITS do
-		task.spawn(function()
-			local description = Instance.new("HumanoidDescription")
-			description.Shirt = outfit.Shirt
-			description.Pants = outfit.Pants
-			if outfit.Hat then
-				description.HatAccessory = tostring(outfit.Hat)
+		-- Corps réalistes permis à la classe de la tenue (tous si elle n'en précise pas).
+		local class = CLASS_BY_ID[outfit.Class]
+		local shapes: { BodyShape | false } = {}
+		if USE_REALISTIC_BODIES then
+			for _, shape in BODY_SHAPES do
+				if not (class and class.Bodies) or table.find(class.Bodies, shape.Name) then
+					table.insert(shapes, shape)
+				end
 			end
-			if outfit.Face then
-				description.FaceAccessory = tostring(outfit.Face)
-			end
-			description.HeadColor = SKIN
-			description.TorsoColor = SKIN
-			description.LeftArmColor = SKIN
-			description.RightArmColor = SKIN
-			description.LeftLegColor = SKIN
-			description.RightLegColor = SKIN
-
-			local ok, result = pcall(function()
-				return Players:CreateHumanoidModelFromDescription(description, Enum.HumanoidRigType.R6)
+		end
+		if #shapes == 0 then
+			shapes = { false }
+		end
+		for _, shape in shapes do
+			task.spawn(function()
+				local realistic = if shape then shape else nil
+				local rigType = if realistic then Enum.HumanoidRigType.R15 else Enum.HumanoidRigType.R6
+				local function create(withBrows: boolean)
+					return pcall(function()
+						return Players:CreateHumanoidModelFromDescription(describe(outfit, realistic, withBrows), rigType)
+					end)
+				end
+				local ok, result = create(true)
+				if not ok and realistic and realistic.Eyebrows then
+					-- Les sourcils ne doivent pas coûter le corps entier : on réessaie sans eux.
+					ok, result = create(false)
+				end
+				if ok and result then
+					addTemplate(outfit, result)
+				else
+					local label = outfit.Name .. (if realistic then " / " .. realistic.Name else "")
+					warn("[Enemies] Tenue « " .. label .. " » indisponible : " .. tostring(result))
+				end
 			end)
-			if ok and result then
-				outfitTemplates[outfit] = result
-				table.insert(readyOutfits, outfit)
-			else
-				warn("[Enemies] Tenue « " .. outfit.Name .. " » indisponible : " .. tostring(result))
-			end
-		end)
+		end
 	end
 end
 
--- Tire une tenue prête parmi celles que le niveau du bandit autorise, ou nil s'il n'y en a pas.
-local function pickOutfit(level: number): Outfit?
+-- Tire une tenue prête de la classe, parmi celles que le niveau du bandit autorise, ou nil s'il n'y en a pas.
+local function pickOutfit(level: number, classId: string): Outfit?
 	local candidates = {}
 	for _, outfit in readyOutfits do
-		if level >= (outfit.MinLevel or 1) then
+		if outfit.Class == classId and level >= (outfit.MinLevel or 1) then
 			table.insert(candidates, outfit)
 		end
 	end
@@ -580,25 +883,39 @@ local function pickOutfit(level: number): Outfit?
 	return candidates[random:NextInteger(1, #candidates)]
 end
 
--- La tenue prête qui demande le niveau le plus élevé (celle du boss), ou nil.
-local function bestOutfit(): Outfit?
+-- La tenue prête de la classe qui demande le niveau le plus élevé (celle du boss), ou nil.
+local function bestOutfit(classId: string): Outfit?
 	local best: Outfit? = nil
 	for _, outfit in readyOutfits do
-		if not best or (outfit.MinLevel or 1) > (best.MinLevel or 1) then
+		if outfit.Class == classId and (not best or (outfit.MinLevel or 1) > (best.MinLevel or 1)) then
 			best = outfit
 		end
 	end
 	return best
 end
 
--- Copie le personnage habillé d'une tenue et y retrouve les articulations dont le combat a besoin.
--- Renvoie nil si le modèle n'a pas la forme attendue.
+local function findMotor(model: Model, name: string): Motor6D?
+	for _, item in model:GetDescendants() do
+		if item.Name == name and item:IsA("Motor6D") then
+			return item
+		end
+	end
+	return nil
+end
+
+local function findPart(model: Model, name: string): BasePart?
+	local found = model:FindFirstChild(name)
+	return if found and found:IsA("BasePart") then found else nil
+end
+
+-- Copie un personnage habillé d'une tenue (sur un corps tiré au hasard) et y retrouve les
+-- articulations dont le combat a besoin. Renvoie nil si le modèle n'a pas la forme attendue.
 local function dressedBody(outfit: Outfit): Body?
-	local template = outfitTemplates[outfit]
-	if not template then
+	local templates = outfitTemplates[outfit]
+	if not templates or #templates == 0 then
 		return nil
 	end
-	local model = template:Clone()
+	local model = templates[random:NextInteger(1, #templates)]:Clone()
 	model.Name = "Bandit"
 
 	-- Les scripts d'un personnage de joueur (animations, régénération de la vie) ne servent pas ici.
@@ -615,29 +932,39 @@ local function dressedBody(outfit: Outfit): Body?
 		animator:Destroy()
 	end
 	local root = model:FindFirstChild("HumanoidRootPart")
-	local torso = model:FindFirstChild("Torso")
-	local head = model:FindFirstChild("Head")
-	local leftArm = model:FindFirstChild("Left Arm")
-	local rightArm = model:FindFirstChild("Right Arm")
-	local function motor(name: string): Motor6D?
-		local found = torso and torso:FindFirstChild(name)
-		return if found and found:IsA("Motor6D") then found else nil
-	end
-	local leftShoulder, rightShoulder = motor("Left Shoulder"), motor("Right Shoulder")
-	local leftHip, rightHip = motor("Left Hip"), motor("Right Hip")
+	local head = findPart(model, "Head")
+	local r15 = humanoid ~= nil and humanoid.RigType == Enum.HumanoidRigType.R15
 
-	if not (humanoid and root and root:IsA("Part") and head and head:IsA("BasePart")
-		and leftArm and leftArm:IsA("BasePart") and rightArm and rightArm:IsA("BasePart")
-		and leftShoulder and rightShoulder and leftHip and rightHip) then
+	-- R15 : l'arme est soudée dans la main, et le bras entier (haut, avant-bras, main) suit l'épaule.
+	-- R6 : l'arme est soudée au bras d'une seule pièce.
+	local leftGrip = findPart(model, if r15 then "LeftHand" else "Left Arm")
+	local rightGrip = findPart(model, if r15 then "RightHand" else "Right Arm")
+	local leftShoulder = findMotor(model, if r15 then "LeftShoulder" else "Left Shoulder")
+	local rightShoulder = findMotor(model, if r15 then "RightShoulder" else "Right Shoulder")
+
+	if not (humanoid and root and root:IsA("Part") and head and leftGrip and rightGrip and leftShoulder and rightShoulder) then
 		model:Destroy()
 		return nil
 	end
 
-	-- Mêmes réglages d'articulations que le corps en blocs.
-	leftShoulder.C0 = shoulderC0(-1, 0, 0)
-	rightShoulder.C0 = shoulderC0(1, 0, 0)
-	for _, motorJoint in { leftShoulder, rightShoulder, leftHip, rightHip } do
-		motorJoint.MaxVelocity = 0.15
+	local leftPivot, rightPivot, gripY = nil, nil, R6_GRIP_Y
+	if r15 then
+		-- Position d'origine des épaules, que les gestes reprennent comme point de rotation.
+		leftPivot = leftShoulder.C0.Position
+		rightPivot = rightShoulder.C0.Position
+		-- Le manche passe dans la paume, un peu sous le centre de la main.
+		gripY = -rightGrip.Size.Y * 0.2
+		-- Coudes et poignets droits : le bras reste tendu, comme un bras R6.
+		for _, name in { "LeftElbow", "RightElbow", "LeftWrist", "RightWrist" } do
+			local motor = findMotor(model, name)
+			if motor then
+				motor.Transform = CFrame.new()
+			end
+		end
+	else
+		-- Mêmes réglages d'articulations que le corps en blocs.
+		leftShoulder.C0 = shoulderC0(-1, 0, 0)
+		rightShoulder.C0 = shoulderC0(1, 0, 0)
 	end
 	root.CanQuery = false
 
@@ -646,12 +973,13 @@ local function dressedBody(outfit: Outfit): Body?
 		humanoid = humanoid,
 		root = root,
 		head = head,
-		leftArm = leftArm,
-		rightArm = rightArm,
+		leftGrip = leftGrip,
+		rightGrip = rightGrip,
 		leftShoulder = leftShoulder,
 		rightShoulder = rightShoulder,
-		leftHip = leftHip,
-		rightHip = rightHip,
+		leftPivot = leftPivot,
+		rightPivot = rightPivot,
+		gripY = gripY,
 		strawHat = outfit.Hat == nil, -- pas de chapeau de paille par-dessus un masque ou un casque
 	}
 end
@@ -660,29 +988,33 @@ end
 -- `boss` : fait du bandit un géant aux points de vie et à l'équipement propres.
 type BossBuild = { Name: string, Scale: number, Health: number, Loadout: Loadout }
 
-local function buildEnemy(position: Vector3, level: number, weaponType: string, offhandType: string?, boss: BossBuild?): Enemy
+-- `class` : classe du bandit (forces, tenue). Le boss garde ses propres forces.
+local function buildEnemy(position: Vector3, level: number, class: EnemyClass, weaponType: string, offhandType: string?, boss: BossBuild?): Enemy
 	local def = Config.Weapons[weaponType]
 	local loadout = LOADOUTS[weaponType]
 	assert(def and loadout, "Arme de bandit inconnue : " .. weaponType)
-	local health = math.round(BASE_HEALTH * (1 + HEALTH_PER_LEVEL * (level - 1)))
-	local attackSpeed = 1 + ATTACK_SPEED_PER_LEVEL * (level - 1)
+	local health = math.round(BASE_HEALTH * (1 + HEALTH_PER_LEVEL * (level - 1)) * class.HealthScale)
+	local attackSpeed = (1 + ATTACK_SPEED_PER_LEVEL * (level - 1)) * BASE_ATTACK_SPEED * class.AttackSpeedScale
+	local damageScale = class.DamageScale
+	local walkScale = class.WalkSpeedScale
 	local scale = 1
 	if boss then
 		loadout = boss.Loadout
 		health = boss.Health
 		scale = boss.Scale
+		attackSpeed = 1 + ATTACK_SPEED_PER_LEVEL * (level - 1)
+		damageScale, walkScale = 1, 1
 	end
 
-	-- Corps habillé d'une tenue du catalogue si une est prête, sinon corps en blocs.
-	-- Le boss porte la tenue la plus prestigieuse disponible.
-	local outfit = if boss then bestOutfit() else pickOutfit(level)
+	-- Corps habillé d'une tenue de sa classe si une est prête, sinon corps en blocs.
+	-- Le boss porte la tenue la plus prestigieuse de sa classe.
+	local outfit = if boss then bestOutfit(class.Id) else pickOutfit(level, class.Id)
 	local body = (if outfit then dressedBody(outfit) else nil) or blockBody()
 	local model, root, head = body.model, body.root, body.head
-	local leftArm, rightArm = body.leftArm, body.rightArm
 	local leftShoulder, rightShoulder = body.leftShoulder, body.rightShoulder
-	local leftHip, rightHip = body.leftHip, body.rightHip
+	model:SetAttribute("Class", class.Id)
 
-	if body.strawHat then
+	if body.strawHat and class.StrawHat then
 		-- Chapeau de paille conique.
 		local flat = CFrame.Angles(0, 0, QUARTER)
 		local brim = accessory("Chapeau", Vector3.new(0.25, 3, 3), STRAW, Enum.Material.Wood, head, CFrame.new(0, 0.7, 0) * flat, model)
@@ -692,21 +1024,23 @@ local function buildEnemy(position: Vector3, level: number, weaponType: string, 
 	end
 
 	-- Arme principale dans la main droite, et parfois une seconde dans la main gauche.
-	local hands = { equip(model, rightArm, rightShoulder, 1, weaponType) }
+	local hands = { equip(model, body.rightGrip, rightShoulder, 1, weaponType, body.rightPivot, body.gripY) }
 	local displayName = def.DisplayName
 	if offhandType then
-		table.insert(hands, equip(model, leftArm, leftShoulder, -1, offhandType))
+		table.insert(hands, equip(model, body.leftGrip, leftShoulder, -1, offhandType, body.leftPivot, body.gripY))
 		displayName ..= " + " .. Config.Weapons[offhandType].DisplayName
 	end
 
 	local humanoid = body.humanoid
-	humanoid.DisplayName = "Niv. " .. level .. " · " .. (if boss then boss.Name else "Bandit") .. " · " .. displayName
+	humanoid.DisplayName = "Niv. " .. level .. " · " .. (if boss then boss.Name else class.Name) .. " · " .. displayName
 	humanoid.MaxHealth = health
 	humanoid.Health = health
 	-- Chaque bandit marche à une allure légèrement différente : ils n'avancent pas au pas cadencé.
-	local walkSpeed = loadout.WalkSpeed * random:NextNumber(0.92, 1.08)
+	local walkSpeed = loadout.WalkSpeed * walkScale * random:NextNumber(0.92, 1.08)
 	humanoid.WalkSpeed = walkSpeed
 	humanoid.HealthDisplayType = Enum.HumanoidHealthDisplayType.AlwaysOn
+	-- À sa mort, le corps passe en ragdoll (module Ragdoll) au lieu de tomber en morceaux.
+	humanoid.BreakJointsOnDeath = false
 
 	-- Le corps s'oriente par une contrainte souple plutôt que par la rotation automatique du Humanoid :
 	-- il pivote progressivement vers sa cible et peut marcher de côté en la regardant.
@@ -731,13 +1065,19 @@ local function buildEnemy(position: Vector3, level: number, weaponType: string, 
 	model.PrimaryPart = root
 	if boss then
 		-- Le géant : tout le modèle est agrandi, armes et articulations comprises.
+		local hipHeight = humanoid.HipHeight
 		model:ScaleTo(scale)
 		for _, hand in hands do
 			hand.scale = scale
 			hand.loadout = loadout
 		end
-		-- Un personnage R6 agrandi s'enfonce dans le sol : on relève ses hanches d'autant que ses jambes ont grandi.
-		humanoid.HipHeight = 2 * (scale - 1)
+		if humanoid.RigType == Enum.HumanoidRigType.R15 then
+			-- R15 : la hauteur des hanches grandit avec les jambes.
+			humanoid.HipHeight = hipHeight * scale
+		else
+			-- Un personnage R6 agrandi s'enfonce dans le sol : on relève ses hanches d'autant que ses jambes ont grandi.
+			humanoid.HipHeight = 2 * (scale - 1)
+		end
 		humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.Viewer
 		humanoid.NameDisplayDistance = 200
 		humanoid.HealthDisplayDistance = 200
@@ -772,10 +1112,10 @@ local function buildEnemy(position: Vector3, level: number, weaponType: string, 
 		walkSpeed = walkSpeed,
 		flank = random:NextNumber(-1, 1),
 		isBoss = boss ~= nil,
-		xpLevels = level,
+		xpLevels = if boss then level else level * class.XpScale,
+		dashRate = if boss then BOSS_DASH_RATE else class.DashRate,
+		damageScale = damageScale,
 		tick = nil,
-		leftHip = leftHip,
-		rightHip = rightHip,
 	}
 end
 
@@ -1112,8 +1452,7 @@ local function attack(enemy: Enemy, player: Player, targetHumanoid: Humanoid, ta
 		moveArm(hand, { angle = style.Raise, roll = style.Roll, push = 0.15, wrist = WRIST_COCK * sweep }, raiseTime)
 	end
 	enemy.model:SetAttribute("AttackLean", 0.6)
-	blade.Material = Enum.Material.Neon
-	blade.Color = Color3.fromRGB(255, 140, 60)
+	setGlow(hand, Color3.fromRGB(255, 140, 60))
 	task.wait(raiseTime)
 	if humanoid.Health <= 0 then
 		enemy.model:SetAttribute("AttackLean", 0)
@@ -1122,7 +1461,7 @@ local function attack(enemy: Enemy, player: Player, targetHumanoid: Humanoid, ta
 
 	-- 2. Prise d'élan : la lame vire au blanc (fenêtre de parade parfaite) pendant que le bras
 	--    recule encore un peu, comme un ressort que l'on tend.
-	blade.Color = Color3.fromRGB(255, 255, 255)
+	setGlow(hand, Color3.fromRGB(255, 255, 255))
 	moveArm(hand, { angle = style.Raise + (if style.Thrust then -0.1 else 0.14 * sweep) }, PERFECT_WINDOW, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
 	enemy.model:SetAttribute("AttackLean", 1)
 	local playerSpeed = samplePlayerBladeSpeed(player, blade, targetRoot, PERFECT_WINDOW)
@@ -1142,8 +1481,7 @@ local function attack(enemy: Enemy, player: Player, targetHumanoid: Humanoid, ta
 	enemy.model:SetAttribute("AttackLean", -1)
 	local strike = watchStrike(player, blade, root, targetRoot, STRIKE_TIME + 0.02)
 	playerSpeed = math.max(playerSpeed, strike.speed)
-	blade.Material = Enum.Material.Metal
-	blade.Color = hand.bladeColor
+	setGlow(hand, nil)
 	if humanoid.Health <= 0 then
 		enemy.model:SetAttribute("AttackLean", 0)
 		return
@@ -1204,7 +1542,7 @@ local function attack(enemy: Enemy, player: Player, targetHumanoid: Humanoid, ta
 			enemy.model:SetAttribute("AttackLean", 1)
 			task.wait(STAGGER_TIME)
 		else
-			local levelScale = 1 + DAMAGE_PER_LEVEL * (enemy.level - 1)
+			local levelScale = (1 + DAMAGE_PER_LEVEL * (enemy.level - 1)) * enemy.damageScale
 			-- Les techniques du Corps du joueur réduisent les dégâts reçus.
 			local taken = Progression.damageTakenMultiplier(player)
 			targetHumanoid:TakeDamage(hand.loadout.Damage * style.DamageScale * levelScale * taken)
@@ -1218,11 +1556,179 @@ local function attack(enemy: Enemy, player: Player, targetHumanoid: Humanoid, ta
 	moveArm(hand, { angle = GUARD_ANGLE, roll = 0, push = 0, wrist = 0 }, GUARD_RETURN_TIME)
 end
 
+-- Petit nuage de poussière soulevé aux pieds par un dash.
+local function dustPuff(root: BasePart, scale: number)
+	local anchor = Instance.new("Attachment")
+	anchor.Name = "PoussiereDash"
+	anchor.Position = Vector3.new(0, -2.6 * scale, 0)
+	anchor.Parent = root
+	local dust = Instance.new("ParticleEmitter")
+	dust.Texture = "rbxasset://textures/particles/smoke_main.dds"
+	dust.Color = ColorSequence.new(Color3.fromRGB(190, 170, 140))
+	dust.Size = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.8 * scale), NumberSequenceKeypoint.new(1, 2.6 * scale) })
+	dust.Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.45), NumberSequenceKeypoint.new(1, 1) })
+	dust.Lifetime = NumberRange.new(0.4, 0.7)
+	dust.Speed = NumberRange.new(3, 6)
+	dust.SpreadAngle = Vector2.new(180, 15)
+	dust.Acceleration = Vector3.new(0, 2, 0)
+	dust.Rate = 0
+	dust.Parent = anchor
+	dust:Emit(14)
+	Debris:AddItem(anchor, 1)
+end
+
+-- Traînée laissée par le corps pendant un dash : un voile clair tendu de la tête aux genoux,
+-- qui s'étire derrière le bandit puis s'efface.
+local DASH_TRAIL_LIFETIME = 0.3
+local DASH_TRAIL_COLOR = Color3.fromRGB(235, 225, 210)
+
+local function dashTrail(root: BasePart, scale: number, duration: number)
+	local top = Instance.new("Attachment")
+	top.Name = "TraineeDashHaut"
+	top.Position = Vector3.new(0, 1.6 * scale, 0)
+	top.Parent = root
+	local bottom = Instance.new("Attachment")
+	bottom.Name = "TraineeDashBas"
+	bottom.Position = Vector3.new(0, -1.8 * scale, 0)
+	bottom.Parent = root
+
+	local trail = Instance.new("Trail")
+	trail.Name = "TraineeDash"
+	trail.Attachment0 = top
+	trail.Attachment1 = bottom
+	trail.Lifetime = DASH_TRAIL_LIFETIME
+	trail.MinLength = 0.1
+	trail.FaceCamera = true
+	trail.Color = ColorSequence.new(DASH_TRAIL_COLOR)
+	trail.LightEmission = 0.4
+	trail.LightInfluence = 0.3
+	trail.Transparency = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, 0.45),
+		NumberSequenceKeypoint.new(1, 1),
+	})
+	trail.WidthScale = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, 1),
+		NumberSequenceKeypoint.new(1, 0.4),
+	})
+	trail.Parent = root
+
+	-- À la fin du dash, la traînée cesse de s'allonger et ses derniers segments s'effacent.
+	task.delay(duration, function()
+		trail.Enabled = false
+	end)
+	Debris:AddItem(trail, duration + DASH_TRAIL_LIFETIME + 0.1)
+	Debris:AddItem(top, duration + DASH_TRAIL_LIFETIME + 0.1)
+	Debris:AddItem(bottom, duration + DASH_TRAIL_LIFETIME + 0.1)
+end
+
+-- Lance un dash dans la direction `direction` (à plat) sur au plus `distance` studs.
+-- Le dash est raccourci devant un mur et annulé s'il finirait dans le vide.
+-- Renvoie sa durée, ou nil s'il n'a pas eu lieu.
+local function dash(enemy: Enemy, direction: Vector3, distance: number): number?
+	local root = enemy.root
+	direction = Vector3.new(direction.X, 0, direction.Z)
+	if direction.Magnitude < 0.01 then
+		return nil
+	end
+	direction = direction.Unit
+	local scale = enemy.model:GetScale()
+
+	local ignored: { Instance } = { folder, weaponsFolder }
+	for _, player in Players:GetPlayers() do
+		if player.Character then
+			table.insert(ignored, player.Character)
+		end
+	end
+	local params = RaycastParams.new()
+	params.FilterType = Enum.RaycastFilterType.Exclude
+	params.FilterDescendantsInstances = ignored
+
+	-- Un mur sur le trajet : il s'arrête avant.
+	local margin = 1.5 * scale
+	local wall = workspace:Raycast(root.Position, direction * (distance + margin), params)
+	if wall then
+		distance = wall.Distance - margin
+	end
+	if distance < 3 then
+		return nil
+	end
+	-- Pas de sol à l'arrivée (bord de l'arène) : pas de dash.
+	local landing = root.Position + direction * distance
+	if not workspace:Raycast(landing, Vector3.new(0, -8 * scale, 0), params) then
+		return nil
+	end
+
+	local duration = distance / DASH_SPEED
+	local attachment = Instance.new("Attachment")
+	attachment.Name = "Dash"
+	attachment.Parent = root
+	-- Vitesse imposée à l'horizontale seulement : la gravité garde la main sur l'axe vertical.
+	local push = Instance.new("LinearVelocity")
+	push.Name = "Dash"
+	push.Attachment0 = attachment
+	push.RelativeTo = Enum.ActuatorRelativeTo.World
+	push.VelocityConstraintMode = Enum.VelocityConstraintMode.Vector
+	push.ForceLimitMode = Enum.ForceLimitMode.PerAxis
+	push.MaxAxesForce = Vector3.new(1e6, 0, 1e6)
+	push.VectorVelocity = direction * DASH_SPEED
+	push.Parent = root
+	Debris:AddItem(push, duration)
+	Debris:AddItem(attachment, duration)
+
+	enemy.humanoid:MoveTo(landing)
+	dustPuff(root, scale)
+	dashTrail(root, scale, duration)
+	Sfx.play("Dash", root, 1)
+	return duration
+end
+
+-- Cherche une lame de joueur qui fend l'air près de `position`. Renvoie la position de sa pointe.
+local function incomingBlade(position: Vector3, range: number): Vector3?
+	for _, weapon in weaponsFolder:GetChildren() do
+		if weapon:IsA("Model") and weapon:GetAttribute("Holder") then
+			for _, part in weapon:GetChildren() do
+				if part:IsA("BasePart") and part:GetAttribute("IsBlade") then
+					local tip = part.CFrame * Vector3.new(0, part.Size.Y / 2, 0)
+					if (tip - position).Magnitude <= range and part:GetVelocityAtPosition(tip).Magnitude >= DASH_EVADE_BLADE_SPEED then
+						return tip
+					end
+				end
+			end
+		end
+	end
+	return nil
+end
+
 local function run(enemy: Enemy)
 	local humanoid, root = enemy.humanoid, enemy.root
 	local nextAttack = os.clock() + 1
 	local lastPosition = root.Position
 	local stuckTime = 0
+
+	-- Dash : prochain dash permis, fin du dash en cours, et esquive à tenter après un coup reçu.
+	local nextDash = os.clock() + random:NextNumber(1, 3)
+	local dashUntil = 0
+	local wantsDodge = false
+	local lastEvadeRoll = 0
+	local lastHealth = humanoid.Health
+	humanoid.HealthChanged:Connect(function(health)
+		if health < lastHealth and health > 0 then
+			wantsDodge = true
+		end
+		lastHealth = health
+	end)
+	local function tryDash(chance: number, direction: Vector3, distance: number): boolean
+		if enemy.dashRate <= 0 or os.clock() < nextDash or random:NextNumber() >= math.min(chance * enemy.dashRate, 0.9) then
+			return false
+		end
+		local duration = dash(enemy, direction, distance)
+		if not duration then
+			return false
+		end
+		dashUntil = os.clock() + duration
+		nextDash = os.clock() + DASH_COOLDOWN / enemy.dashRate * random:NextNumber(0.8, 1.25)
+		return true
+	end
 
 	while humanoid.Health > 0 and enemy.model.Parent do
 		local dt = task.wait(0.12)
@@ -1236,6 +1742,7 @@ local function run(enemy: Enemy)
 		if not enemy.isBoss and typeof(stunnedUntil) == "number" and os.clock() < stunnedUntil then
 			humanoid:MoveTo(root.Position)
 			lastPosition = root.Position
+			wantsDodge = false
 			continue
 		end
 
@@ -1252,6 +1759,48 @@ local function run(enemy: Enemy)
 			-- Il garde les yeux sur sa cible et pivote en douceur, qu'il marche ou non.
 			faceToward(enemy, targetRoot.Position)
 		end
+
+		-- En plein dash : on le laisse filer.
+		if os.clock() < dashUntil then
+			lastPosition = root.Position
+			continue
+		end
+
+		-- Il vient d'être touché : il bondit parfois en arrière, en biais, pour reprendre ses distances.
+		if wantsDodge then
+			wantsDodge = false
+			if targetRoot then
+				local away = (root.Position - targetRoot.Position) * Vector3.new(1, 0, 1)
+				local angle = math.rad(random:NextNumber(20, 45)) * (if random:NextNumber() < 0.5 then 1 else -1)
+				if away.Magnitude > 0.1 and tryDash(DASH_DODGE_CHANCE, CFrame.Angles(0, angle, 0):VectorToWorldSpace(away.Unit), DASH_DODGE_DISTANCE) then
+					nextAttack = math.max(nextAttack, os.clock() + 0.6)
+					lastPosition = root.Position
+					continue
+				end
+			end
+		end
+
+		-- Esquive réflexe : une lame arrive vite sur lui, il s'écarte d'un dash latéral, du côté opposé.
+		if targetRoot and enemy.dashRate > 0 and os.clock() >= nextDash then
+			local tip = incomingBlade(root.Position, DASH_EVADE_RANGE * enemy.model:GetScale())
+			-- Une seule tentative par coup : la lame reste menaçante sur plusieurs tours de boucle.
+			if tip and os.clock() - lastEvadeRoll < 0.5 then
+				tip = nil
+			end
+			if tip then
+				lastEvadeRoll = os.clock()
+				local toTarget = (targetRoot.Position - root.Position) * Vector3.new(1, 0, 1)
+				if toTarget.Magnitude > 0.1 then
+					local right = toTarget.Unit:Cross(Vector3.yAxis)
+					local side = if (tip - root.Position):Dot(right) > 0 then -1 else 1
+					if tryDash(DASH_EVADE_CHANCE, right * side, DASH_SIDE_DISTANCE) then
+						lastPosition = root.Position
+						continue
+					end
+				end
+			end
+		end
+
 		if player and targetHumanoid and targetRoot and distance > enemy.loadout.AttackRange then
 			humanoid.WalkSpeed = enemy.walkSpeed
 			-- Il n'arrive pas en ligne droite : chaque bandit vise un point décalé autour du joueur,
@@ -1261,6 +1810,28 @@ local function run(enemy: Enemy)
 			if away.Magnitude > 0.5 and distance < 30 then
 				local direction = CFrame.Angles(0, math.rad(FLANK_ANGLE) * enemy.flank, 0):VectorToWorldSpace(away.Unit)
 				destination = targetRoot.Position + direction * enemy.loadout.AttackRange * 0.8
+			end
+			-- Ruée : encore loin de sa portée, il comble la distance d'un coup (sans dépasser sa portée).
+			local gap = distance - enemy.loadout.AttackRange
+			if gap > DASH_CLOSE_MIN_GAP and distance < DASH_CLOSE_MAX_DISTANCE
+				and tryDash(DASH_CLOSE_CHANCE, destination - root.Position, math.min(DASH_DISTANCE, gap - 2)) then
+				stuckTime = 0
+				lastPosition = root.Position
+				continue
+			end
+			-- Zigzag : un écart de côté en avançant, quand il n'est plus très loin.
+			if gap > 3 and distance < 20 then
+				local forward = (targetRoot.Position - root.Position) * Vector3.new(1, 0, 1)
+				if forward.Magnitude > 0.1 then
+					forward = forward.Unit
+					local side = forward:Cross(Vector3.yAxis) * (if random:NextNumber() < 0.5 then 1 else -1)
+					local zigzag = math.min(DASH_ZIGZAG_DISTANCE, gap - 1)
+					if tryDash(DASH_ZIGZAG_CHANCE, side + forward * DASH_ZIGZAG_FORWARD, zigzag) then
+						stuckTime = 0
+						lastPosition = root.Position
+						continue
+					end
+				end
 			end
 			humanoid:MoveTo(destination)
 			-- Bloqué contre un obstacle (le leitai, le râtelier) : il saute par-dessus.
@@ -1280,6 +1851,12 @@ local function run(enemy: Enemy)
 				local away = (root.Position - targetRoot.Position) * Vector3.new(1, 0, 1)
 				if away.Magnitude > 0.5 then
 					local side = if enemy.flank >= 0 then 1 else -1
+					-- Pas chassé : un brusque écart de côté, jamais juste avant d'attaquer.
+					local sideways = away.Unit:Cross(Vector3.yAxis) * (if random:NextNumber() < 0.5 then 1 else -1)
+					if nextAttack - os.clock() > 0.5 and tryDash(DASH_SIDE_CHANCE, sideways, DASH_SIDE_DISTANCE) then
+						lastPosition = root.Position
+						continue
+					end
 					local direction = CFrame.Angles(0, math.rad(CIRCLE_STEP) * side, 0):VectorToWorldSpace(away.Unit)
 					humanoid.WalkSpeed = enemy.walkSpeed * CIRCLE_SPEED
 					humanoid:MoveTo(targetRoot.Position + direction * enemy.loadout.AttackRange * 0.85)
@@ -1338,16 +1915,56 @@ local function announce(text: string)
 	Debris:AddItem(anchor, 4)
 end
 
--- Tire au sort une seconde arme pour la main gauche, ou nil.
+-- Tire au sort une seconde arme pour la main gauche, parmi celles de la classe, ou nil.
 -- Seules les armes à une main se portent par paire : ni l'épée longue ni la hache.
-local function pickOffhand(weaponType: string, wave: number): string?
-	if Config.Weapons[weaponType].TwoHanded or wave < DUAL_FIRST_WAVE then
+local function pickOffhand(class: EnemyClass, weaponType: string, wave: number): string?
+	local offhand = class.Offhand
+	if not offhand or #offhand == 0 or Config.Weapons[weaponType].TwoHanded or wave < DUAL_FIRST_WAVE then
 		return nil
 	end
-	if random:NextNumber() >= DUAL_CHANCE then
+	if random:NextNumber() >= class.DualChance then
 		return nil
 	end
-	return OFFHAND_WEAPONS[random:NextInteger(1, #OFFHAND_WEAPONS)]
+	return offhand[random:NextInteger(1, #offhand)]
+end
+
+-- Tire un élément d'une liste selon les poids donnés par `weightOf` (les poids nuls sont ignorés).
+local function weightedPick<T>(items: { T }, weightOf: (T) -> number): T?
+	local total = 0
+	for _, item in items do
+		total += math.max(weightOf(item), 0)
+	end
+	if total <= 0 then
+		return nil
+	end
+	local roll = random:NextNumber() * total
+	for _, item in items do
+		roll -= math.max(weightOf(item), 0)
+		if roll <= 0 then
+			return item
+		end
+	end
+	return items[#items]
+end
+
+-- Tire la classe d'un bandit de la vague `wave` parmi celles déjà apparues.
+local function pickClass(wave: number): EnemyClass
+	local class = weightedPick(CLASSES, function(candidate: EnemyClass)
+		if wave < candidate.MinWave then
+			return 0
+		end
+		-- Une classe déjà apparue garde toujours une petite chance d'être tirée.
+		return math.max(candidate.Weight + candidate.WeightPerWave * (wave - candidate.MinWave), 0.5)
+	end)
+	return class or CLASSES[1]
+end
+
+-- Tire l'arme principale d'un bandit de cette classe, parmi celles que la vague autorise.
+local function pickWeapon(class: EnemyClass, wave: number): string
+	local choice = weightedPick(class.Weapons, function(candidate: WeaponChoice)
+		return if wave >= (candidate.MinWave or 1) then candidate.Weight else 0
+	end)
+	return if choice then choice.Weapon else class.Weapons[1].Weapon
 end
 
 -- Niveau d'un bandit de la vague `wave` : le numéro de la vague, à LEVEL_SPREAD près.
@@ -1359,8 +1976,48 @@ local function pickLevel(wave: number): number
 	return math.clamp(wave + random:NextInteger(-LEVEL_SPREAD, LEVEL_SPREAD), 1, MAX_LEVEL)
 end
 
-local function spawnEnemy(position: Vector3, weaponType: string, wave: number, onGone: () -> ())
-	local enemy = buildEnemy(position, pickLevel(wave), weaponType, pickOffhand(weaponType, wave))
+-- Durée pendant laquelle le corps d'un bandit reste au sol avant de s'effacer (secondes).
+local CORPSE_TIME = 6
+local BOSS_CORPSE_TIME = 10
+local CORPSE_FADE = 1.2
+
+-- Mort d'un bandit : le corps s'effondre (ragdoll), ses armes lui tombent des mains,
+-- puis il s'efface doucement au bout de `corpseTime` secondes.
+local function collapse(enemy: Enemy, corpseTime: number)
+	local model = enemy.model
+	enemy.humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None -- plus de nom ni de barre de vie
+	Ragdoll.apply(model)
+
+	for _, hand in enemy.hands do
+		local handle = hand.wrist.Part1
+		hand.wrist:Destroy()
+		if handle then
+			-- Seul le manche (invisible) heurte le sol ; le reste de l'arme y est soudé.
+			handle.CanCollide = true
+			handle.Massless = false
+			pcall(function()
+				handle:SetNetworkOwner(nil)
+			end)
+		end
+	end
+
+	task.delay(corpseTime, function()
+		if not model.Parent then
+			return
+		end
+		local fade = TweenInfo.new(CORPSE_FADE)
+		for _, item in model:GetDescendants() do
+			if (item:IsA("BasePart") or item:IsA("Decal")) and item.Transparency < 1 then
+				TweenService:Create(item, fade, { Transparency = 1 }):Play()
+			end
+		end
+	end)
+	Debris:AddItem(model, corpseTime + CORPSE_FADE + 0.1)
+end
+
+local function spawnEnemy(position: Vector3, class: EnemyClass, wave: number, onGone: () -> ())
+	local weaponType = pickWeapon(class, wave)
+	local enemy = buildEnemy(position, pickLevel(wave), class, weaponType, pickOffhand(class, weaponType, wave))
 	local gone = false
 	local function finish()
 		if gone then
@@ -1372,7 +2029,9 @@ local function spawnEnemy(position: Vector3, weaponType: string, wave: number, o
 			Progression.creditKill(enemy.model, enemy.xpLevels, enemy.root.Position)
 		end
 		onGone()
-		Debris:AddItem(enemy.model, 3)
+		if enemy.model.Parent then
+			collapse(enemy, CORPSE_TIME)
+		end
 	end
 	enemy.humanoid.Died:Connect(finish)
 	-- Filet de sécurité : un bandit tombé dans le vide est supprimé par le moteur.
@@ -1420,12 +2079,10 @@ local function groundSlam(enemy: Enemy)
 	-- L'arme monte lentement au-dessus de la tête pendant tout l'avertissement.
 	moveArm(hand, { angle = 3, roll = 0, push = 0.2, wrist = WRIST_COCK }, BOSS_SLAM_WINDUP)
 	enemy.model:SetAttribute("AttackLean", 1)
-	hand.blade.Material = Enum.Material.Neon
-	hand.blade.Color = Color3.fromRGB(255, 60, 40)
+	setGlow(hand, Color3.fromRGB(255, 60, 40))
 	task.wait(BOSS_SLAM_WINDUP)
 	warning:Destroy()
-	hand.blade.Material = Enum.Material.Metal
-	hand.blade.Color = hand.bladeColor
+	setGlow(hand, nil)
 	if humanoid.Health <= 0 then
 		return
 	end
@@ -1494,7 +2151,7 @@ local function spawnBoss(wave: number, onGone: () -> ())
 		WalkSpeed = BOSS_WALK_SPEED,
 		Attacks = base.Attacks,
 	}
-	local enemy = buildEnemy(SPAWN_POINTS[1], level, BOSS_WEAPON, nil, {
+	local enemy = buildEnemy(SPAWN_POINTS[1], level, CLASS_BY_ID[BOSS_CLASS], BOSS_WEAPON, nil, {
 		Name = BOSS_NAME,
 		Scale = BOSS_SCALE,
 		Health = math.round(BOSS_HEALTH * (1 + BOSS_HEALTH_PER_CYCLE * (cycle - 1))),
@@ -1516,7 +2173,8 @@ local function spawnBoss(wave: number, onGone: () -> ())
 			for i = 1, BOSS_MINIONS do
 				local side = if i % 2 == 0 then 1 else -1
 				local position = root.Position * Vector3.new(1, 0, 1) + root.CFrame.RightVector * side * (5 + i)
-				spawnEnemy(position, WEAPON_ORDER[random:NextInteger(1, #WEAPON_ORDER)], math.max(wave - 2, 1), function() end)
+				local minionWave = math.max(wave - 2, 1)
+				spawnEnemy(position, pickClass(minionWave), minionWave, function() end)
 			end
 		end
 
@@ -1557,7 +2215,9 @@ local function spawnBoss(wave: number, onGone: () -> ())
 			Progression.creditKill(enemy.model, enemy.xpLevels, enemy.root.Position)
 		end
 		onGone()
-		Debris:AddItem(enemy.model, 4)
+		if enemy.model.Parent then
+			collapse(enemy, BOSS_CORPSE_TIME)
+		end
 	end
 	enemy.humanoid.Died:Connect(finish)
 	enemy.model.AncestryChanged:Connect(function(_, parent)
@@ -1590,21 +2250,23 @@ function Enemies.start()
 		local wave = 0
 		while true do
 			wave += 1
-			announce("Vague " .. wave)
+			-- Une classe qui fait son entrée dans cette vague ouvre la marche ; les autres bandits
+			-- sont tirés au hasard parmi les classes déjà apparues.
+			local newcomer: EnemyClass? = nil
+			for _, class in CLASSES do
+				if class.MinWave == wave and wave > 1 then
+					newcomer = class
+					break
+				end
+			end
+			announce("Vague " .. wave .. (if newcomer then " · nouveaux ennemis : " .. newcomer.Name .. "s" else ""))
 			task.wait(2)
 
 			local count = math.min(wave, MAX_ENEMIES)
 			local alive = count
 			for i = 1, count do
-				-- Premières vagues : une arme de plus à chaque vague. Ensuite : au hasard.
-				local weaponType
-				if wave <= #WEAPON_ORDER then
-					-- Le premier bandit porte l'arme nouvelle de la vague, les suivants les précédentes.
-					weaponType = WEAPON_ORDER[wave - (i - 1) % wave]
-				else
-					weaponType = WEAPON_ORDER[random:NextInteger(1, #WEAPON_ORDER)]
-				end
-				spawnEnemy(SPAWN_POINTS[i], weaponType, wave, function()
+				local class = if i == 1 and newcomer then newcomer else pickClass(wave)
+				spawnEnemy(SPAWN_POINTS[i], class, wave, function()
 					alive -= 1
 				end)
 				task.wait(0.4)

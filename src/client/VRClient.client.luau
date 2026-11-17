@@ -359,6 +359,35 @@ local function showAvatar()
 	end
 end
 
+-- Suivi exact (Config.HAND_TRACKING = "Exact") : la main est placée exactement sur la manette à
+-- chaque image, juste avant l'affichage, et l'arme soudée suit avec elle. On lui donne aussi la
+-- vitesse réelle du geste (déplacement et rotation depuis l'image précédente), pour que la
+-- physique, les chocs et les sons voient une arme qui bouge vraiment.
+local exactTracking = Config.HAND_TRACKING ~= "Physique"
+local MAX_HAND_SPEED = 250 -- studs/s ; au-delà, c'est une téléportation (réapparition), pas un geste
+local lastHandTargets: { [string]: CFrame } = {}
+
+local function followExactly(hand: BasePart, side: string, target: CFrame, dt: number)
+	local last = lastHandTargets[side]
+	lastHandTargets[side] = target
+	local linear, angular = Vector3.zero, Vector3.zero
+	if last and dt > 0 then
+		linear = (target.Position - last.Position) / dt
+		if linear.Magnitude > MAX_HAND_SPEED then
+			linear = Vector3.zero
+		else
+			local axis, angle = (last.Rotation:Inverse() * target.Rotation):ToAxisAngle()
+			-- Sans rotation, l'axe n'est pas défini (il peut valoir NaN) : on garde une vitesse nulle.
+			if angle == angle and angle > 1e-5 and axis.Magnitude > 0.5 then
+				angular = last:VectorToWorldSpace(axis.Unit) * (angle / dt)
+			end
+		end
+	end
+	hand.CFrame = target
+	hand.AssemblyLinearVelocity = linear
+	hand.AssemblyAngularVelocity = angular
+end
+
 local function update(dt: number)
 	if Config.SHOW_AVATAR then
 		showAvatar()
@@ -405,6 +434,9 @@ local function update(dt: number)
 		if alignPosition and alignPosition:IsA("AlignPosition") and alignOrientation and alignOrientation:IsA("AlignOrientation") then
 			alignPosition.Position = targets[side].Position
 			alignOrientation.CFrame = targets[side].Rotation
+			if exactTracking and hand:IsA("BasePart") then
+				followExactly(hand, side, targets[side], dt)
+			end
 		end
 	end
 

@@ -287,7 +287,7 @@ function Progression.damageTakenMultiplier(player: Player): number
 end
 
 -- Débloque une technique de cultivation si le joueur en remplit les conditions.
--- `at` : position de l'orbe sur la stèle, pour l'effet visuel.
+-- `at` : position où afficher l'effet visuel du déblocage (au-dessus de la tête du joueur).
 function Progression.unlock(player: Player, skillId: any, at: Vector3?): boolean
 	local data = stats[player]
 	local skill = if typeof(skillId) == "string" then Skills.ById[skillId] else nil
@@ -369,7 +369,7 @@ function Progression.creditKill(target: Instance, enemyLevel: number, at: Vector
 	local userId = target:GetAttribute("LastAttacker")
 	local killer = if typeof(userId) == "number" then Players:GetPlayerByUserId(userId) else nil
 	if killer then
-		Progression.addXp(killer, settings.XP_PER_ENEMY_LEVEL * enemyLevel, at)
+		Progression.addXp(killer, math.round(settings.XP_PER_ENEMY_LEVEL * enemyLevel), at)
 		-- Absorption du Qi : chaque bandit tué rend une part des points de vie.
 		local heal = effectOf(stats[killer], "KillHeal")
 		local character = killer.Character

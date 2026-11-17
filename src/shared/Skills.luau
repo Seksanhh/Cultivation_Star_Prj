@@ -138,6 +138,17 @@ local list: { Skill } = {
 		Effects = {},
 		Active = { QiCost = 25, Cooldown = 3, Distance = 16 },
 	},
+	{
+		Id = "EpeeVolante", Name = "Épée volante", Hanzi = "御剑术", Path = "Arts",
+		Description = "Une épée de Qi flotte à ton épaule. Garde X enfoncé et pointe ta main gauche : elle vole où tu vises et tranche selon sa vitesse. Double appui pour la congédier. Consomme du Qi (V au clavier).",
+		-- TEST : gratuite et sans prérequis dès le niveau 1. Valeurs normales : Cost = 4, MinLevel = 13, Requires = "Ruee".
+		Cost = 0, MinLevel = 1, Column = 1.5, Row = 4,
+		Effects = {},
+		-- QiCost : invocation ; Drain / GuideDrain : Qi par seconde au repos / guidée ;
+		-- Damage : dégâts à 40 studs/s (×0,5 à ×1,5 selon la vitesse) ; MinSpeed : vitesse minimale pour blesser ;
+		-- MaxSpeed : vitesse de vol ; Range : distance maximale au joueur ; HitRadius : portée de la lame.
+		Active = { QiCost = 20, Cooldown = 1, Drain = 2, GuideDrain = 6, Damage = 22, MinSpeed = 14, MaxSpeed = 75, Range = 55, HitRadius = 1.6 },
+	},
 }
 
 Skills.List = list

@@ -43,9 +43,15 @@ type Rig = {
 local rigs: { [Model]: Rig } = {}
 local random = Random.new()
 
-local function findMotor(parent: Instance?, name: string): Motor6D?
-	local found = parent and parent:FindFirstChild(name)
-	return if found and found:IsA("Motor6D") then found else nil
+-- Cherche une articulation par son nom R6 ou R15 (dans un corps R15, chaque articulation est rangée
+-- dans la pièce qu'elle fait bouger, et non dans le buste).
+local function findMotor(model: Model, r6Name: string, r15Name: string): Motor6D?
+	for _, item in model:GetDescendants() do
+		if (item.Name == r6Name or item.Name == r15Name) and item:IsA("Motor6D") then
+			return item
+		end
+	end
+	return nil
 end
 
 local function track(model: Instance)
@@ -55,21 +61,20 @@ local function track(model: Instance)
 	-- Le modèle arrive du serveur pièce par pièce : on attend l'essentiel.
 	local humanoid = model:WaitForChild("Humanoid", 5)
 	local root = model:WaitForChild("HumanoidRootPart", 5)
-	local torso = model:WaitForChild("Torso", 5)
-	if not humanoid or not humanoid:IsA("Humanoid") or not root or not root:IsA("BasePart") or not torso then
+	if not humanoid or not humanoid:IsA("Humanoid") or not root or not root:IsA("BasePart") then
 		return
 	end
-	task.wait(0.2) -- le temps que les articulations suivent
+	task.wait(0.3) -- le temps que le reste du corps et les articulations suivent
 
 	local rig: Rig = {
 		model = model,
 		humanoid = humanoid,
 		root = root,
-		rootJoint = findMotor(root, "RootJoint"),
-		neck = findMotor(torso, "Neck"),
-		leftHip = findMotor(torso, "Left Hip"),
-		rightHip = findMotor(torso, "Right Hip"),
-		freeArm = if model:GetAttribute("FreeArm") then findMotor(torso, "Left Shoulder") else nil,
+		rootJoint = findMotor(model, "RootJoint", "Root"),
+		neck = findMotor(model, "Neck", "Neck"),
+		leftHip = findMotor(model, "Left Hip", "LeftHip"),
+		rightHip = findMotor(model, "Right Hip", "RightHip"),
+		freeArm = if model:GetAttribute("FreeArm") then findMotor(model, "Left Shoulder", "LeftShoulder") else nil,
 		scale = model:GetScale(),
 		phase = random:NextNumber(0, math.pi * 2),
 		offset = random:NextNumber(0, 10),

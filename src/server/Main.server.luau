@@ -11,7 +11,6 @@ local Enemies = require(script.Parent:WaitForChild("Enemies"))
 local Collisions = require(script.Parent:WaitForChild("Collisions"))
 local Sfx = require(script.Parent:WaitForChild("Sfx"))
 local Progression = require(script.Parent:WaitForChild("Progression"))
-local SkillTree = require(script.Parent:WaitForChild("SkillTree"))
 local Techniques = require(script.Parent:WaitForChild("Techniques"))
 
 Progression.init()
@@ -61,11 +60,12 @@ do
 	Enemies.init(weaponsFolder, feedbackRemote)
 	Techniques.init(weaponsFolder, feedbackRemote, useTechniqueRemote)
 
-	-- Stèle de cultivation : à gauche du point d'apparition, derrière les mannequins, face au nord.
-	local tree = SkillTree.build(CFrame.new(-13, 0, 52))
+	-- Arbre de cultivation : il s'ouvre en interface (touche K, voir src/client/Skills.client.luau).
+	-- L'effet de déblocage apparaît au-dessus de la tête du joueur.
 	unlockSkillRemote.OnServerEvent:Connect(function(player, skillId: any)
-		local orb = if typeof(skillId) == "string" then tree:FindFirstChild("Orbe" .. skillId) else nil
-		Progression.unlock(player, skillId, if orb and orb:IsA("BasePart") then orb.Position + Vector3.new(0, 1.2, 0) else nil)
+		local character = player.Character
+		local head = character and character:FindFirstChild("Head")
+		Progression.unlock(player, skillId, if head and head:IsA("BasePart") then head.Position + Vector3.new(0, 1.5, 0) else nil)
 	end)
 end
 

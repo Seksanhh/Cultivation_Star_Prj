@@ -2,6 +2,13 @@
   "name": "RobloxVR-Melee",
   "tree": {
     "$className": "DataModel",
+    "Lighting": {
+      "$properties": {
+        "Technology": {
+          "Enum": 4
+        }
+      }
+    },
     "ReplicatedStorage": {
       "Shared": {
         "$path": "src/shared"

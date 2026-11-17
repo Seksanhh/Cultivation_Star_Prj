@@ -137,10 +137,10 @@ local function update()
 		xpFill.Size = UDim2.fromScale(math.clamp(xp / math.max(needed, 1), 0, 1), 1)
 		xpLabel.Text = "Niv. " .. level .. " · " .. math.floor(xp) .. " / " .. needed .. " XP"
 	end
-	-- Points de Qi à dépenser sur la stèle de cultivation.
+	-- Points de Qi à dépenser dans l'arbre de cultivation (touche K).
 	local points = player:GetAttribute("SkillPoints") or 0
 	if points > 0 then
-		xpLabel.Text ..= " · " .. points .. " pt"
+		xpLabel.Text ..= " · " .. points .. " pt (K)"
 	end
 
 	-- Position : au-dessus de la main gauche, ou devant le regard si la main n'existe pas.

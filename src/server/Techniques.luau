@@ -9,6 +9,7 @@ local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Skills = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Skills"))
+local Config = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("Config"))
 local Progression = require(script.Parent:WaitForChild("Progression"))
 local Sfx = require(script.Parent:WaitForChild("Sfx"))
 
@@ -253,12 +254,244 @@ local function lightningStep(player: Player, settings: { [string]: number }, dir
 	return true
 end
 
+---------------------------------------------------------------------------
+-- Épée volante (御剑术) : une épée de Qi qui flotte à l'épaule du joueur et vole là où il la guide.
+-- Le client envoie le point visé (main gauche ou regard) tant que le joueur maintient le bouton ;
+-- le serveur fait voler l'épée, la fait trancher et consomme le Qi.
+---------------------------------------------------------------------------
+
+type FlyingSword = {
+	model: Model,
+	position: Vector3,
+	velocity: Vector3,
+	rotation: CFrame, -- orientation actuelle (l'axe Y du repère = la pointe)
+	guided: boolean,
+	target: Vector3?,
+	hits: { [Humanoid]: number }, -- prochain instant où chaque cible peut être de nouveau touchée
+}
+
+local swords: { [Player]: FlyingSword } = {}
+local swordsFolder: Folder
+local SWORD_SETTINGS = Skills.ById.EpeeVolante.Active :: { [string]: number }
+local SWORD_REST = CFrame.new(-2, 2.4, 1.2) -- place de l'épée au repos, derrière l'épaule gauche
+local SWORD_HIT_INTERVAL = 0.4 -- délai avant qu'une même cible puisse être de nouveau touchée
+local SWORD_TIP = 3.85 -- distance du centre du manche à la pointe (modèle de l'épée)
+
+-- Copie spectrale de l'épée (jian) de Config, entourée de Qi.
+local function buildFlyingSword(): Model
+	local model = Instance.new("Model")
+	model.Name = "EpeeVolante"
+	local core = Instance.new("Part")
+	core.Name = "Coeur"
+	core.Size = Vector3.new(0.2, 0.2, 0.2)
+	core.Transparency = 1
+	model.PrimaryPart = core
+	core.Parent = model
+
+	for _, info in Config.Weapons.Epee.Parts do
+		if not info.Hidden then
+			local part: BasePart
+			if info.Wedge then
+				part = Instance.new("WedgePart")
+			else
+				local block = Instance.new("Part")
+				if info.Shape then
+					block.Shape = info.Shape
+				end
+				part = block
+			end
+			part.Name = info.Name
+			part.Size = info.Size
+			part.Color = info.Color
+			part.Material = info.Material
+			part.Reflectance = info.Reflectance or 0
+			part.CFrame = CFrame.new(info.Offset) * (info.Rotation or CFrame.new())
+			part.Parent = model
+		end
+	end
+	for _, item in model:GetChildren() do
+		if item:IsA("BasePart") then
+			item.Anchored = true
+			item.CanCollide = false
+			item.CanQuery = false
+			item.CanTouch = false
+			item.CastShadow = false
+		end
+	end
+
+	-- Halo, étincelles le long de la lame et traînée de Qi derrière elle.
+	local light = Instance.new("PointLight")
+	light.Color = QI_COLOR
+	light.Range = 9
+	light.Brightness = 2
+	light.Parent = core
+	local base = Instance.new("Attachment")
+	base.Position = Vector3.new(0, 0.8, 0)
+	base.Parent = core
+	local tip = Instance.new("Attachment")
+	tip.Position = Vector3.new(0, SWORD_TIP, 0)
+	tip.Parent = core
+	local trail = Instance.new("Trail")
+	trail.Attachment0 = base
+	trail.Attachment1 = tip
+	trail.Lifetime = 0.25
+	trail.MinLength = 0.05
+	trail.Color = ColorSequence.new(QI_COLOR)
+	trail.LightEmission = 1
+	trail.Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.3), NumberSequenceKeypoint.new(1, 1) })
+	trail.Parent = core
+	local middle = Instance.new("Attachment")
+	middle.Position = Vector3.new(0, 2.2, 0)
+	middle.Parent = core
+	local sparks = Instance.new("ParticleEmitter")
+	sparks.Texture = "rbxasset://textures/particles/sparkles_main.dds"
+	sparks.Color = ColorSequence.new(QI_COLOR)
+	sparks.LightEmission = 1
+	sparks.Size = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.25), NumberSequenceKeypoint.new(1, 0) })
+	sparks.Lifetime = NumberRange.new(0.3, 0.6)
+	sparks.Rate = 18
+	sparks.Speed = NumberRange.new(0.5, 1.5)
+	sparks.SpreadAngle = Vector2.new(180, 180)
+	sparks.Parent = middle
+	return model
+end
+
+local function dismissSword(player: Player)
+	local sword = swords[player]
+	if not sword then
+		return
+	end
+	swords[player] = nil
+	player:SetAttribute("EpeeVolante", nil)
+	-- L'épée se dissout en lumière.
+	for _, item in sword.model:GetDescendants() do
+		if item:IsA("BasePart") and item.Transparency < 1 then
+			item.Material = Enum.Material.Neon
+			item.Color = QI_COLOR
+			TweenService:Create(item, TweenInfo.new(0.3), { Transparency = 1 }):Play()
+		end
+	end
+	Debris:AddItem(sword.model, 0.35)
+end
+
+local function summonSword(player: Player): boolean
+	local root = rootOf(player)
+	if not root or swords[player] then
+		return false
+	end
+	local model = buildFlyingSword()
+	local start = (root.CFrame * SWORD_REST).Position
+	model:PivotTo(CFrame.new(start))
+	model.Parent = swordsFolder
+	swords[player] = {
+		model = model,
+		position = start,
+		velocity = Vector3.zero,
+		rotation = CFrame.new(),
+		guided = false,
+		target = nil,
+		hits = {},
+	}
+	player:SetAttribute("EpeeVolante", true)
+	Sfx.play("Grab", start, 1.2)
+	return true
+end
+
+-- Fait voler toutes les épées d'une image : direction, vitesse, orientation, coups et Qi.
+local function updateSwords(dt: number)
+	local settings = SWORD_SETTINGS
+	local now = os.clock()
+	for player, sword in swords do
+		local root = rootOf(player)
+		local remaining = (qi[player] or 0) - (if sword.guided then settings.GuideDrain else settings.Drain) * dt
+		if not root or remaining <= 0 then
+			setQi(player, math.max(remaining, 0))
+			dismissSword(player)
+			continue
+		end
+		setQi(player, remaining)
+
+		-- Point visé : la cible guidée (sans s'éloigner du joueur au-delà de la portée), sinon
+		-- sa place au repos, qui ondule doucement.
+		local aim: Vector3
+		if sword.guided and sword.target then
+			local offset = sword.target - root.Position
+			if offset.Magnitude > settings.Range then
+				offset = offset.Unit * settings.Range
+			end
+			aim = root.Position + offset
+		else
+			aim = (root.CFrame * SWORD_REST).Position + Vector3.new(0, math.sin(now * 2) * 0.25, 0)
+		end
+
+		-- Pilotage : elle file vers le point visé et ralentit en arrivant.
+		local toAim = aim - sword.position
+		local distance = toAim.Magnitude
+		local maxSpeed = if sword.guided then settings.MaxSpeed else math.max(settings.MaxSpeed * 0.6, root.AssemblyLinearVelocity.Magnitude + 20)
+		local desired = if distance > 0.01 then toAim.Unit * math.min(maxSpeed, distance * 6) else Vector3.zero
+		sword.velocity += (desired - sword.velocity) * math.min(1, dt * 10)
+		sword.position += sword.velocity * dt
+		local speed = sword.velocity.Magnitude
+
+		-- Orientation : la pointe en avant quand elle vole ; au repos, debout, tournant lentement.
+		local goal: CFrame
+		if speed > 4 then
+			local direction = sword.velocity.Unit
+			local right = direction:Cross(Vector3.yAxis)
+			if right.Magnitude < 0.05 then
+				right = Vector3.xAxis
+			end
+			goal = CFrame.fromMatrix(Vector3.zero, right.Unit, direction)
+		elseif sword.guided then
+			goal = sword.rotation
+		else
+			goal = CFrame.Angles(0, now * 1.5, 0)
+		end
+		sword.rotation = sword.rotation:Lerp(goal, math.min(1, dt * 12))
+		local frame = CFrame.new(sword.position) * sword.rotation
+		sword.model:PivotTo(frame)
+
+		-- La lame blesse ce qu'elle traverse assez vite. Plus elle va vite, plus elle fait mal.
+		if speed >= settings.MinSpeed then
+			local damage = settings.Damage * math.clamp(speed / 40, 0.5, 1.5)
+			local tip = frame * Vector3.new(0, SWORD_TIP - 0.4, 0)
+			local middle = frame * Vector3.new(0, 2.1, 0)
+			for _, point in { tip, middle } do
+				for humanoid, model in targetsNear(point, settings.HitRadius) do
+					if now >= (sword.hits[humanoid] or 0) then
+						sword.hits[humanoid] = now + SWORD_HIT_INTERVAL
+						strike(player, humanoid, model, damage)
+						Sfx.play("Flesh", point, 1)
+						feedbackRemote:FireClient(player, "Left", 0.5, 0.08)
+					end
+				end
+			end
+		end
+	end
+end
+
+local function onSwordCommand(player: Player, action: any, target: any)
+	local sword = swords[player]
+	if action == "Guide" and sword and typeof(target) == "Vector3" and target == target then
+		sword.guided = true
+		sword.target = target
+	elseif action == "Release" and sword then
+		sword.guided = false
+		sword.target = nil
+	elseif action == "Dismiss" then
+		dismissSword(player)
+	end
+end
+
 local HANDLERS: { [string]: (Player, { [string]: number }, any) -> boolean } = {
 	OndeDeQi = qiWave,
 	Rugissement = function(player, settings)
 		return lionRoar(player, settings)
 	end,
 	Ruee = lightningStep,
+	EpeeVolante = function(player)
+		return summonSword(player)
+	end,
 }
 
 ---------------------------------------------------------------------------
@@ -307,18 +540,29 @@ function Techniques.init(weapons: Instance, feedback: RemoteEvent, useRemote: Re
 		onPlayerAdded(player)
 	end
 	Players.PlayerRemoving:Connect(function(player)
+		dismissSword(player)
 		qi[player] = nil
 		readyAt[player] = nil
 	end)
 
 	useRemote.OnServerEvent:Connect(Techniques.use)
 
-	-- Le Qi se régénère en continu.
+	-- Épée volante : dossier des épées, canal de guidage et vol à chaque image.
+	swordsFolder = Instance.new("Folder")
+	swordsFolder.Name = "EpeesVolantes"
+	swordsFolder.Parent = workspace
+	local swordRemote = Instance.new("RemoteEvent")
+	swordRemote.Name = "EpeeVolante" -- client → serveur : "Guide" (point visé), "Release", "Dismiss"
+	swordRemote.Parent = useRemote.Parent
+	swordRemote.OnServerEvent:Connect(onSwordCommand)
+	RunService.Heartbeat:Connect(updateSwords)
+
+	-- Le Qi se régénère en continu (sauf pendant qu'une épée volante l'entretient).
 	task.spawn(function()
 		while true do
 			local dt = task.wait(0.25)
 			for player, value in qi do
-				if value < Skills.QI_MAX then
+				if value < Skills.QI_MAX and not swords[player] then
 					setQi(player, value + Skills.QI_REGEN * dt)
 				end
 			end

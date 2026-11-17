@@ -2,9 +2,8 @@
 -- râtelier d'armes, mannequins de bois, lanternes, cerisiers et pics montagneux au loin.
 -- Repères : le nord est vers -Z. Le joueur apparaît au sud de la cour, face à la grande salle.
 
-local Lighting = game:GetService("Lighting")
-
 local Collisions = require(script.Parent:WaitForChild("Collisions"))
+local Ambience = require(script.Parent:WaitForChild("Ambience"))
 
 local Arena = {}
 
@@ -146,6 +145,8 @@ local function lantern(position: Vector3, armDirection: number)
 	light.Color = Color3.fromRGB(255, 150, 90)
 	light.Range = 22
 	light.Brightness = 1.6
+	light.Shadows = true -- avec l'éclairage Future, la lanterne projette des ombres douces
+	light:SetAttribute("Flicker", true) -- la flamme vacille (LightFlicker.client.luau)
 	light.Parent = body
 end
 
@@ -326,27 +327,6 @@ local function buildDecor()
 	end
 end
 
--- Lumière de fin d'après-midi et brume.
-local function setAtmosphere()
-	Lighting.ClockTime = 17.3
-	Lighting.GeographicLatitude = 35
-	Lighting.Brightness = 2.4
-	Lighting.Ambient = Color3.fromRGB(95, 78, 78)
-	Lighting.OutdoorAmbient = Color3.fromRGB(150, 122, 110)
-	Lighting.ColorShift_Top = Color3.fromRGB(255, 205, 160)
-
-	if not Lighting:FindFirstChildOfClass("Atmosphere") then
-		local atmosphere = Instance.new("Atmosphere")
-		atmosphere.Density = 0.36
-		atmosphere.Offset = 0.15
-		atmosphere.Color = Color3.fromRGB(235, 200, 170)
-		atmosphere.Decay = Color3.fromRGB(160, 120, 110)
-		atmosphere.Glare = 0.25
-		atmosphere.Haze = 1.8
-		atmosphere.Parent = Lighting
-	end
-end
-
 ---------------------------------------------------------------------------
 -- Mannequins
 ---------------------------------------------------------------------------
@@ -417,7 +397,7 @@ function Arena.build(weaponCount: number): { CFrame }
 	folder.Name = "Arena"
 	folder.Parent = workspace
 
-	setAtmosphere()
+	Ambience.apply()
 	buildGround()
 	buildWalls()
 	buildHall()

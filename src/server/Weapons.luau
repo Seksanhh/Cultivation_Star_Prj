@@ -8,8 +8,6 @@ local Sfx = require(script.Parent:WaitForChild("Sfx"))
 
 local Weapons = {}
 
-local WOOD = Color3.fromRGB(105, 70, 40)
-
 -- Traînée lumineuse derrière une lame en mouvement, tendue entre sa base et sa pointe.
 -- Sa longueur suit la vitesse : presque invisible sur un geste lent, large sur un vrai coup.
 function Weapons.addTrail(blade: BasePart)
@@ -57,8 +55,9 @@ function Weapons.create(typeName: string, home: CFrame, parent: Instance): Model
 	local handle = Instance.new("Part")
 	handle.Name = "Handle"
 	handle.Size = Vector3.new(0.28, def.HandleLength, 0.28)
-	handle.Color = def.HandleColor or WOOD
+	handle.Color = def.HandleColor or Config.HANDLE_WOOD
 	handle.Material = def.HandleMaterial or Enum.Material.Wood
+	handle.Transparency = 1 -- on voit à sa place le manche rond (pièce « Fut » de Config)
 	handle.TopSurface = Enum.SurfaceType.Smooth
 	handle.BottomSurface = Enum.SurfaceType.Smooth
 	handle.Anchored = true -- ancrée tant qu'elle est sur le râtelier
@@ -81,6 +80,7 @@ function Weapons.create(typeName: string, home: CFrame, parent: Instance): Model
 		part.Color = info.Color
 		part.Material = info.Material
 		part.Reflectance = info.Reflectance or 0
+		part.Transparency = if info.Hidden then 1 else 0
 		part.TopSurface = Enum.SurfaceType.Smooth
 		part.BottomSurface = Enum.SurfaceType.Smooth
 		if info.Decor then

@@ -23,22 +23,38 @@ L'arène (sol, râtelier, mannequins) et les armes sont créées par le script a
 
 Un contour blanc indique l'arme que la main peut saisir.
 
+L'arme tenue suit la manette sur ses 6 degrés de liberté : les 3 axes de position et les 3 axes de rotation, sans retard ni ballant. À chaque image, la main est placée exactement sur la manette. Elle reçoit aussi la vitesse réelle du geste, pour que les coups et les chocs restent justes. En contrepartie, une arme tenue peut traverser un mur. Si tu préfères qu'elle bute contre les murs, quitte à traîner un peu sur les gestes rapides, mets `Config.HAND_TRACKING = "Physique"` dans `src/shared/Config.luau`.
+
 ## Armes
 
 | Arme | Modèle chinois | Dégâts de base | Vitesse minimale | Deux mains |
 | --- | --- | --- | --- | --- |
 | Dague | bishou (匕首) : lame droite à deux tranchants, pommeau en anneau | 12 | 8 | non |
 | Épée | jian (剑) : lame droite à arête centrale, garde de bronze, pommeau de jade, pompon de soie rouge | 25 | 11 | non |
-| Épée longue | changdao (长刀) : long sabre à un tranchant, garde ronde en laiton, poignée tressée noire | 40 | 9 | oui |
+| Épée longue | changdao (长刀) : long sabre légèrement courbe à un tranchant, garde ronde en laiton, poignée tressée noire | 40 | 9 | oui |
 | Hache | fu (斧) : fer en croissant, pique au sommet, manche laqué rouge et houppe de soie | 35 | 10 | oui |
-| Sabre | dao (刀) : lame à un tranchant qui s'élargit vers la pointe, garde ronde, foulard de soie rouge | 28 | 10 | non |
+| Sabre | dao (刀) : lame courbe à un tranchant qui s'élargit vers la pointe, garde ronde, pommeau en anneau, foulard de soie rouge | 28 | 10 | non |
 | Lance | qiang (枪) : longue hampe de bois clair, fer en feuille de saule, houppe de crin rouge | 30 | 9 | oui |
 | Guandao | guandao (偃月刀) : lourde lame en croissant sur une hampe, crochet au dos, contrepoids au talon | 45 | 8 | oui |
 | Bâton | gun (棍) : long bâton ferré aux deux bouts | 18 | 8 | oui |
 
 La lance, le guandao et le bâton sont des armes d'hast : elles frappent de loin, et la seconde main sur la hampe les rend bien plus faciles à diriger. Seule la partie métallique touche : le fer de la lance, la lame du guandao, les deux embouts du bâton. La hampe ne blesse pas et ne pare pas.
 
-Les armes sont assemblées à partir de pièces simples (blocs, biseaux, cylindres) décrites dans `Config.Weapons` : lames brillantes à pointe effilée, gardes, pommeaux et ornements. Les bandits portent les mêmes modèles. Les pompons et cordons sont rigides et ne heurtent rien.
+Les armes sont des modèles détaillés, construits par code dans `src/shared/Config.luau`. Ils n'utilisent aucun modèle de la Toolbox, donc rien ne peut disparaître ni contenir de script caché. Détails :
+
+- **Lames :**
+  - Les lames ont une vraie section : en losange avec une arête centrale pour la dague, l'épée et la lance ; dos épais, plat de lame et gorge sombre pour le sabre, l'épée longue et le guandao. Un biseau poli, plus clair, descend jusqu'au fil.
+  - Les sabres sont courbes : 12° pour le dao, 8° pour l'épée longue et 24° pour le croissant du guandao. Leur pointe remonte vers le dos.
+  - Les fonctions `blade`, `bevel`, `point` et `clipPoint` construisent les lames. Les réglages de chaque arme (longueur, largeurs, épaisseur, courbure, gorge) sont dans sa ligne `blade(...)`.
+- **Montures :**
+  - Les manches sont ronds. Les poignées sont tressées de cordon en losanges.
+  - Les pommeaux en anneau sont faits de segments ; le pommeau de l'épée porte un cabochon de jade.
+  - Gardes : en « montagne » pour l'épée, en disque pour le sabre et l'épée longue. Le fer de la hache est riveté.
+  - Les houppes de crin sont faites de brins qui s'écartent.
+- **Bouclier :** rotin en spirale, cerclé de clous de laiton.
+- **Zones de frappe :** elles sont restées les boîtes d'avant, rendues invisibles (champ `Hidden`). Le modèle visible ne heurte rien (`Decor`). La détection des coups et des parades est donc exactement la même qu'avant.
+- **Bandits :** ils portent les mêmes modèles. Quand un bandit arme son coup, tout l'acier visible de sa lame s'illumine (champ `Glow`), plus seulement une pièce.
+- Les pompons et cordons sont rigides et ne heurtent rien.
 
 Les dégâts sont proportionnels à la vitesse de pointe du coup : dégâts = dégâts de base × (vitesse / 25 studs/s), entre ×0,3 et ×2,5. Un coup deux fois plus rapide fait deux fois plus mal, et un coup sous la vitesse minimale ne compte pas.
 
@@ -80,13 +96,19 @@ Sans cela le jeu fonctionne normalement, mais un avertissement apparaît dans la
 
 ## Cultivation (arbre de techniques)
 
-Chaque niveau gagné donne 1 point de Qi, à dépenser sur la **stèle de cultivation** : une grande dalle de pierre à gauche du point d'apparition, derrière la rangée de mannequins. Chaque technique y est une orbe, reliée par un trait d'or à celle qu'elle demande :
+Chaque niveau gagné donne 1 point de Qi, à dépenser dans l'**arbre de cultivation**.
+
+**Ouvrir l'arbre :** appuie sur **`K`** (en VR : clic du joystick gauche). La même touche le referme, tout comme la croix en haut à droite. Pendant que l'arbre est ouvert, la souris est libérée pour cliquer.
+
+**Lecture de l'arbre :** chaque voie est une colonne, avec la racine en bas au centre. Chaque technique est une case, reliée par un trait d'or à celle qu'elle demande :
 
 - grise : conditions non remplies ;
-- dorée et palpitante : tu peux la débloquer ;
+- dorée : tu peux la débloquer ;
 - verte : acquise.
 
-Approche la main d'une orbe pour lire sa fiche (effet, coût, ce qui manque), puis serre la gâchette de préhension pour la débloquer (`E` ou `Q` sans casque). Les points restants s'affichent sur la barre d'XP (« · 2 pt »).
+**Débloquer :** survole ou clique une case pour lire sa fiche en bas du panneau (effet, coût, niveau, ce qui manque). Le bouton **Débloquer** apparaît quand la technique est disponible.
+
+Les points restants s'affichent sur la barre d'XP (« · 2 pt (K) »).
 
 | Technique | Voie | Coût | Niveau | Effet |
 | --- | --- | --- | --- | --- |
@@ -103,8 +125,9 @@ Approche la main d'une orbe pour lire sa fiche (effet, coût, ce qui manque), pu
 | Onde de Qi (剑气) | Arts | 1 | 2 | technique active (voir plus bas) |
 | Rugissement du lion (狮子吼) | Arts | 2 | 5 | technique active |
 | Pas de l'éclair (闪电步) | Arts | 3 | 9 | technique active |
+| Épée volante (御剑术) | Arts | 4 | 13 | technique active |
 
-Chaque voie se débloque de bas en haut. L'arbre complet coûte 25 points pour 19 disponibles au niveau 20 : il faut choisir ses voies.
+Chaque voie se débloque de bas en haut. L'arbre complet coûte 29 points pour 19 disponibles au niveau 20 : il faut choisir ses voies.
 
 ### Techniques actives (voie des Arts)
 
@@ -115,12 +138,23 @@ Elles se déclenchent avec un bouton et consomment du Qi, une réserve de 100 po
 | Onde de Qi | gâchette de la main armée | `F` | 30 | 1,5 s | une lame d'énergie part de la pointe de l'arme, dans l'axe de la lame, sur 45 studs ; 30 dégâts à chaque cible traversée |
 | Rugissement du lion | bouton `Y` (manette gauche) | `R` | 50 | 8 s | repousse et sonne 2 s les bandits à moins de 14 studs, 12 dégâts |
 | Pas de l'éclair | bouton `B` (manette droite) | `C` | 25 | 3 s | déplacement instantané de 16 studs dans la direction du regard, arrêté par les murs |
+| Épée volante | bouton `X` (manette gauche), maintenu | `V`, maintenu | 20, puis 2/s (6/s guidée) | 1 s | une épée de Qi qui vole où tu vises (voir ci-dessous) |
+
+**Épée volante (御剑术) :**
+
+- **Invocation :** un premier appui sur `X` fait apparaître une épée de Qi spectrale (le jian du jeu, lumineux, avec traînée et étincelles). Elle flotte derrière ton épaule gauche.
+- **Guidage :** tant que tu maintiens `X`, l'épée vole vers le point que vise ta main gauche, dans l'axe de la manette, comme le « doigt d'épée » des films wuxia. Une petite sphère bleue, visible de toi seul, marque le point visé. Sans casque, on vise avec le regard en maintenant `V`.
+- **Retour :** quand tu relâches le bouton, l'épée revient à ton épaule.
+- **Dégâts :** l'épée blesse selon sa vitesse. Arrêtée sur une cible, elle ne fait rien : balaie la main pour qu'elle traverse les bandits. Elle fait 22 dégâts à 40 studs/s, de ×0,5 à ×1,5 selon la vitesse, et ne blesse pas sous 14 studs/s. Une même cible ne peut être touchée qu'une fois toutes les 0,4 seconde.
+- **Portée :** l'épée ne s'éloigne pas à plus de 55 studs de toi.
+- **Qi :** invoquer l'épée coûte 20 Qi. Ensuite elle consomme 2 Qi par seconde au repos et 6 Qi par seconde guidée. Le Qi ne se régénère pas tant qu'elle est là, et elle se dissipe quand il est épuisé.
+- **Congédier :** un double appui rapide sur `X` ou `V` dissipe l'épée.
 
 Les dégâts des techniques profitent des bonus de niveau et de cultivation, et comptent pour l'expérience. L'Onde de Qi demande une arme à lame en main (pas le bouclier) : pointe l'arme vers la cible avant de tirer. Les réglages sont dans le champ `Active` de chaque technique (`src/shared/Skills.luau`), le code dans `src/server/Techniques.luau` et `src/client/Techniques.client.luau`. Les techniques sont sauvegardées avec le niveau, et il n'y a pas de remise à zéro des points.
 
 Le niveau donne aussi un **royaume de cultivation**, annoncé quand on y entre : Raffinement du Qi (炼气, niveau 1), Établissement des fondations (筑基, 5), Noyau d'or (金丹, 9), Âme naissante (元婴, 13), Transformation divine (化神, 17).
 
-L'arbre est décrit dans `src/shared/Skills.luau` (techniques, coûts, effets, royaumes), la stèle dans `src/server/SkillTree.luau` et l'interaction dans `src/client/Skills.client.luau`.
+L'arbre est décrit dans `src/shared/Skills.luau` (techniques, coûts, effets, royaumes). L'interface de l'arbre est dans `src/client/Skills.client.luau`, avec ses touches dans `TOGGLE_KEYS`.
 
 ## Bouclier
 
@@ -135,7 +169,7 @@ Par rapport à la parade à l'épée, le bouclier est plus tolérant sur le plac
 Juste avant de s'abattre, la lame du bandit passe de l'orange au blanc pendant 0,15 seconde. Si tu frappes activement son sabre avec ta lame à ce moment-là (au moins 12 studs/s), au lieu de simplement la laisser sur la trajectoire, la parade est parfaite :
 
 - le bandit prend 20 points de dégâts et son sabre est rejeté en arrière ;
-- il reste sonné 2,5 secondes, entouré d'un halo doré ;
+- il reste sonné 0,6 seconde, entouré d'un halo doré ;
 - pendant ce temps, tes coups lui font le double de dégâts (riposte) ;
 - une gerbe d'étincelles, une onde de choc lumineuse, un éclair de lumière, un tintement aigu et une longue vibration le signalent.
 
@@ -175,7 +209,7 @@ Les bandits varient leurs coups, et la pose d'armement annonce d'où le coup vie
 
 La dague pique surtout, l'épée connaît tous les coups, l'épée longue tous sauf le montant, et la hache ne donne ni estoc ni montant. Pour parer ou bloquer, ta lame ou ton bouclier doit se trouver sur la trajectoire du coup : une garde haute n'arrête pas un fauchage.
 
-À partir de la vague 2, un bandit à la dague, à l'épée ou au sabre a 40 % de chances de porter une seconde arme (dague, épée ou sabre) dans la main gauche ; son nom l'indique (« Bandit · Épée + Dague »). Il frappe d'une main puis de l'autre, chaque arme gardant ses dégâts, sa portée et ses coups, et il enchaîne plus vite (temps entre deux attaques ×0,65). Les coups de la main gauche sont en miroir. Les armes à deux mains (épée longue, hache, lance, guandao, bâton) ne se portent jamais par paire.
+À partir de la vague 2, un combattant à l'épée ou au sabre a 40 % de chances de porter une seconde arme (épée ou sabre) dans la main gauche, et un assassin 75 % de chances de porter une seconde dague ; son nom l'indique (« Combattant · Épée + Sabre »). Il frappe d'une main puis de l'autre, chaque arme gardant ses dégâts, sa portée et ses coups, et il enchaîne plus vite (temps entre deux attaques ×0,65). Les coups de la main gauche sont en miroir. Les armes à deux mains (épée longue, hache, lance, guandao, bâton) ne se portent jamais par paire.
 
 ### Mouvements
 
@@ -192,6 +226,42 @@ Les durées d'un coup (armement, fenêtre de parade parfaite) n'ont pas changé 
 
 L'animation du corps est calculée par chaque joueur à chaque image (`src/client/EnemyAnimator.client.luau`) ; le serveur ne pilote que les bras armés, qui comptent pour la parade. Les réglages d'allure (`TURN_SPEED`, `FLANK_ANGLE`, `CIRCLE_SPEED`…) sont en haut de `src/server/Enemies.luau`, ceux de l'animation en haut du script client.
 
+### Dash
+
+Les bandits font de brusques dashs au ras du sol, sur quelques mètres. Chaque dash soulève un nuage de poussière et fait un bruit de fente, ce qui permet de le voir et de l'entendre venir. Le corps laisse aussi derrière lui une traînée claire, de la tête aux genoux, qui s'efface en 0,3 seconde. Sa durée et sa couleur se règlent avec `DASH_TRAIL_LIFETIME` et `DASH_TRAIL_COLOR`. Il y a trois sortes de dash :
+
+- **Ruée :** encore loin, le bandit comble la distance d'un coup. Il s'arrête à sa portée, sans te foncer dedans, puis attaque normalement avec la lame qui s'illumine.
+- **Esquive :** juste après avoir été touché, il bondit parfois en arrière, en biais, pour reprendre ses distances.
+- **Pas chassé :** pendant qu'il tourne autour de toi, il fait parfois un brusque écart de côté. Jamais juste avant d'attaquer.
+- **Esquive réflexe (latérale) :** quand ta lame arrive vite tout près de lui (plus de 18 studs/s, à moins de 8 studs), il peut s'écarter d'un dash de côté, du côté opposé à ta lame. Il ne tente sa chance qu'une fois par coup, et jamais pendant sa propre attaque : un coup qui suit sa parade ou son attaque reste le meilleur moment pour frapper.
+- **Zigzag (latéral) :** en approchant, quand il n'est plus très loin, il fait des écarts de côté tout en avançant.
+
+Un temps de recharge sépare deux dashs. Un dash est raccourci devant un mur et annulé s'il finirait hors de l'arène. Le bandit ne dashe pas quand il est sonné ou vulnérable.
+
+La fréquence dépend de la classe (champ `DashRate`) :
+
+| Classe | Fréquence des dashs |
+| --- | --- |
+| Fermier | ×0,35 |
+| Combattant | ×1 |
+| Moine | ×1,2 |
+| Assassin | ×2 |
+| Boss | ×0,5 |
+
+Les réglages (vitesse, distances, chances, recharge) sont dans les constantes `DASH_*` en haut de `src/server/Enemies.luau`. Le son est `Config.Sounds.Dash`.
+
+### Mort et ragdoll
+
+À sa mort, un bandit s'effondre de façon physique au lieu de tomber en morceaux :
+
+- **Articulations :**
+  - Chaque articulation devient une rotule limitée comme celles d'un vrai corps : le genou plie sans se tordre, la tête bascule sans faire le tour du cou.
+  - Une légère friction évite l'effet pantin.
+- **Chute :** le corps part dans le sens du coup fatal, à l'opposé du joueur qui l'a tué. Ses armes lui tombent des mains et restent au sol.
+- **Disparition :** le nom et la barre de vie disparaissent aussitôt. Le corps reste 6 secondes (10 pour le boss), puis s'efface en fondu.
+
+Le code est dans `src/server/Ragdoll.luau` : limites de chaque articulation, force de projection. Les durées sont dans `CORPSE_TIME` et `BOSS_CORPSE_TIME`, en bas de `src/server/Enemies.luau`. Le ragdoll fonctionne avec les corps R15 et R6.
+
 ### Boss
 
 Toutes les cinq vagues (après les vagues 5, 10, 15…), une fois le dernier bandit tombé, le **Seigneur de guerre** (首领) entre dans la cour : un géant 1,6 fois plus grand qu'un bandit, armé d'un guandao à sa taille, cerné d'un contour rouge. La vague suivante ne commence qu'après sa mort.
@@ -206,9 +276,26 @@ Toutes les cinq vagues (après les vagues 5, 10, 15…), une fois le dernier ban
 
 Les réglages (`BOSS_EVERY`, `BOSS_HEALTH`, `BOSS_SLAM_…`, etc.) sont en haut de `src/server/Enemies.luau`.
 
+### Classes
+
+Chaque bandit appartient à une classe, affichée dans son nom (« Niv. 3 · Moine · Bâton »), qui fixe ses armes, ses tenues, sa silhouette et ses forces :
+
+| Classe | Dès la vague | Armes | Tenues | Vie | Dégâts | Vit. d'attaque | Marche | XP |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Fermier | 1 | bâton, dague, hache (vague 3) | habits de paysan, chapeau de paille | ×0,8 | ×0,8 | ×0,9 | ×0,95 | ×0,75 |
+| Combattant | 2 | épée, sabre, lance (4), épée longue (5), guandao (7) ; 40 % portent une 2e épée ou un 2e sabre | rônin noir, robe blanche, brigand masqué, capitaine casqué (niv. 6) | ×1 | ×1 | ×1 | ×1 | ×1 |
+| Moine | 3 | bâton surtout, lance (5) | robes shaolin safran, brune, grise, rouge (niv. 6), crâne rasé | ×1,15 | ×0,9 | ×1,15 | ×1,1 | ×1,2 |
+| Assassin | 4 | dague surtout, sabre ; 75 % portent une 2e dague | ombre, assassin rouge (niv. 6) | ×0,75 | ×1,1 | ×1,25 | ×1,2 | ×1,1 |
+
+Une classe fait son entrée en tête de sa première vague, annoncée avec le numéro de la vague. Ensuite, les bandits sont tirés au hasard parmi les classes déjà apparues : les fermiers, nombreux au début, se raréfient au fil des vagues, tandis que les autres deviennent plus fréquents. Les fermiers ont la silhouette « Homme » ou « Corps de base 2 », les moines et assassins les deux « Corps de base » ; les combattants les trois. Le boss est un combattant et porte la tenue de capitaine.
+
+Tout se règle dans la table `CLASSES` (en haut de `src/server/Enemies.luau`) : armes et leur poids au tirage, vague d'apparition, chance de seconde arme, multiplicateurs, chapeau de paille, corps permis. Pour ajouter une tenue à une classe, ajoute une ligne à `OUTFITS` avec son champ `Class`.
+
 ### Tenues
 
-Les bandits portent des tenues du catalogue Roblox, tirées au hasard : rônin noir, robe blanche, brigand masqué, puis ombre (niveau 2 et plus), assassin rouge (niveau 4 et plus) et capitaine casqué (niveau 6 et plus). Ceux qui n'ont ni masque ni casque gardent le chapeau de paille.
+Les bandits portent des tenues du catalogue Roblox, tirées au hasard parmi celles de leur classe. Ceux qui n'ont ni masque ni casque gardent le chapeau de paille, sauf les moines.
+
+Les tenues sont enfilées sur des corps réalistes R15 (membres arrondis, visage d'homme animé), tous publiés gratuitement par Roblox : le lot « Homme » et deux « Corps de base » (Charlie et Parker), coiffés du « Visage d'homme ». Chaque tenue est préparée sur chaque corps, et chaque bandit en tire une combinaison au hasard. Leurs bras restent tendus (coude et poignet fixes) et tiennent l'arme dans la main. Pour changer de corps, copie dans la table `BODY_SHAPES` les numéros des pièces d'un lot (tête, buste, bras, jambes) relevés sur sa page du catalogue. `USE_REALISTIC_BODIES = false` revient aux personnages R6 carrés.
 
 Les vêtements sont téléchargés au lancement du serveur. Tant qu'ils ne sont pas arrivés, ou si l'un d'eux a été retiré du catalogue, les bandits concernés apparaissent avec l'ancien corps en blocs, et un avertissement s'affiche dans la fenêtre Sortie.
 
@@ -216,7 +303,7 @@ Pour changer une tenue, ouvre la page d'un vêtement sur le catalogue Roblox et 
 
 ### Niveaux
 
-Chaque bandit a un niveau de 1 à 10, affiché devant son nom (« Niv. 4 · Bandit · Épée »). Le niveau suit le numéro de la vague, à un niveau près ; la première vague est toujours au niveau 1.
+Chaque bandit a un niveau de 1 à 10, affiché devant son nom (« Niv. 4 · Combattant · Épée »). Le niveau suit le numéro de la vague, à un niveau près ; la première vague est toujours au niveau 1.
 
 | Niveau | Points de vie | Vitesse d'attaque | Dégâts |
 | --- | --- | --- | --- |
@@ -227,7 +314,7 @@ Chaque bandit a un niveau de 1 à 10, affiché devant son nom (« Niv. 4 · Band
 
 La vitesse d'attaque divise le temps d'armement et le temps entre deux attaques : un bandit de niveau 10 à l'épée arme son coup en 0,37 s au lieu de 0,6 s. Le temps d'armement ne descend jamais sous 0,25 s. Les dégâts de l'arme augmentent de 10 % par niveau : une hache de niveau 10 inflige 46 points au lieu de 24, sur les 100 points de vie du joueur. Les réglages (`MAX_LEVEL`, `LEVEL_SPREAD`, `HEALTH_PER_LEVEL`, `ATTACK_SPEED_PER_LEVEL`, `DAMAGE_PER_LEVEL`) sont en haut de `src/server/Enemies.luau`.
 
-Les vagues 1 à 8 ajoutent une arme chacune (épée, puis dague, sabre, hache, lance, épée longue, bâton, guandao) : le premier bandit de la vague porte la nouvelle arme. Ensuite les armes sont tirées au hasard.
+Les armes dépendent de la classe du bandit (voir « Classes ») : certaines n'apparaissent qu'à partir d'une vague donnée.
 
 Les réglages (équipement par arme, délais, nombre maximal) sont en haut de `src/server/Enemies.luau`.
 
@@ -240,6 +327,14 @@ Chaque choc, coup porté, parade, blocage et saisie joue un son, tiré de la bib
 ## Traînées
 
 Chaque lame (les tiennes et celles des bandits) laisse une traînée claire quand elle bouge. Sa longueur suit la vitesse : à peine visible sur un geste lent, large sur un vrai coup. Elle aide aussi à lire l'angle d'attaque d'un bandit. La durée et la couleur se règlent avec `Config.TRAIL_LIFETIME` et `Config.TRAIL_COLOR` (`src/shared/Config.luau`).
+
+## Ciel et éclairage
+
+Le temple baigne dans un coucher de soleil doré (17 h 36) : soleil bas et ombres longues, brume chaude sur les lointains, nuages volumétriques en 3D qui dérivent lentement, ciel haute définition de Roblox avec soleil, lune et étoiles. Le moteur d'éclairage **Future** donne des ombres douces aux lanternes et des reflets du ciel sur les métaux ; les lanternes vacillent comme des flammes. Un léger post-traitement ajoute un halo autour des lumières vives, des rayons de soleil et un peu de contraste. Il n'y a pas de flou de profondeur, qui fatigue les yeux en VR.
+
+- **Réglages :** heure, couleurs, brume, nuages et effets en haut de `src/server/Ambience.luau`.
+- **Autre ciel :** dans Studio, prends un ciel dans la Toolbox (recherche « skybox ») et glisse son objet `Sky` dans `Lighting`. Le script le garde tel quel. Tu peux aussi copier ses numéros d'images dans la table `SKY`.
+- **Moteur Future :** il est réglé dans `default.project.json` (`Lighting.Technology`), car un script ne peut pas le changer. Si Rojo ne l'applique pas, choisis-le à la main : `Lighting` → propriété `Technology` → `Future`. Sur les casques autonomes peu puissants, Roblox réduit de lui-même la qualité.
 
 ## Modifier le jeu
 
